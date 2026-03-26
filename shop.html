@@ -165,7 +165,6 @@
         // CONFIG
         const USER_DB_URL = 'https://script.google.com/macros/s/AKfycbwPQ0XPpvykwy6uwxA9uiFOATq_Logr7Q58hHqpru8FHsgN79G9XYkK6SzMe2pn2M6w/exec'; 
         const INVENTORY_CSV = 'https://docs.google.com/spreadsheets/d/e/2PACX-1vRVrA_8ndp0w3vWU_rwfKKNFsECqNMN6yW9yHN2VTOXRCIP5kQa1tLznW4DBmEasd_KR-LXcBcKNz9s/pub?gid=0&single=true&output=csv';
-        const CASHAPP_TAG = '$Jay12vr'; // Always kept to $jay12vr as requested
 
         let user = JSON.parse(localStorage.getItem('dim3d_user') || 'null');
         let cart = [];
@@ -178,8 +177,8 @@
         // AUTH
         async function handleLogin() {
             const u = document.getElementById('log-user').value;
-
             const p = document.getElementById('log-pass').value;
+
             if (u === 'jay12vr' && p === '123211') {
                 saveUser({ firstName: 'Jay', username: 'jay12vr', role: 'owner', address: 'HQ' });
                 closeModal('login-modal'); return;
@@ -198,8 +197,8 @@
                 const check = await fetch(`${USER_DB_URL}?action=check&u=${u}`).then(r => r.json());
                 if (check.exists) {
                     showToast("Account exists! Redirecting...");
-
                     closeModal('signup-modal'); openModal('login-modal'); return;
+
                 }
             } catch (e) {}
 
@@ -218,8 +217,8 @@
                 document.getElementById('auth-buttons').classList.add('hidden');
                 document.getElementById('user-display').classList.remove('hidden');
                 document.getElementById('welcome-name').innerText = user.firstName;
-
                 if (user.username === 'jay12vr') {
+
                     document.getElementById('nav-orders').classList.remove('hidden');
                     document.getElementById('orders-section').classList.remove('hidden');
                     renderOrders();
@@ -238,8 +237,8 @@
                     return { id: i, n: c[0].replace(/"/g,''), p: parseFloat(c[1])||0, d: c[2].replace(/"/g,''), img: c[3].replace(/"/g,'') };
                 });
                 renderProducts(items);
-
             } catch (e) { showToast("Inventory Error"); }
+
             finally { document.getElementById('sync-icon').classList.remove('loading-spin'); }
         }
 
@@ -258,8 +257,8 @@
                     </div>
                     <button onclick="addToCart('${item.id}', '${item.n.replace(/'/g,"")}', ${item.p})" class="bg-[#00d632] py-3 rounded-xl font-bold text-white mt-auto">Add to Cart</button>
                 </div>`;
-
             }).join('');
+
         }
 
         function selectColor(id, c) {
@@ -278,8 +277,8 @@
             document.getElementById('cart-count').innerText = cart.length;
             const total = cart.reduce((s, i) => s + i.p, 0);
             document.getElementById('cart-total').innerText = `$${total.toFixed(2)}`;
-
             document.getElementById('cart-items').innerHTML = cart.map((i, idx) => `
+
                 <div class="bg-white/5 p-4 rounded-xl flex justify-between items-center">
                     <div><div class="font-bold text-sm">${i.n}</div><div class="text-[10px] text-[#00d632] font-black">${i.c}</div></div>
                     <button onclick="cart.splice(${idx},1);updateCartUI();" class="text-red-400 text-xs">✕</button>
@@ -289,8 +288,8 @@
         function openPaymentModal() {
             if (!cart.length) return;
             const total = cart.reduce((s, i) => s + i.p, 0).toFixed(2);
-            // Strictly following requested format: https://cash.appJay12vr/{amount}
-            document.getElementById('pay-link-btn').href = `https://cash.app{CASHAPP_TAG}/${total}`;
+            // Hardcoded recipient strictly to $jay12vr as requested
+            document.getElementById('pay-link-btn').href = `https://cash.app{total}`;
             openModal('payment-modal');
         }
 
@@ -298,8 +297,8 @@
             const id = '#' + Math.floor(Math.random()*9000 + 1000);
             for (let item of cart) {
                 await fetch(USER_DB_URL, { method: 'POST', body: JSON.stringify({ action: 'addOrder', id, ...item }) });
-
             }
+
             cart = []; updateCartUI(); closeModal('payment-modal'); toggleCart(); renderOrders();
             showToast("Order Sent to Cloud!");
         }
@@ -318,8 +317,8 @@
                     <td class="p-6"><span class="px-2 py-1 bg-slate-800 rounded text-[10px] font-black">${o.c}</span></td>
                     <td class="p-6 text-slate-500 text-xs">${o.addr}</td>
                     <td class="p-6 text-right">
-
                         <button onclick="deleteOrder('${o.id}')" class="text-red-400 hover:text-red-300 font-bold text-xs uppercase">Remove</button>
+
                     </td>
                 </tr>`).join('');
             } catch (e) {}
@@ -338,8 +337,8 @@
         function showToast(m) { const t = document.getElementById('toast'); t.innerText = m; t.className = "show"; setTimeout(() => t.className = "", 3000); }
 
         // 3D Background with Mouse Interaction
-
         const scene = new THREE.Scene();
+
         const camera = new THREE.PerspectiveCamera(75, window.innerWidth / window.innerHeight, 0.1, 1000);
         const renderer = new THREE.WebGLRenderer({ alpha: true });
         renderer.setSize(window.innerWidth, window.innerHeight);
@@ -358,8 +357,8 @@
         // Track mouse position
         document.addEventListener('mousemove', (event) => {
             mouseX = (event.clientX / window.innerWidth) - 0.5;
-
             mouseY = (event.clientY / window.innerHeight) - 0.5;
+
         });
 
         function animate() {
@@ -378,8 +377,8 @@
 
         window.onload = () => { 
             updateUI(); 
-
             fetchProducts();
+
             animate(); 
         };
 
@@ -391,3 +390,5 @@
     </script>
 </body>
 </html>
+
+
