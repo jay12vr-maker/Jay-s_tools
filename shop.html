@@ -165,7 +165,7 @@
         // CONFIG
         const USER_DB_URL = 'https://script.google.com/macros/s/AKfycbwPQ0XPpvykwy6uwxA9uiFOATq_Logr7Q58hHqpru8FHsgN79G9XYkK6SzMe2pn2M6w/exec'; 
         const INVENTORY_CSV = 'https://docs.google.com/spreadsheets/d/e/2PACX-1vRVrA_8ndp0w3vWU_rwfKKNFsECqNMN6yW9yHN2VTOXRCIP5kQa1tLznW4DBmEasd_KR-LXcBcKNz9s/pub?gid=0&single=true&output=csv';
-        const CASHAPP_TAG = 'Jay12vr'; // Your updated $Cashtag
+        const CASHAPP_TAG = 'Jay12vr'; // Your $Cashtag
 
         let user = JSON.parse(localStorage.getItem('dim3d_user') || 'null');
         let cart = [];
@@ -336,21 +336,58 @@
 
         function showToast(m) { const t = document.getElementById('toast'); t.innerText = m; t.className = "show"; setTimeout(() => t.className = "", 3000); }
 
-        // 3D Background
+        // 3D Background with Mouse Interaction
         const scene = new THREE.Scene();
 
         const camera = new THREE.PerspectiveCamera(75, window.innerWidth / window.innerHeight, 0.1, 1000);
         const renderer = new THREE.WebGLRenderer({ alpha: true });
         renderer.setSize(window.innerWidth, window.innerHeight);
         document.getElementById('canvas-container').appendChild(renderer.domElement);
-        const torus = new THREE.Mesh(new THREE.TorusGeometry(10, 3, 16, 100), new THREE.MeshBasicMaterial({ color: 0x00d632, wireframe: true }));
-        scene.add(torus); camera.position.z = 30;
-        function animate() { requestAnimationFrame(animate); torus.rotation.x += 0.001; torus.rotation.y += 0.002; renderer.render(scene, camera); }
-        animate();
 
-        window.onload = () => { updateUI(); fetchProducts(); };
+        const torus = new THREE.Mesh(
+            new THREE.TorusGeometry(10, 3, 16, 100), 
+            new THREE.MeshBasicMaterial({ color: 0x00d632, wireframe: true })
+        );
+        scene.add(torus);
+        camera.position.z = 30;
+
+        let mouseX = 0;
+        let mouseY = 0;
+
+        // Track mouse position
+        document.addEventListener('mousemove', (event) => {
+            mouseX = (event.clientX / window.innerWidth) - 0.5;
+            mouseY = (event.clientY / window.innerHeight) - 0.5;
+
+        });
+
+        function animate() {
+            requestAnimationFrame(animate);
+            
+            // Standard auto-rotation
+            torus.rotation.x += 0.001;
+            torus.rotation.y += 0.002;
+
+            // Add rotation based on mouse movement
+            torus.rotation.x += mouseY * 0.05;
+            torus.rotation.y += mouseX * 0.05;
+
+            renderer.render(scene, camera);
+        }
+
+        window.onload = () => { 
+            updateUI(); 
+            fetchProducts();
+
+            animate(); 
+        };
+
+        // Handle window resize
+        window.addEventListener('resize', () => {
+            camera.aspect = window.innerWidth / window.innerHeight;
+            camera.updateProjectionMatrix();
+            renderer.setSize(window.innerWidth, window.innerHeight);
+        });
     </script>
 </body>
 </html>
-
-
