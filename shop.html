@@ -4,168 +4,90 @@
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
     <title>Dimension3D - Custom 3D Prints</title>
-    <!-- Dependencies -->
     <script src="https://cdn.tailwindcss.com"></script>
     <script src="https://cdnjs.cloudflare.com/ajax/libs/three.js/r128/three.min.js"></script>
     <style>
         @import url('https://fonts.googleapis.com/css2?family=Inter:wght@300;400;600;800&display=swap');
-        
-        body {
-            font-family: 'Inter', sans-serif;
-            background-color: #0f172a;
-            color: #f8fafc;
-            overflow-x: hidden;
-            scroll-behavior: smooth;
-        }
-
-
-        #canvas-container {
-            position: fixed;
-            top: 0;
-            left: 0;
-            width: 100%;
-            height: 100%;
-            z-index: -1;
-            opacity: 0.2;
-        }
-
-        .glass-card {
-            background: rgba(30, 41, 59, 0.7);
-            backdrop-filter: blur(12px);
-            border: 1px solid rgba(255, 255, 255, 0.1);
-            transition: all 0.3s cubic-bezier(0.4, 0, 0.2, 1);
-        }
-
-        .glass-card:hover {
-            transform: translateY(-8px);
-
-            border-color: #38bdf8;
-            box-shadow: 0 20px 25px -5px rgba(0, 0, 0, 0.3);
-        }
-
-        .gradient-text {
-            background: linear-gradient(90deg, #38bdf8, #818cf8);
-            -webkit-background-clip: text;
-            -webkit-text-fill-color: transparent;
-        }
-
-        .color-dot {
-            width: 1.5rem;
-            height: 1.5rem;
-            border-radius: 9999px;
-            cursor: pointer;
-            border: 2px solid transparent;
-            transition: all 0.2s;
-        }
-        .color-dot:hover { transform: scale(1.2); }
-
+        body { font-family: 'Inter', sans-serif; background-color: #0f172a; color: #f8fafc; scroll-behavior: smooth; }
+        #canvas-container { position: fixed; top: 0; left: 0; width: 100%; height: 100%; z-index: -1; opacity: 0.2; }
+        .glass-card { background: rgba(30, 41, 59, 0.7); backdrop-filter: blur(12px); border: 1px solid rgba(255, 255, 255, 0.1); transition: all 0.3s cubic-bezier(0.4, 0, 0.2, 1); }
+        .glass-card:hover { transform: translateY(-8px); border-color: #38bdf8; }
+        .gradient-text { background: linear-gradient(90deg, #38bdf8, #818cf8); -webkit-background-clip: text; -webkit-text-fill-color: transparent; }
+        .color-dot { width: 1.5rem; height: 1.5rem; border-radius: 9999px; cursor: pointer; border: 2px solid transparent; transition: all 0.2s; }
         .color-dot.active { border-color: #38bdf8; transform: scale(1.1); }
-
-        .modal {
-            display: none;
-            position: fixed;
-            inset: 0;
-            z-index: 1000;
-            background: rgba(0,0,0,0.85);
-            backdrop-filter: blur(12px);
-            align-items: center;
-            justify-content: center;
-        }
+        .modal { display: none; position: fixed; inset: 0; z-index: 1000; background: rgba(0,0,0,0.85); backdrop-filter: blur(12px); align-items: center; justify-content: center; }
         .modal.active { display: flex; }
-
-        #toast {
-            visibility: hidden;
-            min-width: 250px;
-            background-color: #38bdf8;
-            color: #fff;
-
-            text-align: center;
-            border-radius: 12px;
-            padding: 16px;
-            position: fixed;
-            z-index: 2000;
-            right: 30px;
-            bottom: 30px;
-            box-shadow: 0 10px 15px -3px rgba(0, 0, 0, 0.4);
-        }
+        #toast { visibility: hidden; min-width: 250px; background-color: #38bdf8; color: #fff; text-align: center; border-radius: 12px; padding: 16px; position: fixed; z-index: 2000; right: 30px; bottom: 30px; }
         #toast.show { visibility: visible; animation: fadein 0.5s, fadeout 0.5s 2.5s; }
         @keyframes fadein { from {bottom: 0; opacity: 0;} to {bottom: 30px; opacity: 1;} }
-        @keyframes fadeout { from {bottom: 30px; opacity: 1;} to {bottom: 0; opacity: 0;} }
-
-        /* Sync Animation */
-        .sync-icon.loading { animation: spin 1s linear infinite; }
         @keyframes spin { from { transform: rotate(0deg); } to { transform: rotate(360deg); } }
+        .loading-spin { animation: spin 1s linear infinite; }
     </style>
 </head>
 <body>
-
 
     <div id="canvas-container"></div>
 
     <!-- Navigation -->
     <nav class="flex items-center justify-between px-8 py-6 sticky top-0 z-50 bg-slate-900/80 backdrop-blur-xl border-b border-white/5">
         <div class="text-2xl font-black tracking-tighter flex items-center gap-2">
-            <div class="w-10 h-10 bg-sky-500 rounded-xl flex items-center justify-center shadow-lg shadow-sky-500/20 text-white">3D</div>
+            <div class="w-10 h-10 bg-sky-500 rounded-xl flex items-center justify-center shadow-lg text-white">3D</div>
             <span>Dimension3D</span>
         </div>
-        <div class="flex items-center gap-8">
-            <a href="index.html" class="text-sm font-semibold hover:text-sky-400 transition">Home</a>
-            <a href="#shop" class="text-sm font-semibold hover:text-sky-400 transition">Shop</a>
-            <a id="nav-orders" href="#orders-section" class="hidden text-sm font-semibold hover:text-sky-400 transition">Orders</a>
+        <div class="flex items-center gap-8 text-sm font-semibold">
+            <a href="index.html" class="hover:text-sky-400 transition">Home</a>
+            <a href="#shop" class="hover:text-sky-400 transition">Shop</a>
+            <a id="nav-orders" href="#orders-section" class="hidden hover:text-sky-400 transition">Orders</a>
             
-            <!-- Auth -->
             <div id="auth-buttons" class="flex items-center gap-4">
-                <button onclick="openModal('login-modal')" class="text-sm font-bold hover:text-sky-400 transition">Login</button>
-                <button onclick="openModal('signup-modal')" class="bg-white/10 hover:bg-white/20 px-5 py-2 rounded-full text-sm font-bold transition">Sign Up</button>
+                <button onclick="openModal('login-modal')" class="hover:text-sky-400">Login</button>
+                <button onclick="openModal('signup-modal')" class="bg-white/10 px-5 py-2 rounded-full hover:bg-white/20">Sign Up</button>
             </div>
             <div id="user-display" class="hidden flex items-center gap-4">
-
-                <span id="welcome-name" class="font-bold text-sky-400"></span>
-                <button onclick="logout()" class="text-xs text-slate-500 hover:text-red-400 transition">Logout</button>
+                <span id="welcome-name" class="text-sky-400 font-bold"></span>
+                <button onclick="logout()" class="text-xs text-slate-500 hover:text-red-400">Logout</button>
             </div>
 
-            <button onclick="toggleCart()" class="bg-sky-500 hover:bg-sky-400 px-6 py-2.5 rounded-full flex items-center gap-2 font-bold transition shadow-lg shadow-sky-500/20 text-white">
-                Cart <span id="cart-count" class="bg-white text-sky-600 text-[10px] rounded-full w-5 h-5 flex items-center justify-center">0</span>
+            <button onclick="toggleCart()" class="bg-sky-500 px-6 py-2.5 rounded-full flex items-center gap-2 text-white shadow-lg">
+                Cart <span id="cart-count" class="bg-white text-sky-600 rounded-full w-5 h-5 flex items-center justify-center text-[10px]">0</span>
             </button>
         </div>
     </nav>
 
-    <!-- Main Shop Header -->
-    <section class="px-8 pt-16 pb-8 max-w-7xl mx-auto">
-        <div class="flex flex-col md:flex-row justify-between items-end gap-8 mb-12">
+    <!-- Shop -->
+    <section id="shop" class="px-8 pt-16 pb-20 max-w-7xl mx-auto">
+        <div class="flex justify-between items-end mb-12">
             <div>
-                <h1 class="text-5xl font-black mb-2">Available for <span class="gradient-text">Sale</span></h1>
-                <p class="text-slate-400">Custom 3D prints synced live from our workshop database.</p>
+                <h1 class="text-5xl font-black mb-2">For <span class="gradient-text">Sale</span></h1>
+                <p class="text-slate-400">Premium 3D prints delivered to your door.</p>
             </div>
-            <button onclick="fetchProducts()" class="flex items-center gap-2 text-slate-500 hover:text-sky-400 transition group">
-                <svg id="sync-icon" class="w-4 h-4 transition-transform group-hover:rotate-180" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path d="M4 4v5h.582m15.356 2A8.001 8.001 0 004.582 9m0 0H9m11 11v-5h-.581m0 0a8.003 8.003 0 01-15.357-2m15.357 2H15"></path></svg>
-
-                <span class="text-xs font-bold uppercase tracking-widest">Update Shop</span>
+            <button onclick="fetchProducts()" class="flex items-center gap-2 text-xs font-bold text-slate-500 hover:text-sky-400 uppercase tracking-widest">
+                <svg id="sync-icon" class="w-4 h-4" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path d="M4 4v5h.582m15.356 2A8.001 8.001 0 004.582 9m0 0H9m11 11v-5h-.581m0 0a8.003 8.003 0 01-15.357-2m15.357 2H15"></path></svg>
+                Refresh
             </button>
         </div>
-        
-        <!-- The Inventory (For Sale Stuff) -->
-        <div id="product-grid" class="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-4 gap-8">
-            <!-- Dynamic Content -->
-        </div>
+        <div id="product-grid" class="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-4 gap-8"></div>
     </section>
 
-    <!-- Admin Orders (Restricted) -->
+    <!-- Order Dashboard (jay12vr Only) -->
     <section id="orders-section" class="hidden px-8 py-20 max-w-7xl mx-auto border-t border-white/5 bg-slate-900/40 rounded-[3rem] my-20">
-        <div class="mb-10">
-            <h2 class="text-3xl font-black">Owner Dashboard</h2>
-            <p class="text-sm text-slate-500">Authenticated as jay12vr</p>
+        <div class="flex justify-between items-center mb-10">
+            <div>
+                <h2 class="text-3xl font-black">Incoming Orders</h2>
+                <p class="text-slate-500">Manage your production queue here.</p>
+            </div>
+            <button onclick="renderOrders()" class="text-xs font-bold text-sky-400 uppercase">Refresh Cloud Orders</button>
         </div>
         <div class="glass-card rounded-3xl overflow-hidden overflow-x-auto">
-            <table class="w-full text-left min-w-[800px]">
+            <table class="w-full text-left">
                 <thead class="bg-white/5 border-b border-white/10">
-
                     <tr>
-                        <th class="p-6 text-[10px] font-bold text-slate-400 uppercase tracking-wider">Order ID</th>
-                        <th class="p-6 text-[10px] font-bold text-slate-400 uppercase tracking-wider">Customer</th>
-                        <th class="p-6 text-[10px] font-bold text-slate-400 uppercase tracking-wider">Item</th>
-                        <th class="p-6 text-[10px] font-bold text-slate-400 uppercase tracking-wider">Color</th>
-                        <th class="p-6 text-[10px] font-bold text-slate-400 uppercase tracking-wider">Shipping Address</th>
+                        <th class="p-6 text-[10px] font-bold text-slate-400 uppercase">Order ID</th>
+                        <th class="p-6 text-[10px] font-bold text-slate-400 uppercase">Customer</th>
+                        <th class="p-6 text-[10px] font-bold text-slate-400 uppercase">Item</th>
+                        <th class="p-6 text-[10px] font-bold text-slate-400 uppercase">Color</th>
+                        <th class="p-6 text-[10px] font-bold text-slate-400 uppercase">Address</th>
+                        <th class="p-6 text-[10px] font-bold text-slate-400 uppercase text-right">Action</th>
                     </tr>
                 </thead>
                 <tbody id="orders-table-body" class="divide-y divide-white/5"></tbody>
@@ -173,36 +95,47 @@
         </div>
     </section>
 
+    <!-- Payment Modal -->
+    <div id="payment-modal" class="modal">
+        <div class="bg-slate-900 p-10 rounded-[2.5rem] w-full max-w-md border border-white/10 text-center">
+            <div class="w-20 h-20 bg-green-500/20 text-green-500 rounded-full flex items-center justify-center mx-auto mb-6">
+                <svg class="w-10 h-10" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-width="3" d="M5 13l4 4L19 7"></path></svg>
+            </div>
+            <h2 class="text-3xl font-black mb-2">Ready to Pay?</h2>
+            <p class="text-slate-400 mb-8">To finish your order, please send the total via PayPal. We will start printing as soon as it arrives!</p>
+            <a id="pay-link-btn" href="#" target="_blank" onclick="completeCheckout()" class="block w-full bg-sky-500 py-4 rounded-xl font-black text-slate-900 hover:bg-sky-400 transition mb-4">Pay with PayPal</a>
+            <button onclick="closeModal('payment-modal')" class="text-slate-500 text-sm">Cancel</button>
+        </div>
+    </div>
+
     <!-- Modals -->
     <div id="login-modal" class="modal">
         <div class="bg-slate-900 p-10 rounded-[2.5rem] w-full max-w-md border border-white/10 shadow-2xl">
             <h2 class="text-3xl font-black mb-6">Login</h2>
-            <input id="log-user" type="text" placeholder="Username" class="w-full bg-white/5 border border-white/10 p-4 rounded-xl mb-4 focus:border-sky-500 outline-none">
-            <input id="log-pass" type="password" placeholder="Password" class="w-full bg-white/5 border border-white/10 p-4 rounded-xl mb-6 focus:border-sky-500 outline-none">
-
-            <button onclick="handleLogin()" class="w-full bg-sky-500 py-4 rounded-xl font-black text-slate-900 hover:bg-sky-400 transition">Sign In</button>
+            <input id="log-user" type="text" placeholder="Username" class="w-full bg-white/5 border border-white/10 p-4 rounded-xl mb-4 outline-none">
+            <input id="log-pass" type="password" placeholder="Password" class="w-full bg-white/5 border border-white/10 p-4 rounded-xl mb-6 outline-none">
+            <button onclick="handleLogin()" class="w-full bg-sky-500 py-4 rounded-xl font-black text-slate-900">Sign In</button>
             <button onclick="closeModal('login-modal')" class="w-full text-slate-500 text-sm mt-4">Cancel</button>
         </div>
     </div>
 
     <div id="signup-modal" class="modal">
-        <div class="bg-slate-900 p-10 rounded-[2.5rem] w-full max-w-md border border-white/10 shadow-2xl">
+        <div class="bg-slate-900 p-10 rounded-[2.5rem] w-full max-w-md border border-white/10">
             <h2 class="text-3xl font-black mb-6">Sign Up</h2>
             <div class="grid grid-cols-2 gap-4 mb-4">
-                <input id="sig-first" type="text" placeholder="First" class="bg-white/5 border border-white/10 p-4 rounded-xl outline-none focus:border-sky-500">
-                <input id="sig-last" type="text" placeholder="Last" class="bg-white/5 border border-white/10 p-4 rounded-xl outline-none focus:border-sky-500">
+                <input id="sig-first" type="text" placeholder="First" class="bg-white/5 border border-white/10 p-4 rounded-xl outline-none">
+                <input id="sig-last" type="text" placeholder="Last" class="bg-white/5 border border-white/10 p-4 rounded-xl outline-none">
             </div>
-            <input id="sig-email" type="email" placeholder="Email" class="w-full bg-white/5 border border-white/10 p-4 rounded-xl mb-4 outline-none focus:border-sky-500">
-            <input id="sig-addr" type="text" placeholder="Shipping Address" class="w-full bg-white/5 border border-white/10 p-4 rounded-xl mb-4 outline-none focus:border-sky-500">
-            <input id="sig-user" type="text" placeholder="Username" class="w-full bg-white/5 border border-white/10 p-4 rounded-xl mb-4 outline-none focus:border-sky-500">
-            <input id="sig-pass" type="password" placeholder="Password" class="w-full bg-white/5 border border-white/10 p-4 rounded-xl mb-6 outline-none focus:border-sky-500">
-            <button onclick="handleSignUp()" class="w-full bg-sky-500 py-4 rounded-xl font-black text-slate-900 hover:bg-sky-400 transition">Join Now</button>
+            <input id="sig-email" type="email" placeholder="Email" class="w-full bg-white/5 border border-white/10 p-4 rounded-xl mb-4 outline-none">
+            <input id="sig-addr" type="text" placeholder="Shipping Address" class="w-full bg-white/5 border border-white/10 p-4 rounded-xl mb-4 outline-none">
+            <input id="sig-user" type="text" placeholder="Username" class="w-full bg-white/5 border border-white/10 p-4 rounded-xl mb-4 outline-none">
+            <input id="sig-pass" type="password" placeholder="Password" class="w-full bg-white/5 border border-white/10 p-4 rounded-xl mb-6 outline-none">
+            <button onclick="handleSignUp()" class="w-full bg-sky-500 py-4 rounded-xl font-black text-slate-900">Join Now</button>
             <button onclick="closeModal('signup-modal')" class="w-full text-slate-500 text-sm mt-4">Cancel</button>
         </div>
-
     </div>
 
-    <!-- Cart -->
+    <!-- Cart Sidebar -->
     <div id="cart-sidebar" class="fixed top-0 right-0 h-full w-full sm:w-[400px] bg-slate-900/95 backdrop-blur-2xl shadow-2xl z-[1000] translate-x-full transition-transform duration-500 border-l border-white/10 p-10 flex flex-col">
         <div class="flex justify-between items-center mb-10">
             <h3 class="text-3xl font-black">Your Cart</h3>
@@ -214,17 +147,17 @@
                 <span class="text-slate-400">Total</span>
                 <span id="cart-total" class="text-3xl font-black text-sky-400">$0.00</span>
             </div>
-            <button onclick="processCheckout()" class="w-full bg-sky-500 py-5 rounded-2xl font-black text-slate-900 hover:bg-sky-400 transition">Place Order</button>
+            <button onclick="openPaymentModal()" class="w-full bg-sky-500 py-5 rounded-2xl font-black text-slate-900 hover:bg-sky-400 transition">Checkout</button>
         </div>
     </div>
 
     <div id="toast"></div>
 
-
     <script>
         // CONFIG
         const USER_DB_URL = 'https://script.google.com/macros/s/AKfycbwPQ0XPpvykwy6uwxA9uiFOATq_Logr7Q58hHqpru8FHsgN79G9XYkK6SzMe2pn2M6w/exec'; 
         const INVENTORY_CSV = 'https://docs.google.com/spreadsheets/d/e/2PACX-1vRVrA_8ndp0w3vWU_rwfKKNFsECqNMN6yW9yHN2VTOXRCIP5kQa1tLznW4DBmEasd_KR-LXcBcKNz9s/pub?gid=0&single=true&output=csv';
+        const PAYPAL_LINK = 'https://paypal.me'; // Put your paypal link here!
 
         let user = JSON.parse(localStorage.getItem('dim3d_user') || 'null');
         let cart = [];
@@ -238,91 +171,46 @@
         async function handleLogin() {
             const u = document.getElementById('log-user').value;
             const p = document.getElementById('log-pass').value;
-
             if (u === 'jay12vr' && p === '123211') {
-
-                saveUser({ firstName: 'Jay', username: 'jay12vr', role: 'owner', address: 'Main Workshop' });
-                closeModal('login-modal');
-                return;
+                saveUser({ firstName: 'Jay', username: 'jay12vr', role: 'owner', address: 'HQ' });
+                closeModal('login-modal'); return;
             }
-
             try {
                 const res = await fetch(`${USER_DB_URL}?action=login&u=${u}&p=${p}`);
                 const data = await res.json();
-                if (data.success) {
-                    saveUser(data.user);
-                    closeModal('login-modal');
-                    showToast(`Hello, ${data.user.firstName}!`);
-                } else {
-                    showToast("Login failed.");
-                }
-            } catch (e) { showToast("Connection failed."); }
+                if (data.success) { saveUser(data.user); closeModal('login-modal'); }
+                else showToast("Login Failed");
+            } catch (e) { showToast("Connection error"); }
         }
 
         async function handleSignUp() {
-
             const u = document.getElementById('sig-user').value;
-            
-            // Step 1: Check if account exists
             try {
-                const checkRes = await fetch(`${USER_DB_URL}?action=check&u=${u}`);
-                const checkData = await checkRes.json();
-                
-                if (checkData.exists) {
-                    showToast("Account already exists! Redirecting to login...");
-                    closeModal('signup-modal');
-                    setTimeout(() => openModal('login-modal'), 1000);
-                    return;
+                const check = await fetch(`${USER_DB_URL}?action=check&u=${u}`).then(r => r.json());
+                if (check.exists) {
+                    showToast("Account exists! Redirecting...");
+                    closeModal('signup-modal'); openModal('login-modal'); return;
                 }
-            } catch (e) { console.log("Check failed, trying sign up anyway."); }
+            } catch (e) {}
 
-            // Step 2: Proceed with sign up if user doesn't exist
-            const newUser = {
-                firstName: document.getElementById('sig-first').value,
-                lastName: document.getElementById('sig-last').value,
-
-                email: document.getElementById('sig-email').value,
-                address: document.getElementById('sig-addr').value,
-                username: u,
-                password: document.getElementById('sig-pass').value
-            };
-
+            const newUser = { firstName: document.getElementById('sig-first').value, lastName: document.getElementById('sig-last').value, email: document.getElementById('sig-email').value, address: document.getElementById('sig-addr').value, username: u, password: document.getElementById('sig-pass').value };
             try {
                 await fetch(USER_DB_URL, { method: 'POST', body: JSON.stringify(newUser) });
-                saveUser(newUser);
-                closeModal('signup-modal');
-                showToast("Synced to Cloud!");
-            } catch (e) { 
-                saveUser(newUser);
-                closeModal('signup-modal');
-                showToast("Saved Locally");
-            }
+                saveUser(newUser); closeModal('signup-modal');
+            } catch (e) { saveUser(newUser); closeModal('signup-modal'); }
         }
 
-        function saveUser(u) {
-
-            user = u;
-            localStorage.setItem('dim3d_user', JSON.stringify(user));
-            updateUI();
-        }
-
+        function saveUser(u) { user = u; localStorage.setItem('dim3d_user', JSON.stringify(user)); updateUI(); }
         function logout() { localStorage.removeItem('dim3d_user'); location.reload(); }
 
         function updateUI() {
-            const btns = document.getElementById('auth-buttons');
-            const disp = document.getElementById('user-display');
-            const name = document.getElementById('welcome-name');
-            const nav = document.getElementById('nav-orders');
-            const sec = document.getElementById('orders-section');
-
             if (user) {
-                btns.classList.add('hidden');
-                disp.classList.remove('hidden');
-                name.innerText = user.firstName;
+                document.getElementById('auth-buttons').classList.add('hidden');
+                document.getElementById('user-display').classList.remove('hidden');
+                document.getElementById('welcome-name').innerText = user.firstName;
                 if (user.username === 'jay12vr') {
-
-                    nav.classList.remove('hidden');
-                    sec.classList.remove('hidden');
+                    document.getElementById('nav-orders').classList.remove('hidden');
+                    document.getElementById('orders-section').classList.remove('hidden');
                     renderOrders();
                 }
             }
@@ -330,20 +218,17 @@
 
         // SHOP
         async function fetchProducts() {
-            const icon = document.getElementById('sync-icon');
-            icon.classList.add('loading');
+            document.getElementById('sync-icon').classList.add('loading-spin');
             try {
                 const res = await fetch(INVENTORY_CSV);
                 const csv = await res.text();
-                const lines = csv.split(/\n/).slice(1);
-                const items = lines.filter(l => l.trim()).map((l, i) => {
+                const items = csv.split(/\n/).slice(1).filter(l => l.trim()).map((l, i) => {
                     const c = l.split(/,(?=(?:(?:[^"]*"){2})*[^"]*$)/);
-                    return { id: i, n: c[0].replace(/"/g,''), p: parseFloat(c[1])||0, d: c[2].replace(/"/g,''), img: c[3].replace(/"/g,'').trim() };
+                    return { id: i, n: c[0].replace(/"/g,''), p: parseFloat(c[1])||0, d: c[2].replace(/"/g,''), img: c[3].replace(/"/g,'') };
                 });
-
                 renderProducts(items);
-            } catch (e) { showToast("Sync failed."); }
-            finally { icon.classList.remove('loading'); }
+            } catch (e) { showToast("Inventory Error"); }
+            finally { document.getElementById('sync-icon').classList.remove('loading-spin'); }
         }
 
         function renderProducts(items) {
@@ -351,38 +236,29 @@
             grid.innerHTML = items.map(item => {
                 selectedColors[item.id] = 'White';
                 return `
-                <div class="glass-card rounded-[2rem] overflow-hidden flex flex-col p-6">
+                <div class="glass-card rounded-[2rem] p-6 flex flex-col">
                     <img src="${item.img || 'https://placehold.co/400'}" class="rounded-2xl aspect-square object-cover mb-6">
-                    <div class="flex justify-between mb-4">
-                        <h3 class="font-bold text-lg">${item.n}</h3>
-                        <span class="text-sky-400 font-black">$${item.p.toFixed(2)}</span>
-                    </div>
-                    <p class="text-slate-500 text-xs mb-6 line-clamp-2">${item.d}</p>
+                    <div class="flex justify-between mb-4"><h3 class="font-bold">${item.n}</h3><span class="text-sky-400 font-black">$${item.p.toFixed(2)}</span></div>
                     <div class="flex gap-2 mb-6">
                         <div onclick="selectColor('${item.id}', 'White')" data-color="White" class="color-dot dot-${item.id} bg-white active"></div>
-
                         <div onclick="selectColor('${item.id}', 'Black')" data-color="Black" class="color-dot dot-${item.id} bg-black border border-white/10"></div>
                         <div onclick="selectColor('${item.id}', 'Blue')" data-color="Blue" class="color-dot dot-${item.id} bg-blue-600"></div>
                     </div>
-                    <button onclick="addToCart('${item.id}', '${item.n.replace(/'/g,"")}', ${item.p})" class="bg-sky-500 py-4 rounded-xl font-bold text-slate-900 mt-auto hover:bg-sky-400 transition">Add to Cart</button>
-                </div>
-            `}).join('');
+                    <button onclick="addToCart('${item.id}', '${item.n.replace(/'/g,"")}', ${item.p})" class="bg-sky-500 py-3 rounded-xl font-bold text-slate-900 mt-auto">Add to Cart</button>
+                </div>`;
+            }).join('');
         }
 
         function selectColor(id, c) {
             selectedColors[id] = c;
-            document.querySelectorAll(`.dot-${id}`).forEach(d => {
-                d.classList.remove('active');
-                if (d.getAttribute('data-color') === c) d.classList.add('active');
-            });
+            document.querySelectorAll(`.dot-${id}`).forEach(d => { d.classList.remove('active'); if (d.getAttribute('data-color') === c) d.classList.add('active'); });
         }
 
+        // CART & PAYMENT
         function addToCart(id, n, p) {
             if (!user) return openModal('login-modal');
             cart.push({ n, p, c: selectedColors[id], addr: user.address, cust: user.firstName });
-
-            updateCartUI();
-            showToast("Added to cart!");
+            updateCartUI(); showToast("Added!");
         }
 
         function updateCartUI() {
@@ -390,69 +266,72 @@
             const total = cart.reduce((s, i) => s + i.p, 0);
             document.getElementById('cart-total').innerText = `$${total.toFixed(2)}`;
             document.getElementById('cart-items').innerHTML = cart.map((i, idx) => `
-                <div class="flex justify-between items-center bg-white/5 p-4 rounded-xl">
-                    <div>
-                        <div class="font-bold text-sm">${i.n}</div>
-                        <div class="text-[10px] text-sky-400 uppercase font-black">${i.c}</div>
-                    </div>
-                    <button onclick="cart.splice(${idx},1);updateCartUI();" class="text-red-400 text-xs">Remove</button>
-                </div>
-            `).join('');
+                <div class="bg-white/5 p-4 rounded-xl flex justify-between items-center">
+                    <div><div class="font-bold text-sm">${i.n}</div><div class="text-[10px] text-sky-400 font-black">${i.c}</div></div>
+                    <button onclick="cart.splice(${idx},1);updateCartUI();" class="text-red-400 text-xs">✕</button>
+                </div>`).join('');
         }
 
-
-        function processCheckout() {
+        function openPaymentModal() {
             if (!cart.length) return;
-            const orders = JSON.parse(localStorage.getItem('dim3d_orders') || '[]');
-            const id = '#' + Math.floor(Math.random()*9000 + 1000);
-            cart.forEach(item => orders.unshift({ id, ...item }));
-            localStorage.setItem('dim3d_orders', JSON.stringify(orders));
-            cart = []; updateCartUI(); toggleCart(); renderOrders();
-            showToast("Success! Check Admin.");
+            const total = cart.reduce((s, i) => s + i.p, 0).toFixed(2);
+            document.getElementById('pay-link-btn').href = `${PAYPAL_LINK}/${total}`;
+            openModal('payment-modal');
         }
 
-        function renderOrders() {
-            const table = document.getElementById('orders-table-body');
-            const orders = JSON.parse(localStorage.getItem('dim3d_orders') || '[]');
-            table.innerHTML = orders.map(o => `
-                <tr>
+        async function completeCheckout() {
+            const id = '#' + Math.floor(Math.random()*9000 + 1000);
+            for (let item of cart) {
+                await fetch(USER_DB_URL, { method: 'POST', body: JSON.stringify({ action: 'addOrder', id, ...item }) });
+            }
+            cart = []; updateCartUI(); closeModal('payment-modal'); toggleCart(); renderOrders();
+            showToast("Order Sent to Cloud!");
+        }
+
+        // ORDER DASHBOARD
+        async function renderOrders() {
+            if (!user || user.username !== 'jay12vr') return;
+            try {
+                const res = await fetch(`${USER_DB_URL}?action=getOrders`);
+                const orders = await res.json();
+                document.getElementById('orders-table-body').innerHTML = orders.map(o => `
+                <tr class="hover:bg-white/5">
                     <td class="p-6 text-sky-400 font-mono text-sm">${o.id}</td>
                     <td class="p-6 font-bold text-sm">${o.cust}</td>
                     <td class="p-6 text-sm">${o.n}</td>
-                    <td class="p-6"><span class="px-2 py-1 bg-slate-800 rounded text-[10px] uppercase font-bold">${o.c}</span></td>
-
+                    <td class="p-6"><span class="px-2 py-1 bg-slate-800 rounded text-[10px] font-black">${o.c}</span></td>
                     <td class="p-6 text-slate-500 text-xs">${o.addr}</td>
-                </tr>
-            `).join('');
+                    <td class="p-6 text-right">
+                        <button onclick="deleteOrder('${o.id}')" class="text-red-400 hover:text-red-300 font-bold text-xs uppercase">Remove</button>
+                    </td>
+                </tr>`).join('');
+            } catch (e) {}
+        }
+
+        async function deleteOrder(id) {
+            if (!confirm("Remove this order?")) return;
+            showToast("Deleting...");
+            try {
+                await fetch(`${USER_DB_URL}?action=deleteOrder&id=${id}`);
+                renderOrders();
+                showToast("Order Removed");
+            } catch (e) { showToast("Delete failed"); }
         }
 
         function showToast(m) { const t = document.getElementById('toast'); t.innerText = m; t.className = "show"; setTimeout(() => t.className = "", 3000); }
 
-        // Background
+        // 3D Background
         const scene = new THREE.Scene();
         const camera = new THREE.PerspectiveCamera(75, window.innerWidth / window.innerHeight, 0.1, 1000);
         const renderer = new THREE.WebGLRenderer({ alpha: true });
         renderer.setSize(window.innerWidth, window.innerHeight);
         document.getElementById('canvas-container').appendChild(renderer.domElement);
-
-        const geometry = new THREE.TorusGeometry(10, 3, 16, 100);
-        const material = new THREE.MeshBasicMaterial({ color: 0x38bdf8, wireframe: true });
-        const torus = new THREE.Mesh(geometry, material);
-        scene.add(torus);
-        camera.position.z = 30;
-
-
-        function animate() {
-            requestAnimationFrame(animate);
-            torus.rotation.x += 0.001;
-            torus.rotation.y += 0.002;
-            renderer.render(scene, camera);
-        }
+        const torus = new THREE.Mesh(new THREE.TorusGeometry(10, 3, 16, 100), new THREE.MeshBasicMaterial({ color: 0x38bdf8, wireframe: true }));
+        scene.add(torus); camera.position.z = 30;
+        function animate() { requestAnimationFrame(animate); torus.rotation.x += 0.001; torus.rotation.y += 0.002; renderer.render(scene, camera); }
         animate();
 
         window.onload = () => { updateUI(); fetchProducts(); };
     </script>
 </body>
 </html>
-
-
