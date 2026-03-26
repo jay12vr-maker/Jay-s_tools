@@ -165,7 +165,7 @@
         // CONFIG
         const USER_DB_URL = 'https://script.google.com/macros/s/AKfycbwPQ0XPpvykwy6uwxA9uiFOATq_Logr7Q58hHqpru8FHsgN79G9XYkK6SzMe2pn2M6w/exec'; 
         const INVENTORY_CSV = 'https://docs.google.com/spreadsheets/d/e/2PACX-1vRVrA_8ndp0w3vWU_rwfKKNFsECqNMN6yW9yHN2VTOXRCIP5kQa1tLznW4DBmEasd_KR-LXcBcKNz9s/pub?gid=0&single=true&output=csv';
-        const CASHAPP_TAG = 'Jay12vr'; // Your $Cashtag
+        const CASHAPP_TAG = '$Jay12vr'; // Always kept to $jay12vr as requested
 
         let user = JSON.parse(localStorage.getItem('dim3d_user') || 'null');
         let cart = [];
@@ -289,6 +289,7 @@
         function openPaymentModal() {
             if (!cart.length) return;
             const total = cart.reduce((s, i) => s + i.p, 0).toFixed(2);
+            // Strictly following requested format: https://cash.appJay12vr/{amount}
             document.getElementById('pay-link-btn').href = `https://cash.app{CASHAPP_TAG}/${total}`;
             openModal('payment-modal');
         }
@@ -297,8 +298,8 @@
             const id = '#' + Math.floor(Math.random()*9000 + 1000);
             for (let item of cart) {
                 await fetch(USER_DB_URL, { method: 'POST', body: JSON.stringify({ action: 'addOrder', id, ...item }) });
-            }
 
+            }
             cart = []; updateCartUI(); closeModal('payment-modal'); toggleCart(); renderOrders();
             showToast("Order Sent to Cloud!");
         }
@@ -317,8 +318,8 @@
                     <td class="p-6"><span class="px-2 py-1 bg-slate-800 rounded text-[10px] font-black">${o.c}</span></td>
                     <td class="p-6 text-slate-500 text-xs">${o.addr}</td>
                     <td class="p-6 text-right">
-                        <button onclick="deleteOrder('${o.id}')" class="text-red-400 hover:text-red-300 font-bold text-xs uppercase">Remove</button>
 
+                        <button onclick="deleteOrder('${o.id}')" class="text-red-400 hover:text-red-300 font-bold text-xs uppercase">Remove</button>
                     </td>
                 </tr>`).join('');
             } catch (e) {}
@@ -337,8 +338,8 @@
         function showToast(m) { const t = document.getElementById('toast'); t.innerText = m; t.className = "show"; setTimeout(() => t.className = "", 3000); }
 
         // 3D Background with Mouse Interaction
-        const scene = new THREE.Scene();
 
+        const scene = new THREE.Scene();
         const camera = new THREE.PerspectiveCamera(75, window.innerWidth / window.innerHeight, 0.1, 1000);
         const renderer = new THREE.WebGLRenderer({ alpha: true });
         renderer.setSize(window.innerWidth, window.innerHeight);
@@ -357,8 +358,8 @@
         // Track mouse position
         document.addEventListener('mousemove', (event) => {
             mouseX = (event.clientX / window.innerWidth) - 0.5;
-            mouseY = (event.clientY / window.innerHeight) - 0.5;
 
+            mouseY = (event.clientY / window.innerHeight) - 0.5;
         });
 
         function animate() {
@@ -377,12 +378,11 @@
 
         window.onload = () => { 
             updateUI(); 
-            fetchProducts();
 
+            fetchProducts();
             animate(); 
         };
 
-        // Handle window resize
         window.addEventListener('resize', () => {
             camera.aspect = window.innerWidth / window.innerHeight;
             camera.updateProjectionMatrix();
