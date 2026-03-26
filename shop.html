@@ -261,12 +261,29 @@
 
         async function handleSignUp() {
 
+            const u = document.getElementById('sig-user').value;
+            
+            // Step 1: Check if account exists
+            try {
+                const checkRes = await fetch(`${USER_DB_URL}?action=check&u=${u}`);
+                const checkData = await checkRes.json();
+                
+                if (checkData.exists) {
+                    showToast("Account already exists! Redirecting to login...");
+                    closeModal('signup-modal');
+                    setTimeout(() => openModal('login-modal'), 1000);
+                    return;
+                }
+            } catch (e) { console.log("Check failed, trying sign up anyway."); }
+
+            // Step 2: Proceed with sign up if user doesn't exist
             const newUser = {
                 firstName: document.getElementById('sig-first').value,
                 lastName: document.getElementById('sig-last').value,
+
                 email: document.getElementById('sig-email').value,
                 address: document.getElementById('sig-addr').value,
-                username: document.getElementById('sig-user').value,
+                username: u,
                 password: document.getElementById('sig-pass').value
             };
 
@@ -280,10 +297,10 @@
                 closeModal('signup-modal');
                 showToast("Saved Locally");
             }
-
         }
 
         function saveUser(u) {
+
             user = u;
             localStorage.setItem('dim3d_user', JSON.stringify(user));
             updateUI();
@@ -300,10 +317,10 @@
 
             if (user) {
                 btns.classList.add('hidden');
-
                 disp.classList.remove('hidden');
                 name.innerText = user.firstName;
                 if (user.username === 'jay12vr') {
+
                     nav.classList.remove('hidden');
                     sec.classList.remove('hidden');
                     renderOrders();
@@ -320,10 +337,10 @@
                 const csv = await res.text();
                 const lines = csv.split(/\n/).slice(1);
                 const items = lines.filter(l => l.trim()).map((l, i) => {
-
                     const c = l.split(/,(?=(?:(?:[^"]*"){2})*[^"]*$)/);
                     return { id: i, n: c[0].replace(/"/g,''), p: parseFloat(c[1])||0, d: c[2].replace(/"/g,''), img: c[3].replace(/"/g,'').trim() };
                 });
+
                 renderProducts(items);
             } catch (e) { showToast("Sync failed."); }
             finally { icon.classList.remove('loading'); }
@@ -340,10 +357,10 @@
                         <h3 class="font-bold text-lg">${item.n}</h3>
                         <span class="text-sky-400 font-black">$${item.p.toFixed(2)}</span>
                     </div>
-
                     <p class="text-slate-500 text-xs mb-6 line-clamp-2">${item.d}</p>
                     <div class="flex gap-2 mb-6">
                         <div onclick="selectColor('${item.id}', 'White')" data-color="White" class="color-dot dot-${item.id} bg-white active"></div>
+
                         <div onclick="selectColor('${item.id}', 'Black')" data-color="Black" class="color-dot dot-${item.id} bg-black border border-white/10"></div>
                         <div onclick="selectColor('${item.id}', 'Blue')" data-color="Blue" class="color-dot dot-${item.id} bg-blue-600"></div>
                     </div>
@@ -360,10 +377,10 @@
             });
         }
 
-
         function addToCart(id, n, p) {
             if (!user) return openModal('login-modal');
             cart.push({ n, p, c: selectedColors[id], addr: user.address, cust: user.firstName });
+
             updateCartUI();
             showToast("Added to cart!");
         }
@@ -380,9 +397,9 @@
                     </div>
                     <button onclick="cart.splice(${idx},1);updateCartUI();" class="text-red-400 text-xs">Remove</button>
                 </div>
-
             `).join('');
         }
+
 
         function processCheckout() {
             if (!cart.length) return;
@@ -400,10 +417,10 @@
             table.innerHTML = orders.map(o => `
                 <tr>
                     <td class="p-6 text-sky-400 font-mono text-sm">${o.id}</td>
-
                     <td class="p-6 font-bold text-sm">${o.cust}</td>
                     <td class="p-6 text-sm">${o.n}</td>
                     <td class="p-6"><span class="px-2 py-1 bg-slate-800 rounded text-[10px] uppercase font-bold">${o.c}</span></td>
+
                     <td class="p-6 text-slate-500 text-xs">${o.addr}</td>
                 </tr>
             `).join('');
@@ -420,10 +437,10 @@
 
         const geometry = new THREE.TorusGeometry(10, 3, 16, 100);
         const material = new THREE.MeshBasicMaterial({ color: 0x38bdf8, wireframe: true });
-
         const torus = new THREE.Mesh(geometry, material);
         scene.add(torus);
         camera.position.z = 30;
+
 
         function animate() {
             requestAnimationFrame(animate);
@@ -437,3 +454,5 @@
     </script>
 </body>
 </html>
+
+
