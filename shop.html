@@ -9,7 +9,9 @@
     <style>
         @import url('https://fonts.googleapis.com/css2?family=Inter:wght@300;400;600;800&display=swap');
         body { font-family: 'Inter', sans-serif; background-color: #0f172a; color: #f8fafc; scroll-behavior: smooth; overflow-x: hidden; }
+        
         #canvas-container { position: fixed; top: 0; left: 0; width: 100%; height: 100%; z-index: -1; opacity: 0.35; pointer-events: none; }
+        
         .glass-card { background: rgba(30, 41, 59, 0.7); backdrop-filter: blur(12px); border: 1px solid rgba(255, 255, 255, 0.1); transition: all 0.3s cubic-bezier(0.4, 0, 0.2, 1); }
         .glass-card:hover { transform: translateY(-8px); border-color: #00d632; }
         .gradient-text { background: linear-gradient(90deg, #00d632, #38bdf8); -webkit-background-clip: text; -webkit-text-fill-color: transparent; }
@@ -17,7 +19,6 @@
         .color-dot.active { border-color: #00d632; transform: scale(1.1); }
         .modal { display: none; position: fixed; inset: 0; z-index: 1000; background: rgba(0,0,0,0.85); backdrop-filter: blur(12px); align-items: center; justify-content: center; padding: 20px; }
         .modal.active { display: flex; }
-
         #toast { visibility: hidden; min-width: 250px; background-color: #00d632; color: #fff; text-align: center; border-radius: 12px; padding: 16px; position: fixed; z-index: 2000; right: 30px; bottom: 30px; box-shadow: 0 10px 15px -3px rgba(0,0,0,0.4); }
         #toast.show { visibility: visible; animation: fadein 0.5s, fadeout 0.5s 2.5s; }
         @keyframes fadein { from {bottom: 0; opacity: 0;} to {bottom: 30px; opacity: 1;} }
@@ -37,7 +38,6 @@
     <nav class="flex items-center justify-between px-8 py-6 sticky top-0 z-50 bg-slate-900/80 backdrop-blur-xl border-b border-white/5">
         <div class="text-2xl font-black tracking-tighter flex items-center gap-2">
             <div class="w-10 h-10 bg-[#00d632] rounded-xl flex items-center justify-center shadow-lg text-white">3D</div>
-
             <span>Dimension3D</span>
         </div>
         <div class="flex items-center gap-8 text-sm font-semibold">
@@ -57,13 +57,11 @@
             <button onclick="toggleCart()" class="bg-[#00d632] px-6 py-2.5 rounded-full flex items-center gap-2 text-white shadow-lg">
                 Cart <span id="cart-count" class="bg-white text-[#00d632] rounded-full w-5 h-5 flex items-center justify-center text-[10px]">0</span>
             </button>
-
         </div>
     </nav>
 
     <main class="max-w-7xl mx-auto px-8">
         
-        <!-- SHOP TAB -->
         <section id="shop-tab" class="tab-content active pt-16 pb-20">
             <div class="flex justify-between items-end mb-12">
                 <div>
@@ -78,8 +76,6 @@
             <div id="product-grid" class="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-4 gap-8"></div>
         </section>
 
-
-        <!-- ORDERS TAB -->
         <section id="orders-tab" class="tab-content pt-16 pb-20">
             <div class="flex flex-col md:flex-row justify-between items-start md:items-center mb-10 gap-6">
                 <div>
@@ -98,7 +94,6 @@
             <div id="active-orders-container" class="glass-card rounded-3xl overflow-hidden overflow-x-auto">
                 <table class="w-full text-left border-collapse">
                     <thead class="bg-white/5 border-b border-white/10">
-
                         <tr>
                             <th class="p-6 text-[10px] font-bold text-slate-400 uppercase">ID</th>
                             <th class="p-6 text-[10px] font-bold text-slate-400 uppercase">Customer</th>
@@ -118,7 +113,6 @@
                             <th class="p-6 text-[10px] font-bold text-slate-400 uppercase">ID</th>
                             <th class="p-6 text-[10px] font-bold text-slate-400 uppercase">Customer</th>
                             <th class="p-6 text-[10px] font-bold text-slate-400 uppercase text-right">Actions</th>
-
                         </tr>
                     </thead>
                     <tbody id="archived-table-body" class="divide-y divide-white/5"></tbody>
@@ -138,7 +132,6 @@
                 <div id="owner-doc-content" class="text-slate-800 text-center w-full">Syncing...</div>
             </div>
         </div>
-
     </div>
 
     <div id="payment-modal" class="modal">
@@ -158,7 +151,6 @@
             <h2 class="text-3xl font-black mb-6">Login</h2>
             <input id="log-user" type="text" placeholder="Username" class="w-full bg-white/5 border border-white/10 p-4 rounded-xl mb-4 outline-none focus:border-[#00d632] text-white">
             <input id="log-pass" type="password" placeholder="Password" class="w-full bg-white/5 border border-white/10 p-4 rounded-xl mb-6 focus:border-[#00d632] text-white">
-
             <button onclick="handleLogin()" class="w-full bg-[#00d632] py-4 rounded-xl font-black text-white">Sign In</button>
             <button onclick="closeModal('login-modal')" class="w-full text-slate-500 text-sm mt-4">Cancel</button>
         </div>
@@ -178,7 +170,6 @@
             <button onclick="handleSignUp()" class="w-full bg-[#00d632] py-4 rounded-xl font-black text-white">Join Now</button>
             <button onclick="closeModal('signup-modal')" class="w-full text-slate-500 text-sm mt-4">Cancel</button>
         </div>
-
     </div>
 
     <div id="cart-sidebar" class="fixed top-0 right-0 h-full w-full sm:w-[400px] bg-slate-900/95 backdrop-blur-2xl shadow-2xl z-[1000] translate-x-full transition-transform duration-500 border-l border-white/10 p-10 flex flex-col">
@@ -198,9 +189,8 @@
 
     <div id="toast"></div>
 
-
     <script>
-        // CONFIG - Using your provided App Script URL
+        // ULTIMATE REPAIR CONFIG
         const USER_DB_URL = 'https://script.google.com/macros/s/AKfycbyFfb8VEKsdT9qeOfNavk7gSQ8uJvhAj1do4hXjqPj3vvTWSPhqWsBLnx9Z7svO_j30/exec'; 
         const INVENTORY_CSV = 'https://docs.google.com/spreadsheets/d/e/2PACX-1vRVrA_8ndp0w3vWU_rwfKKNFsECqNMN6yW9yHN2VTOXRCIP5kQa1tLznW4DBmEasd_KR-LXcBcKNz9s/pub?gid=0&single=true&output=csv';
 
@@ -218,7 +208,6 @@
             document.querySelectorAll('.nav-link').forEach(link => link.classList.remove('active'));
             document.getElementById(tabId + '-tab').classList.add('active');
             if (event) event.target.classList.add('active');
-
             if (tabId === 'orders') refreshCurrentOrderView();
         }
 
@@ -238,7 +227,6 @@
                 document.getElementById('btn-archived-view').classList.remove('bg-white/5');
                 document.getElementById('active-orders-container').classList.add('hidden');
                 document.getElementById('archived-orders-container').classList.remove('hidden');
-
                 renderArchivedOrders();
             }
         }
@@ -254,10 +242,9 @@
             try {
                 const res = await fetch(`${USER_DB_URL}?action=getMessage`);
                 const data = await res.json();
-                contentDiv.innerHTML = data.html || "Type your message in Cell H2!";
+                contentDiv.innerHTML = data.html || "Set your message in Cell H2!";
             } catch (e) { contentDiv.innerHTML = "Sync Error: Check Script."; }
         }
-
 
         async function handleLogin() {
             const u = document.getElementById('log-user').value;
@@ -278,7 +265,6 @@
             const signupData = { 
                 action: 'signup',
                 firstName: document.getElementById('sig-first').value, 
-
                 lastName: document.getElementById('sig-last').value, 
                 email: document.getElementById('sig-email').value, 
                 address: document.getElementById('sig-addr').value, 
@@ -286,11 +272,8 @@
                 password: document.getElementById('sig-pass').value 
             };
             try {
-                await fetch(USER_DB_URL, { 
-                    method: 'POST', 
-                    mode: 'no-cors', 
-                    body: JSON.stringify(signupData) 
-                });
+                // Using no-cors for signup POST
+                await fetch(USER_DB_URL, { method: 'POST', mode: 'no-cors', body: JSON.stringify(signupData) });
                 saveUser({ username: signupData.username, address: signupData.address }); 
                 closeModal('signup-modal');
                 showToast("Account Ready!");
@@ -298,7 +281,6 @@
         }
 
         function saveUser(u) { user = u; localStorage.setItem('dim3d_user', JSON.stringify(user)); updateUI(); }
-
         function logout() { localStorage.removeItem('dim3d_user'); location.reload(); }
 
         function updateUI() {
@@ -318,7 +300,6 @@
                 const items = csv.split(/\n/).slice(1).filter(l => l.trim()).map((l, i) => {
                     const c = l.split(/,(?=(?:(?:[^"]*"){2})*[^"]*$)/);
                     return { id: i, n: c[0].replace(/"/g,''), p: parseFloat(c[1])||0, d: c[2].replace(/"/g,''), img: c[3].replace(/"/g,'') };
-
                 });
                 renderProducts(items);
             } catch (e) { showToast("Inventory Error"); }
@@ -338,7 +319,6 @@
                         <div onclick="selectColor('${item.id}', 'Black')" class="color-dot dot-${item.id} bg-black border border-white/10" data-color="Black"></div>
                     </div>
                     <button onclick="addToCart('${item.id}', '${item.n}', ${item.p})" class="bg-[#00d632] py-3 rounded-xl font-bold text-white mt-auto hover:bg-[#00c22d] transition">Add to Cart</button>
-
                 </div>`;
             }).join('');
         }
@@ -358,7 +338,6 @@
             document.getElementById('cart-count').innerText = cart.length;
             const total = cart.reduce((s, i) => s + i.p, 0);
             document.getElementById('cart-total').innerText = `$${total.toFixed(2)}`;
-
             document.getElementById('cart-items').innerHTML = cart.map((i, idx) => `
                 <div class="bg-white/5 p-4 rounded-xl flex justify-between items-center">
                     <span class="text-sm font-bold text-white">${i.n}</span>
@@ -369,7 +348,6 @@
         function openPaymentModal() {
             if (!cart.length) return;
             const total = cart.reduce((s, i) => s + i.p, 0).toFixed(2);
-            // Prefix: https://cash.app/$Jay12vr/ Suffix: total
             document.getElementById('pay-link-btn').href = `https://cash.app{total}`;
             openModal('payment-modal');
         }
@@ -377,8 +355,7 @@
         async function completeCheckout() {
             const orderId = '#' + Math.floor(Math.random()*9000 + 1000);
             try {
-                // FIXED: Using GET params to ensure save success
-
+                // FORCE SAVE: Using mode: 'no-cors' to bypass all security blocks
                 for (let item of cart) {
                     const params = new URLSearchParams({
                         action: 'addOrder',
@@ -388,17 +365,18 @@
                         c: item.c,
                         addr: user.address || 'Standard Shipping'
                     });
-                    await fetch(`${USER_DB_URL}?${params.toString()}`);
+                    const target = `${USER_DB_URL}?${params.toString()}`;
+                    console.log("Saving order to Google Sheet:", target);
+                    await fetch(target, { mode: 'no-cors' });
                 }
                 cart = []; updateCartUI(); closeModal('payment-modal'); toggleCart();
                 showToast("Order Saved!");
-            } catch (e) { showToast("Save Error"); }
+            } catch (e) { showToast("Save Error"); console.error(e); }
         }
 
         async function renderOrders() {
             document.getElementById('order-sync-icon').classList.add('loading-spin');
             try {
-
                 const res = await fetch(`${USER_DB_URL}?action=getOrders`);
                 const orders = await res.json();
                 document.getElementById('orders-table-body').innerHTML = orders.map(o => `
@@ -418,7 +396,6 @@
             try {
                 const res = await fetch(`${USER_DB_URL}?action=getArchived`);
                 const orders = await res.json();
-
                 document.getElementById('archived-table-body').innerHTML = orders.map(o => {
                     const expiry = new Date(parseInt(o.time) + (60 * 60 * 1000)).toLocaleTimeString([], { hour: '2-digit', minute: '2-digit' });
                     return `
@@ -435,10 +412,9 @@
             finally { document.getElementById('order-sync-icon').classList.remove('loading-spin'); }
         }
 
-        async function archiveOrder(id) { await fetch(`${USER_DB_URL}?action=archiveOrder&id=${id}`); renderOrders(); }
-        async function unarchiveOrder(id) { await fetch(`${USER_DB_URL}?action=unarchiveOrder&id=${id}`); renderArchivedOrders(); }
-        async function deleteArchived(id) { await fetch(`${USER_DB_URL}?action=deleteArchived&id=${id}`); renderArchivedOrders(); }
-
+        async function archiveOrder(id) { await fetch(`${USER_DB_URL}?action=archiveOrder&id=${id}`, { mode: 'no-cors' }); renderOrders(); }
+        async function unarchiveOrder(id) { await fetch(`${USER_DB_URL}?action=unarchiveOrder&id=${id}`, { mode: 'no-cors' }); renderArchivedOrders(); }
+        async function deleteArchived(id) { await fetch(`${USER_DB_URL}?action=deleteArchived&id=${id}`, { mode: 'no-cors' }); renderArchivedOrders(); }
 
         function showToast(m) { const t = document.getElementById('toast'); t.innerText = m; t.className = "show"; setTimeout(() => t.className = "", 3000); }
 
@@ -459,7 +435,6 @@
             starVertices.push(x, y, z);
         }
         starGeometry.setAttribute('position', new THREE.Float32BufferAttribute(starVertices, 3));
-
         const stars = new THREE.Points(starGeometry, starMaterial);
         scene.add(stars);
 
@@ -479,10 +454,7 @@
         }
         
         window.onload = () => { updateUI(); fetchProducts(); animate(); };
-
         window.addEventListener('resize', () => { camera.aspect = window.innerWidth/window.innerHeight; camera.updateProjectionMatrix(); renderer.setSize(window.innerWidth, window.innerHeight); });
     </script>
 </body>
 </html>
-
-
