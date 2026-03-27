@@ -17,6 +17,7 @@
         .gradient-text { background: linear-gradient(90deg, #00d632, #38bdf8); -webkit-background-clip: text; -webkit-text-fill-color: transparent; }
         .color-dot { width: 1.5rem; height: 1.5rem; border-radius: 9999px; cursor: pointer; border: 2px solid transparent; transition: all 0.2s; }
         .color-dot.active { border-color: #00d632; transform: scale(1.1); }
+
         .modal { display: none; position: fixed; inset: 0; z-index: 1000; background: rgba(0,0,0,0.85); backdrop-filter: blur(12px); align-items: center; justify-content: center; padding: 20px; }
         .modal.active { display: flex; }
         #toast { visibility: hidden; min-width: 250px; background-color: #00d632; color: #fff; text-align: center; border-radius: 12px; padding: 16px; position: fixed; z-index: 2000; right: 30px; bottom: 30px; box-shadow: 0 10px 15px -3px rgba(0,0,0,0.4); }
@@ -36,6 +37,7 @@
     <div id="canvas-container"></div>
 
     <nav class="flex items-center justify-between px-8 py-6 sticky top-0 z-50 bg-slate-900/80 backdrop-blur-xl border-b border-white/5">
+
         <div class="text-2xl font-black tracking-tighter flex items-center gap-2">
             <div class="w-10 h-10 bg-[#00d632] rounded-xl flex items-center justify-center shadow-lg text-white">3D</div>
             <span>Dimension3D</span>
@@ -55,6 +57,7 @@
             </div>
 
             <button onclick="toggleCart()" class="bg-[#00d632] px-6 py-2.5 rounded-full flex items-center gap-2 text-white shadow-lg">
+
                 Cart <span id="cart-count" class="bg-white text-[#00d632] rounded-full w-5 h-5 flex items-center justify-center text-[10px]">0</span>
             </button>
         </div>
@@ -74,6 +77,7 @@
                     Refresh Shop
                 </button>
             </div>
+
             <div id="product-grid" class="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-4 gap-8"></div>
         </section>
 
@@ -92,6 +96,7 @@
                     Refresh Data
                 </button>
             </div>
+
 
             <div id="active-orders-container" class="glass-card rounded-3xl overflow-hidden overflow-x-auto">
                 <table class="w-full text-left border-collapse">
@@ -112,6 +117,7 @@
                 <table class="w-full text-left border-collapse">
                     <thead class="bg-white/5 border-b border-white/10">
                         <tr>
+
                             <th class="p-6 text-[10px] font-bold text-slate-400 uppercase">ID</th>
                             <th class="p-6 text-[10px] font-bold text-slate-400 uppercase">Customer</th>
                             <th class="p-6 text-[10px] font-bold text-slate-400 uppercase text-right">Actions</th>
@@ -131,6 +137,7 @@
                 <button onclick="closeModal('owner-msg-modal')" class="text-slate-500 hover:text-white text-2xl">✕</button>
             </div>
             <div class="bg-white rounded-2xl p-8 min-h-[200px] flex items-center justify-center">
+
                 <div id="owner-doc-content" class="text-slate-800 text-center w-full">Syncing...</div>
             </div>
         </div>
@@ -150,6 +157,7 @@
 
     <div id="login-modal" class="modal">
         <div class="bg-slate-900 p-10 rounded-[2.5rem] w-full max-w-md border border-white/10 shadow-2xl">
+
             <h2 class="text-3xl font-black mb-6">Login</h2>
             <input id="log-user" type="text" placeholder="Username" class="w-full bg-white/5 border border-white/10 p-4 rounded-xl mb-4 outline-none focus:border-[#00d632] text-white">
             <input id="log-pass" type="password" placeholder="Password" class="w-full bg-white/5 border border-white/10 p-4 rounded-xl mb-6 focus:border-[#00d632] text-white">
@@ -169,6 +177,7 @@
             <input id="sig-addr" type="text" placeholder="Shipping Address" class="w-full bg-white/5 border border-white/10 p-4 rounded-xl mb-4 outline-none focus:border-[#00d632] text-white">
             <input id="sig-user" type="text" placeholder="Username" class="w-full bg-white/5 border border-white/10 p-4 rounded-xl mb-4 outline-none focus:border-[#00d632] text-white">
             <input id="sig-pass" type="password" placeholder="Password" class="w-full bg-white/5 border border-white/10 p-4 rounded-xl mb-6 outline-none focus:border-[#00d632] text-white">
+
             <button onclick="handleSignUp()" class="w-full bg-[#00d632] py-4 rounded-xl font-black text-white">Join Now</button>
             <button onclick="closeModal('signup-modal')" class="w-full text-slate-500 text-sm mt-4">Cancel</button>
         </div>
@@ -189,10 +198,11 @@
         </div>
     </div>
 
+
     <div id="toast"></div>
 
     <script>
-        // CONFIG - Syncing with your latest Apps Script
+        // CONFIG - Using your newest Web App URL
         const USER_DB_URL = 'https://script.google.com/macros/s/AKfycbwyvljZ6f6jxfr1lXY-NebU3CBSkZ1d2criV-SGPM6XLCU0nODcYpNkDU_496oVjvG5/exec'; 
         const INVENTORY_CSV = 'https://docs.google.com/spreadsheets/d/e/2PACX-1vRVrA_8ndp0w3vWU_rwfKKNFsECqNMN6yW9yHN2VTOXRCIP5kQa1tLznW4DBmEasd_KR-LXcBcKNz9s/pub?gid=0&single=true&output=csv';
 
@@ -208,6 +218,7 @@
         function switchTab(tabId) {
             document.querySelectorAll('.tab-content').forEach(tab => tab.classList.remove('active'));
             document.querySelectorAll('.nav-link').forEach(link => link.classList.remove('active'));
+
             document.getElementById(tabId + '-tab').classList.add('active');
             if (event) event.target.classList.add('active');
             if (tabId === 'orders') refreshCurrentOrderView();
@@ -227,6 +238,7 @@
             } else {
                 document.getElementById('btn-archived-view').classList.add('active');
                 document.getElementById('btn-archived-view').classList.remove('bg-white/5');
+
                 document.getElementById('active-orders-container').classList.add('hidden');
                 document.getElementById('archived-orders-container').classList.remove('hidden');
                 renderArchivedOrders();
@@ -246,6 +258,7 @@
                 const data = await res.json();
                 contentDiv.innerHTML = data.html || "Type your message in Cell H2!";
             } catch (e) { contentDiv.innerHTML = "Sync Error: Check Script."; }
+
         }
 
         async function handleLogin() {
@@ -265,6 +278,7 @@
 
         async function handleSignUp() {
             const signupData = { 
+
                 action: 'signup',
                 firstName: document.getElementById('sig-first').value, 
                 lastName: document.getElementById('sig-last').value, 
@@ -274,6 +288,7 @@
                 password: document.getElementById('sig-pass').value 
             };
             try {
+                // RESTORED TO POST METHOD (Confirmed Working)
                 await fetch(USER_DB_URL, { method: 'POST', mode: 'no-cors', body: JSON.stringify(signupData) });
                 saveUser({ username: signupData.username, address: signupData.address }); 
                 closeModal('signup-modal');
@@ -283,6 +298,7 @@
 
         function saveUser(u) { user = u; localStorage.setItem('dim3d_user', JSON.stringify(user)); updateUI(); }
         function logout() { localStorage.removeItem('dim3d_user'); location.reload(); }
+
 
         function updateUI() {
             if (user) {
@@ -303,6 +319,7 @@
                     return { id: i, n: c[0].replace(/"/g,''), p: parseFloat(c[1])||0, d: c[2].replace(/"/g,''), img: c[3].replace(/"/g,'') };
                 });
                 renderProducts(items);
+
             } catch (e) { showToast("Inventory Error"); }
             finally { document.getElementById('sync-icon').classList.remove('loading-spin'); }
         }
@@ -322,6 +339,7 @@
                     <button onclick="addToCart('${item.id}', '${item.n}', ${item.p})" class="bg-[#00d632] py-3 rounded-xl font-bold text-white mt-auto hover:bg-[#00c22d] transition">Add to Cart</button>
                 </div>`;
             }).join('');
+
         }
 
         function selectColor(id, c) {
@@ -341,6 +359,7 @@
             document.getElementById('cart-total').innerText = `$${total.toFixed(2)}`;
             document.getElementById('cart-items').innerHTML = cart.map((i, idx) => `
                 <div class="bg-white/5 p-4 rounded-xl flex justify-between items-center">
+
                     <span class="text-sm font-bold text-white">${i.n}</span>
                     <button onclick="cart.splice(${idx},1);updateCartUI();" class="text-red-400 text-xs">✕</button>
                 </div>`).join('');
@@ -356,17 +375,18 @@
         async function completeCheckout() {
             const orderId = '#' + Math.floor(Math.random()*9000 + 1000);
             try {
-                // FORCE SAVE via GET for reliability
+                // RESTORED TO ORIGINAL POST METHOD (Confirmed Working)
                 for (let item of cart) {
-                    const params = new URLSearchParams({
+                    const orderData = {
                         action: 'addOrder',
+
                         id: orderId,
                         cust: item.cust,
                         n: item.n,
                         c: item.c,
                         addr: user.address || 'Standard Shipping'
-                    });
-                    await fetch(`${USER_DB_URL}?${params.toString()}`, { mode: 'no-cors' });
+                    };
+                    await fetch(USER_DB_URL, { method: 'POST', mode: 'no-cors', body: JSON.stringify(orderData) });
                 }
                 cart = []; updateCartUI(); closeModal('payment-modal'); toggleCart();
                 showToast("Order Placed!");
@@ -379,6 +399,7 @@
                 const res = await fetch(`${USER_DB_URL}?action=getOrders`);
                 const orders = await res.json();
                 document.getElementById('orders-table-body').innerHTML = orders.map(o => `
+
                 <tr class="hover:bg-white/5 transition">
                     <td class="p-6 text-sky-400 font-mono text-sm">${o.id}</td>
                     <td class="p-6 font-bold text-sm text-white">${o.cust}</td>
@@ -396,7 +417,9 @@
                 const res = await fetch(`${USER_DB_URL}?action=getArchived`);
                 const orders = await res.json();
                 document.getElementById('archived-table-body').innerHTML = orders.map(o => {
-                    const expiry = new Date(parseInt(o.time) + (60 * 60 * 1000)).toLocaleTimeString([], { hour: '2-digit', minute: '2-digit' });
+                    const expiryTime = parseInt(o.time) + (60 * 60 * 1000);
+                    const expiry = new Date(expiryTime).toLocaleTimeString([], { hour: '2-digit', minute: '2-digit' });
+
                     return `
                     <tr class="hover:bg-white/5 transition">
                         <td class="p-6 text-slate-500 font-mono text-sm">${o.id}</td>
@@ -411,11 +434,12 @@
             finally { document.getElementById('order-sync-icon').classList.remove('loading-spin'); }
         }
 
-        async function archiveOrder(id) { await fetch(`${USER_DB_URL}?action=archiveOrder&id=${id}`, { mode: 'no-cors' }); renderOrders(); }
-        async function unarchiveOrder(id) { await fetch(`${USER_DB_URL}?action=unarchiveOrder&id=${id}`, { mode: 'no-cors' }); renderArchivedOrders(); }
-        async function deleteArchived(id) { await fetch(`${USER_DB_URL}?action=deleteArchived&id=${id}`, { mode: 'no-cors' }); renderArchivedOrders(); }
+        async function archiveOrder(id) { await fetch(`${USER_DB_URL}?action=archiveOrder&id=${id}`); renderOrders(); }
+        async function unarchiveOrder(id) { await fetch(`${USER_DB_URL}?action=unarchiveOrder&id=${id}`); renderArchivedOrders(); }
+        async function deleteArchived(id) { await fetch(`${USER_DB_URL}?action=deleteArchived&id=${id}`); renderArchivedOrders(); }
 
         function showToast(m) { const t = document.getElementById('toast'); t.innerText = m; t.className = "show"; setTimeout(() => t.className = "", 3000); }
+
 
         // ENHANCED 3D BACKGROUND
         const scene = new THREE.Scene();
@@ -437,6 +461,7 @@
         const stars = new THREE.Points(starGeometry, starMaterial);
         scene.add(stars);
 
+
         const knot = new THREE.Mesh(new THREE.TorusKnotGeometry(10, 3, 100, 16), new THREE.MeshBasicMaterial({ color: 0x00d632, wireframe: true }));
         scene.add(knot);
 
@@ -457,3 +482,5 @@
     </script>
 </body>
 </html>
+
+
