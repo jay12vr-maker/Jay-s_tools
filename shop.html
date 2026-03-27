@@ -15,8 +15,9 @@
         .gradient-text { background: linear-gradient(90deg, #00d632, #38bdf8); -webkit-background-clip: text; -webkit-text-fill-color: transparent; }
         .color-dot { width: 1.5rem; height: 1.5rem; border-radius: 9999px; cursor: pointer; border: 2px solid transparent; transition: all 0.2s; }
         .color-dot.active { border-color: #00d632; transform: scale(1.1); }
-        .modal { display: none; position: fixed; inset: 0; z-index: 1000; background: rgba(0,0,0,0.85); backdrop-filter: blur(12px); align-items: center; justify-content: center; }
+        .modal { display: none; position: fixed; inset: 0; z-index: 1000; background: rgba(0,0,0,0.85); backdrop-filter: blur(12px); align-items: center; justify-content: center; padding: 20px; }
         .modal.active { display: flex; }
+
         #toast { visibility: hidden; min-width: 250px; background-color: #00d632; color: #fff; text-align: center; border-radius: 12px; padding: 16px; position: fixed; z-index: 2000; right: 30px; bottom: 30px; }
         #toast.show { visibility: visible; animation: fadein 0.5s, fadeout 0.5s 2.5s; }
         @keyframes fadein { from {bottom: 0; opacity: 0;} to {bottom: 30px; opacity: 1;} }
@@ -36,6 +37,8 @@
         </div>
         <div class="flex items-center gap-8 text-sm font-semibold">
             <a href="index.html" class="hover:text-[#00d632] transition">Home</a>
+
+            <button onclick="openModal('owner-msg-modal')" class="hover:text-[#00d632] transition">Message from Owner</button>
             <a href="#shop" class="hover:text-[#00d632] transition">Shop</a>
             <a id="nav-orders" href="#orders-section" class="hidden hover:text-[#00d632] transition">Orders</a>
             
@@ -53,6 +56,7 @@
             </button>
         </div>
     </nav>
+
 
     <!-- Shop -->
     <section id="shop" class="px-8 pt-16 pb-20 max-w-7xl mx-auto">
@@ -73,6 +77,7 @@
     <section id="orders-section" class="hidden px-8 py-20 max-w-7xl mx-auto border-t border-white/5 bg-slate-900/40 rounded-[3rem] my-20">
         <div class="flex justify-between items-center mb-10">
             <div>
+
                 <h2 class="text-3xl font-black">Incoming Orders</h2>
                 <p class="text-slate-500">Manage your production queue here.</p>
             </div>
@@ -92,11 +97,27 @@
                 </thead>
                 <tbody id="orders-table-body" class="divide-y divide-white/5"></tbody>
             </table>
+
         </div>
     </section>
 
+    <!-- Owner Message Modal -->
+    <div id="owner-msg-modal" class="modal">
+        <div class="bg-slate-900 p-8 rounded-[2.5rem] w-full max-w-4xl border border-white/10 shadow-2xl flex flex-col h-[80vh]">
+            <div class="flex justify-between items-center mb-6">
+                <h2 class="text-3xl font-black">Message from <span class="text-[#00d632]">Owner</span></h2>
+                <button onclick="closeModal('owner-msg-modal')" class="text-slate-500 hover:text-white text-2xl">✕</button>
+            </div>
+            <div class="flex-grow bg-white rounded-2xl overflow-hidden">
+                <iframe id="owner-doc-frame" class="w-full h-full border-none" src="about:blank"></iframe>
+            </div>
+            <p class="text-slate-500 text-xs mt-4 text-center">Live updates directly from Jay's desk.</p>
+        </div>
+    </div>
+
     <!-- Payment Modal (Cash App) -->
     <div id="payment-modal" class="modal">
+
         <div class="bg-slate-900 p-10 rounded-[2.5rem] w-full max-w-md border border-white/10 text-center">
             <div class="w-20 h-20 bg-[#00d632]/20 text-[#00d632] rounded-full flex items-center justify-center mx-auto mb-6">
                 <span class="text-4xl font-bold">$</span>
@@ -116,6 +137,7 @@
             <input id="log-pass" type="password" placeholder="Password" class="w-full bg-white/5 border border-white/10 p-4 rounded-xl mb-6 focus:border-[#00d632]">
             <button onclick="handleLogin()" class="w-full bg-[#00d632] py-4 rounded-xl font-black text-white">Sign In</button>
             <button onclick="closeModal('login-modal')" class="w-full text-slate-500 text-sm mt-4">Cancel</button>
+
         </div>
     </div>
 
@@ -134,6 +156,7 @@
             <button onclick="closeModal('signup-modal')" class="w-full text-slate-500 text-sm mt-4">Cancel</button>
         </div>
     </div>
+
 
     <!-- Cart Sidebar -->
     <div id="cart-sidebar" class="fixed top-0 right-0 h-full w-full sm:w-[400px] bg-slate-900/95 backdrop-blur-2xl shadow-2xl z-[1000] translate-x-full transition-transform duration-500 border-l border-white/10 p-10 flex flex-col">
@@ -154,16 +177,30 @@
     <div id="toast"></div>
 
     <script>
+
         // CONFIG
         const USER_DB_URL = 'https://script.google.com/macros/s/AKfycbwPQ0XPpvykwy6uwxA9uiFOATq_Logr7Q58hHqpru8FHsgN79G9XYkK6SzMe2pn2M6w/exec'; 
         const INVENTORY_CSV = 'https://docs.google.com/spreadsheets/d/e/2PACX-1vRVrA_8ndp0w3vWU_rwfKKNFsECqNMN6yW9yHN2VTOXRCIP5kQa1tLznW4DBmEasd_KR-LXcBcKNz9s/pub?gid=0&single=true&output=csv';
+        // Your specific Google Doc link
+        const OWNER_DOC_URL = 'https://docs.google.com';
 
         let user = JSON.parse(localStorage.getItem('dim3d_user') || 'null');
         let cart = [];
         let selectedColors = {};
 
-        function openModal(id) { document.getElementById(id).classList.add('active'); }
-        function closeModal(id) { document.getElementById(id).classList.remove('active'); }
+        function openModal(id) { 
+            document.getElementById(id).classList.add('active'); 
+            if (id === 'owner-msg-modal') {
+                document.getElementById('owner-doc-frame').src = OWNER_DOC_URL;
+            }
+        }
+        function closeModal(id) { 
+            document.getElementById(id).classList.remove('active'); 
+            if (id === 'owner-msg-modal') {
+
+                document.getElementById('owner-doc-frame').src = 'about:blank';
+            }
+        }
         function toggleCart() { document.getElementById('cart-sidebar').classList.toggle('translate-x-full'); }
 
         // AUTH
@@ -180,6 +217,7 @@
                 if (data.success) { saveUser(data.user); closeModal('login-modal'); }
                 else showToast("Login Failed");
             } catch (e) { showToast("Connection error"); }
+
         }
 
         async function handleSignUp() {
@@ -198,6 +236,7 @@
                 saveUser(newUser); closeModal('signup-modal');
             } catch (e) { saveUser(newUser); closeModal('signup-modal'); }
         }
+
 
         function saveUser(u) { user = u; localStorage.setItem('dim3d_user', JSON.stringify(user)); updateUI(); }
         function logout() { localStorage.removeItem('dim3d_user'); location.reload(); }
@@ -218,6 +257,7 @@
         // SHOP
         async function fetchProducts() {
             document.getElementById('sync-icon').classList.add('loading-spin');
+
             try {
                 const res = await fetch(INVENTORY_CSV);
                 const csv = await res.text();
@@ -237,6 +277,7 @@
                 return `
                 <div class="glass-card rounded-[2rem] p-6 flex flex-col">
                     <img src="${item.img || 'https://placehold.co/400'}" class="rounded-2xl aspect-square object-cover mb-6">
+
                     <div class="flex justify-between mb-4"><h3 class="font-bold">${item.n}</h3><span class="text-[#00d632] font-black">$${item.p.toFixed(2)}</span></div>
                     <div class="flex gap-2 mb-6">
                         <div onclick="selectColor('${item.id}', 'White')" data-color="White" class="color-dot dot-${item.id} bg-white active"></div>
@@ -256,6 +297,7 @@
         // CART & PAYMENT
         function addToCart(id, n, p) {
             if (!user) return openModal('login-modal');
+
             cart.push({ n, p, c: selectedColors[id], addr: user.address, cust: user.firstName });
             updateCartUI(); showToast("Added!");
         }
@@ -275,7 +317,8 @@
             if (!cart.length) return;
             const total = cart.reduce((s, i) => s + i.p, 0).toFixed(2);
             // Hardcoded recipient strictly to $jay12vr as requested
-            document.getElementById('pay-link-btn').href = `https://cash.app/{total}`;
+
+            document.getElementById('pay-link-btn').href = `https://cash.app{total}`;
             openModal('payment-modal');
         }
 
@@ -294,6 +337,7 @@
             try {
                 const res = await fetch(`${USER_DB_URL}?action=getOrders`);
                 const orders = await res.json();
+
                 document.getElementById('orders-table-body').innerHTML = orders.map(o => `
                 <tr class="hover:bg-white/5">
                     <td class="p-6 text-sky-400 font-mono text-sm">${o.id}</td>
@@ -313,6 +357,7 @@
             showToast("Deleting...");
             try {
                 await fetch(`${USER_DB_URL}?action=deleteOrder&id=${id}`);
+
                 renderOrders();
                 showToast("Order Removed");
             } catch (e) { showToast("Delete failed"); }
@@ -332,6 +377,7 @@
             new THREE.MeshBasicMaterial({ color: 0x00d632, wireframe: true })
         );
         scene.add(torus);
+
         camera.position.z = 30;
 
         let mouseX = 0;
@@ -351,6 +397,7 @@
             torus.rotation.y += 0.002;
 
             // Add rotation based on mouse movement
+
             torus.rotation.x += mouseY * 0.05;
             torus.rotation.y += mouseX * 0.05;
 
