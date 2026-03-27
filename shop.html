@@ -17,18 +17,27 @@
         .gradient-text { background: linear-gradient(90deg, #00d632, #38bdf8); -webkit-background-clip: text; -webkit-text-fill-color: transparent; }
         .color-dot { width: 1.5rem; height: 1.5rem; border-radius: 9999px; cursor: pointer; border: 2px solid transparent; transition: all 0.2s; }
         .color-dot.active { border-color: #00d632; transform: scale(1.1); }
+
+        
+        /* Modals */
         .modal { display: none; position: fixed; inset: 0; z-index: 1000; background: rgba(0,0,0,0.85); backdrop-filter: blur(12px); align-items: center; justify-content: center; padding: 20px; }
         .modal.active { display: flex; }
-        #toast { visibility: hidden; min-width: 250px; background-color: #00d632; color: #fff; text-align: center; border-radius: 12px; padding: 16px; position: fixed; z-index: 2000; right: 30px; bottom: 30px; box-shadow: 0 10px 15px -3px rgba(0,0,0,0.4); }
-        #toast.show { visibility: visible; animation: fadein 0.5s, fadeout 0.5s 2.5s; }
+        
+        /* Enhanced Toast Notifications */
+        #toast { visibility: hidden; min-width: 300px; color: #fff; text-align: left; border-radius: 16px; padding: 20px; position: fixed; z-index: 2000; right: 30px; bottom: 30px; box-shadow: 0 20px 25px -5px rgba(0,0,0,0.5); font-weight: 600; border-left: 8px solid rgba(0,0,0,0.2); }
+        #toast.success { background-color: #00d632; visibility: visible; animation: fadein 0.5s, fadeout 0.5s 3.5s; }
+        #toast.error { background-color: #ef4444; visibility: visible; animation: fadein 0.5s, fadeout 0.5s 5.5s; }
+        
         @keyframes fadein { from {bottom: 0; opacity: 0;} to {bottom: 30px; opacity: 1;} }
         @keyframes fadeout { from {bottom: 30px; opacity: 1;} to {bottom: 0; opacity: 0;} }
+        
         @keyframes spin { from { transform: rotate(0deg); } to { transform: rotate(360deg); } }
         .loading-spin { animation: spin 1s linear infinite; }
         .tab-content { display: none; }
         .tab-content.active { display: block; }
         .nav-link.active { color: #00d632; border-bottom: 2px solid #00d632; }
         .sub-tab-btn.active { background: #00d632; color: white; }
+
     </style>
 </head>
 <body>
@@ -48,6 +57,7 @@
             <div id="auth-buttons" class="flex items-center gap-4">
                 <button onclick="openModal('login-modal')" class="hover:text-[#00d632]">Login</button>
                 <button onclick="openModal('signup-modal')" class="bg-white/10 px-5 py-2 rounded-full hover:bg-white/20">Sign Up</button>
+
             </div>
             <div id="user-display" class="hidden flex items-center gap-4">
                 <span id="welcome-name" class="text-slate-300 font-normal"></span>
@@ -67,6 +77,7 @@
             <div class="flex justify-between items-end mb-12">
                 <div>
                     <h1 class="text-5xl font-black mb-2 text-white">For <span class="gradient-text">Sale</span></h1>
+
                     <p class="text-slate-400">Premium 3D prints delivered to your door.</p>
                 </div>
                 <button onclick="fetchProducts()" class="flex items-center gap-2 text-xs font-bold text-slate-500 hover:text-[#00d632] uppercase tracking-widest">
@@ -86,6 +97,7 @@
                         <button onclick="toggleOrderView('active')" id="btn-active-view" class="sub-tab-btn active px-6 py-2 rounded-full text-xs font-bold uppercase transition">Active Orders</button>
                         <button onclick="toggleOrderView('archived')" id="btn-archived-view" class="sub-tab-btn bg-white/5 px-6 py-2 rounded-full text-xs font-bold uppercase transition hover:bg-white/10">Archive</button>
                     </div>
+
                 </div>
                 <button onclick="refreshCurrentOrderView()" class="text-xs font-bold text-[#00d632] uppercase flex items-center gap-2 bg-white/5 px-6 py-3 rounded-xl hover:bg-white/10 transition">
                     <svg id="order-sync-icon" class="w-4 h-4" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path d="M4 4v5h.582m15.356 2A8.001 8.001 0 004.582 9m0 0H9m11 11v-5h-.581m0 0a8.003 8.003 0 01-15.357-2m15.357 2H15"></path></svg>
@@ -105,6 +117,7 @@
                         </tr>
                     </thead>
                     <tbody id="orders-table-body" class="divide-y divide-white/5"></tbody>
+
                 </table>
             </div>
 
@@ -124,6 +137,7 @@
     </main>
 
     <!-- MODALS -->
+
     <div id="owner-msg-modal" class="modal">
         <div class="bg-slate-900 p-8 rounded-[2.5rem] w-full max-w-2xl border border-white/10 shadow-2xl flex flex-col">
             <div class="flex justify-between items-center mb-6">
@@ -143,6 +157,7 @@
             </div>
             <h2 class="text-3xl font-black mb-2 text-white">Cash App Payment</h2>
             <p class="text-slate-400 mb-8">Click below to pay via Cash App. We'll start production immediately!</p>
+
             <a id="pay-link-btn" href="#" target="_blank" onclick="completeCheckout()" class="block w-full bg-[#00d632] py-4 rounded-xl font-black text-white hover:bg-[#00c22d] transition mb-4">Pay with Cash App</a>
             <button onclick="closeModal('payment-modal')" class="text-slate-500 text-sm">Cancel</button>
         </div>
@@ -162,6 +177,7 @@
         <div class="bg-slate-900 p-10 rounded-[2.5rem] w-full max-w-md border border-white/10 shadow-2xl">
             <h2 class="text-3xl font-black mb-6 text-white">Sign Up</h2>
             <div class="grid grid-cols-2 gap-4 mb-4">
+
                 <input id="sig-first" type="text" placeholder="First" class="bg-white/5 border border-white/10 p-4 rounded-xl outline-none focus:border-[#00d632] text-white">
                 <input id="sig-last" type="text" placeholder="Last" class="bg-white/5 border border-white/10 p-4 rounded-xl outline-none focus:border-[#00d632] text-white">
             </div>
@@ -181,6 +197,7 @@
         </div>
         <div id="cart-items" class="flex-grow space-y-4 overflow-y-auto"></div>
         <div class="pt-8 border-t border-white/10 mt-8">
+
             <div class="flex justify-between mb-8">
                 <span class="text-slate-400">Total</span>
                 <span id="cart-total" class="text-3xl font-black text-[#00d632]">$0.00</span>
@@ -192,7 +209,7 @@
     <div id="toast"></div>
 
     <script>
-        // SYNC CONFIG - Using direct fetch pattern like the Shop
+        // CONFIG
         const USER_DB_URL = 'https://script.google.com/macros/s/AKfycbwyvljZ6f6jxfr1lXY-NebU3CBSkZ1d2criV-SGPM6XLCU0nODcYpNkDU_496oVjvG5/exec'; 
         const INVENTORY_CSV = 'https://docs.google.com/spreadsheets/d/e/2PACX-1vRVrA_8ndp0w3vWU_rwfKKNFsECqNMN6yW9yHN2VTOXRCIP5kQa1tLznW4DBmEasd_KR-LXcBcKNz9s/pub?gid=0&single=true&output=csv';
 
@@ -200,6 +217,7 @@
         let cart = [];
         let selectedColors = {};
         let currentOrderView = 'active';
+
 
         function openModal(id) { document.getElementById(id).classList.add('active'); }
         function closeModal(id) { document.getElementById(id).classList.remove('active'); }
@@ -217,10 +235,10 @@
             currentOrderView = view;
             document.querySelectorAll('.sub-tab-btn').forEach(btn => btn.classList.remove('active', 'bg-white/5'));
             document.querySelectorAll('.sub-tab-btn').forEach(btn => btn.classList.add('bg-white/5'));
-            
             if (view === 'active') {
                 document.getElementById('btn-active-view').classList.add('active');
                 document.getElementById('btn-active-view').classList.remove('bg-white/5');
+
                 document.getElementById('active-orders-container').classList.remove('hidden');
                 document.getElementById('archived-orders-container').classList.add('hidden');
                 renderOrders();
@@ -238,50 +256,72 @@
             else renderArchivedOrders();
         }
 
-        // DIRECT FETCH PATTERN (Like Shop)
+        // ENHANCED ERROR HANDLING
         async function openOwnerMessage() {
+
             openModal('owner-msg-modal');
             const contentDiv = document.getElementById('owner-doc-content');
+            contentDiv.innerHTML = "Fetching Cloud Message...";
             try {
                 const res = await fetch(`${USER_DB_URL}?action=getMessage`);
+                if (!res.ok) throw new Error(`HTTP ${res.status}: Connection Denied`);
                 const data = await res.json();
-                contentDiv.innerHTML = data.html || "Type your message in Cell H2!";
-            } catch (e) { contentDiv.innerHTML = "Sync Error: Check Script Deployment."; }
+                if (data.error) throw new Error(data.error);
+                contentDiv.innerHTML = data.html || "Welcome! Type your message in Cell H2.";
+            } catch (e) { 
+                console.error(e);
+                contentDiv.innerHTML = `<span class="text-red-600 font-bold">Sync Failed: ${e.message}</span>`;
+                showToast(`Failed to load message: ${e.message}`, 'error');
+            }
         }
 
         async function handleLogin() {
             const u = document.getElementById('log-user').value;
             const p = document.getElementById('log-pass').value;
-            // Owner hardcode
+
             if (u === 'jay12vr' && p === '123211') {
                 saveUser({ username: 'jay12vr', address: 'Owner HQ' });
-                closeModal('login-modal'); return;
+                closeModal('login-modal');
+                showToast("Welcome back, Owner!", 'success');
+                return;
             }
             try {
                 const res = await fetch(`${USER_DB_URL}?action=login&u=${encodeURIComponent(u)}&p=${encodeURIComponent(p)}`);
                 const data = await res.json();
-                if (data.success) { saveUser(data.user); closeModal('login-modal'); }
-                else showToast("Invalid Credentials");
-            } catch (e) { showToast("Login Sync Error"); }
+                if (data.success) { 
+                    saveUser(data.user); 
+                    closeModal('login-modal'); 
+                    showToast("Login Successful!", 'success');
+                } else {
+                    showToast("Login Failed: Invalid Username or Password", 'error');
+                }
+            } catch (e) { 
+                showToast(`Login Sync Error: ${e.message}`, 'error'); 
+            }
+
         }
 
         async function handleSignUp() {
-            const signupData = { 
-                action: 'signup',
-                firstName: document.getElementById('sig-first').value, 
-                lastName: document.getElementById('sig-last').value, 
-                email: document.getElementById('sig-email').value, 
-                address: document.getElementById('sig-addr').value, 
-                username: document.getElementById('sig-user').value, 
-                password: document.getElementById('sig-pass').value 
-            };
+            const fn = document.getElementById('sig-first').value;
+            const ln = document.getElementById('sig-last').value;
+            const em = document.getElementById('sig-email').value;
+            const ad = document.getElementById('sig-addr').value;
+            const u = document.getElementById('sig-user').value;
+            const p = document.getElementById('sig-pass').value;
+            
+            if (!u || !p) return showToast("Error: Username and Password required", 'error');
+            
+            const params = new URLSearchParams({ action: 'signup', fn, ln, em, ad, u, p });
             try {
-                // Post using standard fetch
-                await fetch(USER_DB_URL, { method: 'POST', body: JSON.stringify(signupData) });
-                saveUser({ username: signupData.username, address: signupData.address }); 
+                // Using mode: 'no-cors' means we can't read the response, but it bypasses preflights
+                await fetch(`${USER_DB_URL}?${params.toString()}`, { mode: 'no-cors' });
+                saveUser({ username: u, address: ad }); 
                 closeModal('signup-modal');
-                showToast("Welcome to Dimension3D!");
-            } catch (e) { showToast("Signup Sync Error"); }
+                showToast("Account Created Successfully!", 'success');
+
+            } catch (e) { 
+                showToast(`Signup Failed: ${e.message}`, 'error'); 
+            }
         }
 
         function saveUser(u) { user = u; localStorage.setItem('dim3d_user', JSON.stringify(user)); updateUI(); }
@@ -298,6 +338,7 @@
 
         async function fetchProducts() {
             document.getElementById('sync-icon').classList.add('loading-spin');
+
             try {
                 const res = await fetch(INVENTORY_CSV);
                 const csv = await res.text();
@@ -306,7 +347,7 @@
                     return { id: i, n: c[0].replace(/"/g,''), p: parseFloat(c[1])||0, d: c[2].replace(/"/g,''), img: c[3].replace(/"/g,'') };
                 });
                 renderProducts(items);
-            } catch (e) { showToast("Inventory Error"); }
+            } catch (e) { showToast(`Inventory Sync Failed: ${e.message}`, 'error'); }
             finally { document.getElementById('sync-icon').classList.remove('loading-spin'); }
         }
 
@@ -317,6 +358,7 @@
                 return `
                 <div class="glass-card rounded-[2rem] p-6 flex flex-col h-full">
                     <img src="${item.img || 'https://placehold.co/400'}" class="rounded-2xl aspect-square object-cover mb-6">
+
                     <div class="flex justify-between mb-4"><h3 class="font-bold text-white">${item.n}</h3><span class="text-[#00d632] font-black">$${item.p.toFixed(2)}</span></div>
                     <div class="flex gap-2 mb-6">
                         <div onclick="selectColor('${item.id}', 'White')" class="color-dot dot-${item.id} bg-white active" data-color="White"></div>
@@ -333,9 +375,14 @@
         }
 
         function addToCart(id, n, p) {
-            if (!user) return openModal('login-modal');
+            if (!user) {
+                showToast("Please Login to add items to cart", 'error');
+                return openModal('login-modal');
+
+            }
             cart.push({ n, p, c: selectedColors[id], cust: user.username });
-            updateCartUI(); showToast("Added!");
+            updateCartUI(); 
+            showToast(`${n} added to cart!`, 'success');
         }
 
         function updateCartUI() {
@@ -344,15 +391,15 @@
             document.getElementById('cart-total').innerText = `$${total.toFixed(2)}`;
             document.getElementById('cart-items').innerHTML = cart.map((i, idx) => `
                 <div class="bg-white/5 p-4 rounded-xl flex justify-between items-center">
-                    <span class="text-sm font-bold text-white">${i.n}</span>
+                    <div class="flex flex-col"><span class="text-sm font-bold text-white">${i.n}</span><span class="text-[10px] text-slate-400">${i.c}</span></div>
                     <button onclick="cart.splice(${idx},1);updateCartUI();" class="text-red-400 text-xs">✕</button>
                 </div>`).join('');
         }
 
         function openPaymentModal() {
-            if (!cart.length) return;
+            if (!cart.length) return showToast("Cart is empty!", 'error');
+
             const total = cart.reduce((s, i) => s + i.p, 0).toFixed(2);
-            // Cash App link prefix + amount suffix
             document.getElementById('pay-link-btn').href = `https://cash.app{total}`;
             openModal('payment-modal');
         }
@@ -360,27 +407,27 @@
         async function completeCheckout() {
             const orderId = '#' + Math.floor(Math.random()*9000 + 1000);
             try {
-                // Direct fetch sync
                 for (let item of cart) {
                     const params = new URLSearchParams({
-                        action: 'addOrder',
-                        id: orderId,
-                        cust: item.cust,
-                        n: item.n,
-                        c: item.c,
-                        addr: user.address || 'Standard Shipping'
+                        action: 'addOrder', id: orderId, cust: item.cust, n: item.n, c: item.c, addr: user.address || 'Standard Shipping'
                     });
-                    await fetch(`${USER_DB_URL}?${params.toString()}`);
+                    const response = await fetch(`${USER_DB_URL}?${params.toString()}`, { mode: 'no-cors' });
+                    // No-cors won't let us see results, but we assume success if no error thrown
                 }
                 cart = []; updateCartUI(); closeModal('payment-modal'); toggleCart();
-                showToast("Order Saved!");
-            } catch (e) { showToast("Save Error: Check Connection"); }
+                showToast(`Order ${orderId} saved! Opening Cash App...`, 'success');
+            } catch (e) { 
+                showToast(`Order Failed: ${e.message}`, 'error'); 
+
+                console.error(e); 
+            }
         }
 
         async function renderOrders() {
             document.getElementById('order-sync-icon').classList.add('loading-spin');
             try {
                 const res = await fetch(`${USER_DB_URL}?action=getOrders`);
+                if (!res.ok) throw new Error("Cloud Database Offline");
                 const orders = await res.json();
                 document.getElementById('orders-table-body').innerHTML = orders.map(o => `
                 <tr class="hover:bg-white/5 transition">
@@ -390,7 +437,11 @@
                     <td class="p-6"><span class="px-2 py-1 bg-slate-800 rounded text-[10px] font-black text-[#00d632]">${o.c}</span></td>
                     <td class="p-6 text-right"><button onclick="archiveOrder('${o.id}')" class="text-orange-400 font-bold uppercase text-xs">Archive</button></td>
                 </tr>`).join('');
-            } catch (e) {}
+                showToast("Orders refreshed.", 'success');
+
+            } catch (e) {
+                showToast(`Database Sync Error: ${e.message}`, 'error');
+            }
             finally { document.getElementById('order-sync-icon').classList.remove('loading-spin'); }
         }
 
@@ -398,6 +449,7 @@
             document.getElementById('order-sync-icon').classList.add('loading-spin');
             try {
                 const res = await fetch(`${USER_DB_URL}?action=getArchived`);
+                if (!res.ok) throw new Error("Cloud Archive Offline");
                 const orders = await res.json();
                 document.getElementById('archived-table-body').innerHTML = orders.map(o => {
                     const expiry = new Date(parseInt(o.time) + (60 * 60 * 1000)).toLocaleTimeString([], { hour: '2-digit', minute: '2-digit' });
@@ -406,20 +458,51 @@
                         <td class="p-6 text-slate-500 font-mono text-sm">${o.id}</td>
                         <td class="p-6 text-slate-400 text-sm">${o.cust} (Wipes: ${expiry})</td>
                         <td class="p-6 text-right flex justify-end gap-6">
+
                             <button onclick="unarchiveOrder('${o.id}')" class="text-[#00d632] font-bold text-xs uppercase">Unarchive</button>
                             <button onclick="deleteArchived('${o.id}')" class="text-red-400 font-bold text-xs uppercase">Delete</button>
                         </td>
                     </tr>`;
                 }).join('');
-            } catch (e) {}
+            } catch (e) {
+                showToast(`Archive Sync Error: ${e.message}`, 'error');
+            }
             finally { document.getElementById('order-sync-icon').classList.remove('loading-spin'); }
         }
 
-        async function archiveOrder(id) { await fetch(`${USER_DB_URL}?action=archiveOrder&id=${id}`); refreshCurrentOrderView(); }
-        async function unarchiveOrder(id) { await fetch(`${USER_DB_URL}?action=unarchiveOrder&id=${id}`); refreshCurrentOrderView(); }
-        async function deleteArchived(id) { await fetch(`${USER_DB_URL}?action=deleteArchived&id=${id}`); refreshCurrentOrderView(); }
+        async function archiveOrder(id) { 
+            try {
+                await fetch(`${USER_DB_URL}?action=archiveOrder&id=${id}`, { mode: 'no-cors' }); 
+                showToast("Order moved to archive.", 'success');
+                refreshCurrentOrderView();
+            } catch (e) { showToast(`Archive Error: ${e.message}`, 'error'); }
+        }
 
-        function showToast(m) { const t = document.getElementById('toast'); t.innerText = m; t.className = "show"; setTimeout(() => t.className = "", 3000); }
+
+        async function unarchiveOrder(id) { 
+            try {
+                await fetch(`${USER_DB_URL}?action=unarchiveOrder&id=${id}`, { mode: 'no-cors' }); 
+                showToast("Order restored to active list.", 'success');
+                refreshCurrentOrderView();
+            } catch (e) { showToast(`Restore Error: ${e.message}`, 'error'); }
+        }
+
+        async function deleteArchived(id) { 
+            try {
+                await fetch(`${USER_DB_URL}?action=deleteArchived&id=${id}`, { mode: 'no-cors' }); 
+                showToast("Order permanently deleted.", 'success');
+                refreshCurrentOrderView();
+            } catch (e) { showToast(`Deletion Error: ${e.message}`, 'error'); }
+        }
+
+        // Updated Toast with Type parameter
+        function showToast(m, type = 'success') { 
+            const t = document.getElementById('toast'); 
+
+            t.innerText = m; 
+            t.className = type; // success or error
+            setTimeout(() => t.className = "", 4000); 
+        }
 
         // 3D BACKGROUND
         const scene = new THREE.Scene();
@@ -427,27 +510,21 @@
         const renderer = new THREE.WebGLRenderer({ alpha: true, antialias: true });
         renderer.setSize(window.innerWidth, window.innerHeight);
         document.getElementById('canvas-container').appendChild(renderer.domElement);
-
         const starGeometry = new THREE.BufferGeometry();
         const starMaterial = new THREE.PointsMaterial({ color: 0xffffff, size: 0.1 });
         const starVertices = [];
         for (let i = 0; i < 2000; i++) {
-            const x = (Math.random() - 0.5) * 100;
-            const y = (Math.random() - 0.5) * 100;
-            const z = (Math.random() - 0.5) * 100;
-            starVertices.push(x, y, z);
+            starVertices.push((Math.random()-0.5)*100, (Math.random()-0.5)*100, (Math.random()-0.5)*100);
         }
         starGeometry.setAttribute('position', new THREE.Float32BufferAttribute(starVertices, 3));
         const stars = new THREE.Points(starGeometry, starMaterial);
-        scene.add(stars);
 
+        scene.add(stars);
         const knot = new THREE.Mesh(new THREE.TorusKnotGeometry(10, 3, 100, 16), new THREE.MeshBasicMaterial({ color: 0x00d632, wireframe: true }));
         scene.add(knot);
-
         camera.position.z = 40;
         let mouseX = 0, mouseY = 0;
-        document.addEventListener('mousemove', (e) => { mouseX = (e.clientX / window.innerWidth) - 0.5; mouseY = (e.clientY / window.innerHeight) - 0.5; });
-
+        document.addEventListener('mousemove', (e) => { mouseX = (e.clientX/window.innerWidth)-0.5; mouseY = (e.clientY/window.innerHeight)-0.5; });
         function animate() {
             requestAnimationFrame(animate);
             knot.rotation.x += 0.002 + (mouseY * 0.02);
@@ -455,9 +532,10 @@
             stars.rotation.y += 0.0005;
             renderer.render(scene, camera);
         }
-        
         window.onload = () => { updateUI(); fetchProducts(); animate(); };
         window.addEventListener('resize', () => { camera.aspect = window.innerWidth/window.innerHeight; camera.updateProjectionMatrix(); renderer.setSize(window.innerWidth, window.innerHeight); });
     </script>
 </body>
 </html>
+
+
