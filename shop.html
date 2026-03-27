@@ -19,11 +19,9 @@
         .color-dot.active { border-color: #00d632; transform: scale(1.1); }
 
         
-        /* Modals */
-        .modal { display: none; position: fixed; inset: 0; z-index: 1000; background: rgba(0,0,0,0.85); backdrop-filter: blur(12px); align-items: center; justify-content: center; padding: 20px; }
+        .modal { display: none; position: fixed; inset: 0; z-index: 1000; background: rgba(0,0,0,0.85); backdrop-filter: blur(12px); align-items: center; justify-content: center; padding: 20px; overflow-y: auto; }
         .modal.active { display: flex; }
         
-        /* Enhanced Toast Notifications */
         #toast { visibility: hidden; min-width: 300px; color: #fff; text-align: left; border-radius: 16px; padding: 20px; position: fixed; z-index: 2000; right: 30px; bottom: 30px; box-shadow: 0 20px 25px -5px rgba(0,0,0,0.5); font-weight: 600; border-left: 8px solid rgba(0,0,0,0.2); }
         #toast.success { background-color: #00d632; visibility: visible; animation: fadein 0.5s, fadeout 0.5s 3.5s; }
         #toast.error { background-color: #ef4444; visibility: visible; animation: fadein 0.5s, fadeout 0.5s 5.5s; }
@@ -33,16 +31,12 @@
         
         @keyframes spin { from { transform: rotate(0deg); } to { transform: rotate(360deg); } }
         .loading-spin { animation: spin 1s linear infinite; }
-        .tab-content { display: none; }
-        .tab-content.active { display: block; }
-        .nav-link.active { color: #00d632; border-bottom: 2px solid #00d632; }
-        .sub-tab-btn.active { background: #00d632; color: white; }
-
     </style>
 </head>
 <body>
 
     <div id="canvas-container"></div>
+
 
     <nav class="flex items-center justify-between px-8 py-6 sticky top-0 z-50 bg-slate-900/80 backdrop-blur-xl border-b border-white/5">
         <div class="text-2xl font-black tracking-tighter flex items-center gap-2">
@@ -50,14 +44,11 @@
             <span>Dimension3D</span>
         </div>
         <div class="flex items-center gap-8 text-sm font-semibold">
-            <button onclick="switchTab('shop')" class="nav-link active py-2 transition">Shop</button>
-            <button onclick="openOwnerMessage()" class="hover:text-[#00d632] transition">Message from Owner</button>
-            <button id="nav-orders" onclick="switchTab('orders')" class="hidden nav-link py-2 transition">Orders</button>
+            <span class="text-[#00d632] py-2">Shop</span>
             
             <div id="auth-buttons" class="flex items-center gap-4">
                 <button onclick="openModal('login-modal')" class="hover:text-[#00d632]">Login</button>
                 <button onclick="openModal('signup-modal')" class="bg-white/10 px-5 py-2 rounded-full hover:bg-white/20">Sign Up</button>
-
             </div>
             <div id="user-display" class="hidden flex items-center gap-4">
                 <span id="welcome-name" class="text-slate-300 font-normal"></span>
@@ -66,18 +57,16 @@
 
             <button onclick="toggleCart()" class="bg-[#00d632] px-6 py-2.5 rounded-full flex items-center gap-2 text-white shadow-lg">
                 Cart <span id="cart-count" class="bg-white text-[#00d632] rounded-full w-5 h-5 flex items-center justify-center text-[10px]">0</span>
+
             </button>
         </div>
     </nav>
 
     <main class="max-w-7xl mx-auto px-8">
-        
-        <!-- SHOP TAB -->
-        <section id="shop-tab" class="tab-content active pt-16 pb-20">
+        <section id="shop-tab" class="pt-16 pb-20">
             <div class="flex justify-between items-end mb-12">
                 <div>
                     <h1 class="text-5xl font-black mb-2 text-white">For <span class="gradient-text">Sale</span></h1>
-
                     <p class="text-slate-400">Premium 3D prints delivered to your door.</p>
                 </div>
                 <button onclick="fetchProducts()" class="flex items-center gap-2 text-xs font-bold text-slate-500 hover:text-[#00d632] uppercase tracking-widest">
@@ -87,82 +76,10 @@
             </div>
             <div id="product-grid" class="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-4 gap-8"></div>
         </section>
-
-        <!-- ORDERS TAB -->
-        <section id="orders-tab" class="tab-content pt-16 pb-20">
-            <div class="flex flex-col md:flex-row justify-between items-start md:items-center mb-10 gap-6">
-                <div>
-                    <h2 class="text-4xl font-black text-white">Cloud <span class="text-[#00d632]">Database</span></h2>
-                    <div class="flex gap-4 mt-4">
-                        <button onclick="toggleOrderView('active')" id="btn-active-view" class="sub-tab-btn active px-6 py-2 rounded-full text-xs font-bold uppercase transition">Active Orders</button>
-                        <button onclick="toggleOrderView('archived')" id="btn-archived-view" class="sub-tab-btn bg-white/5 px-6 py-2 rounded-full text-xs font-bold uppercase transition hover:bg-white/10">Archive</button>
-                    </div>
-
-                </div>
-                <button onclick="refreshCurrentOrderView()" class="text-xs font-bold text-[#00d632] uppercase flex items-center gap-2 bg-white/5 px-6 py-3 rounded-xl hover:bg-white/10 transition">
-                    <svg id="order-sync-icon" class="w-4 h-4" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path d="M4 4v5h.582m15.356 2A8.001 8.001 0 004.582 9m0 0H9m11 11v-5h-.581m0 0a8.003 8.003 0 01-15.357-2m15.357 2H15"></path></svg>
-                    Refresh Data
-                </button>
-            </div>
-
-            <div id="active-orders-container" class="glass-card rounded-3xl overflow-hidden overflow-x-auto">
-                <table class="w-full text-left border-collapse">
-                    <thead class="bg-white/5 border-b border-white/10">
-                        <tr>
-                            <th class="p-6 text-[10px] font-bold text-slate-400 uppercase">ID</th>
-                            <th class="p-6 text-[10px] font-bold text-slate-400 uppercase">Customer</th>
-                            <th class="p-6 text-[10px] font-bold text-slate-400 uppercase">Item</th>
-                            <th class="p-6 text-[10px] font-bold text-slate-400 uppercase">Color</th>
-                            <th class="p-6 text-[10px] font-bold text-slate-400 uppercase text-right">Action</th>
-                        </tr>
-                    </thead>
-                    <tbody id="orders-table-body" class="divide-y divide-white/5"></tbody>
-
-                </table>
-            </div>
-
-            <div id="archived-orders-container" class="hidden glass-card rounded-3xl overflow-hidden overflow-x-auto">
-                <table class="w-full text-left border-collapse">
-                    <thead class="bg-white/5 border-b border-white/10">
-                        <tr>
-                            <th class="p-6 text-[10px] font-bold text-slate-400 uppercase">ID</th>
-                            <th class="p-6 text-[10px] font-bold text-slate-400 uppercase">Customer</th>
-                            <th class="p-6 text-[10px] font-bold text-slate-400 uppercase text-right">Actions</th>
-                        </tr>
-                    </thead>
-                    <tbody id="archived-table-body" class="divide-y divide-white/5"></tbody>
-                </table>
-            </div>
-        </section>
     </main>
 
-    <!-- MODALS -->
 
-    <div id="owner-msg-modal" class="modal">
-        <div class="bg-slate-900 p-8 rounded-[2.5rem] w-full max-w-2xl border border-white/10 shadow-2xl flex flex-col">
-            <div class="flex justify-between items-center mb-6">
-                <h2 class="text-3xl font-black text-white">Message from <span class="text-[#00d632]">Owner</span></h2>
-                <button onclick="closeModal('owner-msg-modal')" class="text-slate-500 hover:text-white text-2xl">✕</button>
-            </div>
-            <div class="bg-white rounded-2xl p-8 min-h-[200px] flex items-center justify-center">
-                <div id="owner-doc-content" class="text-slate-800 text-center w-full">Syncing...</div>
-            </div>
-        </div>
-    </div>
-
-    <div id="payment-modal" class="modal">
-        <div class="bg-slate-900 p-10 rounded-[2.5rem] w-full max-w-md border border-white/10 text-center">
-            <div class="w-20 h-20 bg-[#00d632]/20 text-[#00d632] rounded-full flex items-center justify-center mx-auto mb-6">
-                <span class="text-4xl font-bold">$</span>
-            </div>
-            <h2 class="text-3xl font-black mb-2 text-white">Cash App Payment</h2>
-            <p class="text-slate-400 mb-8">Click below to pay via Cash App. We'll start production immediately!</p>
-
-            <a id="pay-link-btn" href="#" target="_blank" onclick="completeCheckout()" class="block w-full bg-[#00d632] py-4 rounded-xl font-black text-white hover:bg-[#00c22d] transition mb-4">Pay with Cash App</a>
-            <button onclick="closeModal('payment-modal')" class="text-slate-500 text-sm">Cancel</button>
-        </div>
-    </div>
-
+    <!-- AUTH MODALS -->
     <div id="login-modal" class="modal">
         <div class="bg-slate-900 p-10 rounded-[2.5rem] w-full max-w-md border border-white/10 shadow-2xl">
             <h2 class="text-3xl font-black mb-6">Login</h2>
@@ -174,22 +91,38 @@
     </div>
 
     <div id="signup-modal" class="modal">
-        <div class="bg-slate-900 p-10 rounded-[2.5rem] w-full max-w-md border border-white/10 shadow-2xl">
-            <h2 class="text-3xl font-black mb-6 text-white">Sign Up</h2>
+        <div class="bg-slate-900 p-10 rounded-[2.5rem] w-full max-w-md border border-white/10 shadow-2xl overflow-y-auto max-h-[90vh]">
+            <h2 class="text-3xl font-black mb-6 text-center">Sign Up</h2>
             <div class="grid grid-cols-2 gap-4 mb-4">
-
-                <input id="sig-first" type="text" placeholder="First" class="bg-white/5 border border-white/10 p-4 rounded-xl outline-none focus:border-[#00d632] text-white">
-                <input id="sig-last" type="text" placeholder="Last" class="bg-white/5 border border-white/10 p-4 rounded-xl outline-none focus:border-[#00d632] text-white">
+                <input id="reg-fn" type="text" placeholder="First Name" class="bg-white/5 border border-white/10 p-4 rounded-xl outline-none focus:border-[#00d632] text-white">
+                <input id="reg-ln" type="text" placeholder="Last Name" class="bg-white/5 border border-white/10 p-4 rounded-xl outline-none focus:border-[#00d632] text-white">
             </div>
-            <input id="sig-email" type="email" placeholder="Email" class="w-full bg-white/5 border border-white/10 p-4 rounded-xl mb-4 outline-none focus:border-[#00d632] text-white">
-            <input id="sig-addr" type="text" placeholder="Shipping Address" class="w-full bg-white/5 border border-white/10 p-4 rounded-xl mb-4 outline-none focus:border-[#00d632] text-white">
-            <input id="sig-user" type="text" placeholder="Username" class="w-full bg-white/5 border border-white/10 p-4 rounded-xl mb-4 outline-none focus:border-[#00d632] text-white">
-            <input id="sig-pass" type="password" placeholder="Password" class="w-full bg-white/5 border border-white/10 p-4 rounded-xl mb-6 outline-none focus:border-[#00d632] text-white">
-            <button onclick="handleSignUp()" class="w-full bg-[#00d632] py-4 rounded-xl font-black text-white">Join Now</button>
+            <input id="reg-em" type="email" placeholder="Email Address" class="w-full bg-white/5 border border-white/10 p-4 rounded-xl mb-4 outline-none focus:border-[#00d632] text-white">
+
+            <input id="reg-ad" type="text" placeholder="Shipping Address" class="w-full bg-white/5 border border-white/10 p-4 rounded-xl mb-4 outline-none focus:border-[#00d632] text-white">
+            <input id="reg-u" type="text" placeholder="Choose Username" class="w-full bg-white/5 border border-white/10 p-4 rounded-xl mb-4 outline-none focus:border-[#00d632] text-white">
+            <input id="reg-p" type="password" placeholder="Choose Password" class="w-full bg-white/5 border border-white/10 p-4 rounded-xl mb-6 outline-none focus:border-[#00d632] text-white">
+            
+            <button id="signup-btn" onclick="handleSignUp()" class="w-full bg-[#00d632] py-4 rounded-xl font-black text-white shadow-lg">Create Account</button>
             <button onclick="closeModal('signup-modal')" class="w-full text-slate-500 text-sm mt-4">Cancel</button>
         </div>
     </div>
 
+    <!-- PAYMENT MODAL -->
+    <div id="payment-modal" class="modal">
+        <div class="bg-slate-900 p-10 rounded-[2.5rem] w-full max-w-md border border-white/10 text-center">
+            <div class="w-20 h-20 bg-[#00d632]/20 text-[#00d632] rounded-full flex items-center justify-center mx-auto mb-6">
+                <span class="text-4xl font-bold">$</span>
+            </div>
+            <h2 class="text-3xl font-black mb-2 text-white">Cash App Payment</h2>
+            <p class="text-slate-400 mb-8">Click below to pay via Cash App. We'll start production immediately!</p>
+            <a id="pay-link-btn" href="#" target="_blank" onclick="completeCheckout()" class="block w-full bg-[#00d632] py-4 rounded-xl font-black text-white hover:bg-[#00c22d] transition mb-4">Pay with Cash App</a>
+            <button onclick="closeModal('payment-modal')" class="text-slate-500 text-sm">Cancel</button>
+
+        </div>
+    </div>
+
+    <!-- CART SIDEBAR -->
     <div id="cart-sidebar" class="fixed top-0 right-0 h-full w-full sm:w-[400px] bg-slate-900/95 backdrop-blur-2xl shadow-2xl z-[1000] translate-x-full transition-transform duration-500 border-l border-white/10 p-10 flex flex-col">
         <div class="flex justify-between items-center mb-10">
             <h3 class="text-3xl font-black text-white">Your Cart</h3>
@@ -197,7 +130,6 @@
         </div>
         <div id="cart-items" class="flex-grow space-y-4 overflow-y-auto"></div>
         <div class="pt-8 border-t border-white/10 mt-8">
-
             <div class="flex justify-between mb-8">
                 <span class="text-slate-400">Total</span>
                 <span id="cart-total" class="text-3xl font-black text-[#00d632]">$0.00</span>
@@ -206,121 +138,93 @@
         </div>
     </div>
 
+
     <div id="toast"></div>
 
     <script>
         // CONFIG
-        const USER_DB_URL = 'https://script.google.com/macros/s/AKfycbwyvljZ6f6jxfr1lXY-NebU3CBSkZ1d2criV-SGPM6XLCU0nODcYpNkDU_496oVjvG5/exec'; 
         const INVENTORY_CSV = 'https://docs.google.com/spreadsheets/d/e/2PACX-1vRVrA_8ndp0w3vWU_rwfKKNFsECqNMN6yW9yHN2VTOXRCIP5kQa1tLznW4DBmEasd_KR-LXcBcKNz9s/pub?gid=0&single=true&output=csv';
+        const USERS_CSV = 'https://docs.google.com/spreadsheets/d/e/2PACX-1vRrOQlzrUkEikdKt1_ni46XpSa0LIw6yF7RnBFpIjP_M1zwJK16J3MAvnWcF34wgl33GLT2t3xTlSvT/pub?gid=0&single=true&output=csv';
+        
+        // Updated with your provided Sign-Up Web App URL
+        const USER_DB_URL = 'https://script.google.com/macros/s/AKfycbyBZtGSPArYXM8LVn6DtUaXn9Gy9-fvdLRySfqbQejCT7eOnWbp3bVa0g8tOEJyDc7Z/exec';
 
         let user = JSON.parse(localStorage.getItem('dim3d_user') || 'null');
         let cart = [];
         let selectedColors = {};
-        let currentOrderView = 'active';
-
 
         function openModal(id) { document.getElementById(id).classList.add('active'); }
         function closeModal(id) { document.getElementById(id).classList.remove('active'); }
         function toggleCart() { document.getElementById('cart-sidebar').classList.toggle('translate-x-full'); }
 
-        function switchTab(tabId) {
-            document.querySelectorAll('.tab-content').forEach(tab => tab.classList.remove('active'));
-            document.querySelectorAll('.nav-link').forEach(link => link.classList.remove('active'));
-            document.getElementById(tabId + '-tab').classList.add('active');
-            if (event) event.target.classList.add('active');
-            if (tabId === 'orders') refreshCurrentOrderView();
-        }
+        // SIGN UP LOGIC (Writes via Script)
 
-        function toggleOrderView(view) {
-            currentOrderView = view;
-            document.querySelectorAll('.sub-tab-btn').forEach(btn => btn.classList.remove('active', 'bg-white/5'));
-            document.querySelectorAll('.sub-tab-btn').forEach(btn => btn.classList.add('bg-white/5'));
-            if (view === 'active') {
-                document.getElementById('btn-active-view').classList.add('active');
-                document.getElementById('btn-active-view').classList.remove('bg-white/5');
+        async function handleSignUp() {
+            const fn = document.getElementById('reg-fn').value;
+            const ln = document.getElementById('reg-ln').value;
+            const em = document.getElementById('reg-em').value;
+            const ad = document.getElementById('reg-ad').value;
+            const u = document.getElementById('reg-u').value;
+            const p = document.getElementById('reg-p').value;
 
-                document.getElementById('active-orders-container').classList.remove('hidden');
-                document.getElementById('archived-orders-container').classList.add('hidden');
-                renderOrders();
-            } else {
-                document.getElementById('btn-archived-view').classList.add('active');
-                document.getElementById('btn-archived-view').classList.remove('bg-white/5');
-                document.getElementById('active-orders-container').classList.add('hidden');
-                document.getElementById('archived-orders-container').classList.remove('hidden');
-                renderArchivedOrders();
-            }
-        }
+            if(!fn || !ln || !em || !ad || !u || !p) return showToast("Please fill all fields", "error");
 
-        function refreshCurrentOrderView() {
-            if (currentOrderView === 'active') renderOrders();
-            else renderArchivedOrders();
-        }
+            const btn = document.getElementById('signup-btn');
+            btn.innerText = "Creating Account...";
+            btn.disabled = true;
 
-        // ENHANCED ERROR HANDLING
-        async function openOwnerMessage() {
+            const url = `${USER_DB_URL}?action=signup&fn=${encodeURIComponent(fn)}&ln=${encodeURIComponent(ln)}&em=${encodeURIComponent(em)}&ad=${encodeURIComponent(ad)}&u=${encodeURIComponent(u)}&p=${encodeURIComponent(p)}`;
 
-            openModal('owner-msg-modal');
-            const contentDiv = document.getElementById('owner-doc-content');
-            contentDiv.innerHTML = "Fetching Cloud Message...";
             try {
-                const res = await fetch(`${USER_DB_URL}?action=getMessage`);
-                if (!res.ok) throw new Error(`HTTP ${res.status}: Connection Denied`);
+                const res = await fetch(url);
                 const data = await res.json();
-                if (data.error) throw new Error(data.error);
-                contentDiv.innerHTML = data.html || "Welcome! Type your message in Cell H2.";
-            } catch (e) { 
-                console.error(e);
-                contentDiv.innerHTML = `<span class="text-red-600 font-bold">Sync Failed: ${e.message}</span>`;
-                showToast(`Failed to load message: ${e.message}`, 'error');
+
+                if(data.success) {
+                    showToast("Account Created! You can now login.", "success");
+                    closeModal('signup-modal');
+                } else {
+                    showToast("Error: " + data.error, "error");
+                }
+            } catch (e) {
+                showToast("Connection Error", "error");
+            } finally {
+                btn.innerText = "Create Account";
+                btn.disabled = false;
             }
         }
 
+        // LOGIN LOGIC (Reads via CSV)
         async function handleLogin() {
             const u = document.getElementById('log-user').value;
             const p = document.getElementById('log-pass').value;
+            
 
             if (u === 'jay12vr' && p === '123211') {
-                saveUser({ username: 'jay12vr', address: 'Owner HQ' });
+                saveUser({ username: 'jay12vr' });
                 closeModal('login-modal');
-                showToast("Welcome back, Owner!", 'success');
+                showToast("Owner Login Successful!", 'success');
                 return;
             }
+
             try {
-                const res = await fetch(`${USER_DB_URL}?action=login&u=${encodeURIComponent(u)}&p=${encodeURIComponent(p)}`);
-                const data = await res.json();
-                if (data.success) { 
-                    saveUser(data.user); 
-                    closeModal('login-modal'); 
-                    showToast("Login Successful!", 'success');
+                const res = await fetch(USERS_CSV);
+                const csv = await res.text();
+                const users = csv.split(/\n/).slice(1).filter(l => l.trim()).map(l => {
+                    const c = l.split(/,(?=(?:(?:[^"]*"){2})*[^"]*$)/);
+                    return { u: c[4]?.trim(), p: c[5]?.trim() }; 
+                });
+
+                const found = users.find(usr => usr.u === u && usr.p === p);
+                if (found) {
+                    saveUser({ username: u });
+                    closeModal('login-modal');
+
+                    showToast("Welcome back!", 'success');
                 } else {
-                    showToast("Login Failed: Invalid Username or Password", 'error');
+                    showToast("Invalid credentials", 'error');
                 }
-            } catch (e) { 
-                showToast(`Login Sync Error: ${e.message}`, 'error'); 
-            }
-
-        }
-
-        async function handleSignUp() {
-            const fn = document.getElementById('sig-first').value;
-            const ln = document.getElementById('sig-last').value;
-            const em = document.getElementById('sig-email').value;
-            const ad = document.getElementById('sig-addr').value;
-            const u = document.getElementById('sig-user').value;
-            const p = document.getElementById('sig-pass').value;
-            
-            if (!u || !p) return showToast("Error: Username and Password required", 'error');
-            
-            const params = new URLSearchParams({ action: 'signup', fn, ln, em, ad, u, p });
-            try {
-                // Using mode: 'no-cors' means we can't read the response, but it bypasses preflights
-                await fetch(`${USER_DB_URL}?${params.toString()}`, { mode: 'no-cors' });
-                saveUser({ username: u, address: ad }); 
-                closeModal('signup-modal');
-                showToast("Account Created Successfully!", 'success');
-
-            } catch (e) { 
-                showToast(`Signup Failed: ${e.message}`, 'error'); 
+            } catch (e) {
+                showToast("Error reading database", 'error');
             }
         }
 
@@ -332,13 +236,13 @@
                 document.getElementById('auth-buttons').classList.add('hidden');
                 document.getElementById('user-display').classList.remove('hidden');
                 document.getElementById('welcome-name').innerText = user.username; 
-                if (user.username === 'jay12vr') document.getElementById('nav-orders').classList.remove('hidden');
             }
         }
 
-        async function fetchProducts() {
-            document.getElementById('sync-icon').classList.add('loading-spin');
 
+        async function fetchProducts() {
+            const syncIcon = document.getElementById('sync-icon');
+            if (syncIcon) syncIcon.classList.add('loading-spin');
             try {
                 const res = await fetch(INVENTORY_CSV);
                 const csv = await res.text();
@@ -347,18 +251,18 @@
                     return { id: i, n: c[0].replace(/"/g,''), p: parseFloat(c[1])||0, d: c[2].replace(/"/g,''), img: c[3].replace(/"/g,'') };
                 });
                 renderProducts(items);
-            } catch (e) { showToast(`Inventory Sync Failed: ${e.message}`, 'error'); }
-            finally { document.getElementById('sync-icon').classList.remove('loading-spin'); }
+            } catch (e) { showToast(`Sync Failed: ${e.message}`, 'error'); }
+            finally { if (syncIcon) syncIcon.classList.remove('loading-spin'); }
         }
 
         function renderProducts(items) {
             const grid = document.getElementById('product-grid');
             grid.innerHTML = items.map(item => {
                 selectedColors[item.id] = 'White';
+
                 return `
                 <div class="glass-card rounded-[2rem] p-6 flex flex-col h-full">
                     <img src="${item.img || 'https://placehold.co/400'}" class="rounded-2xl aspect-square object-cover mb-6">
-
                     <div class="flex justify-between mb-4"><h3 class="font-bold text-white">${item.n}</h3><span class="text-[#00d632] font-black">$${item.p.toFixed(2)}</span></div>
                     <div class="flex gap-2 mb-6">
                         <div onclick="selectColor('${item.id}', 'White')" class="color-dot dot-${item.id} bg-white active" data-color="White"></div>
@@ -375,12 +279,9 @@
         }
 
         function addToCart(id, n, p) {
-            if (!user) {
-                showToast("Please Login to add items to cart", 'error');
-                return openModal('login-modal');
 
-            }
-            cart.push({ n, p, c: selectedColors[id], cust: user.username });
+            if (!user) return openModal('login-modal');
+            cart.push({ n, p, c: selectedColors[id] });
             updateCartUI(); 
             showToast(`${n} added to cart!`, 'success');
         }
@@ -404,108 +305,21 @@
             openModal('payment-modal');
         }
 
-        async function completeCheckout() {
-            const orderId = '#' + Math.floor(Math.random()*9000 + 1000);
-            try {
-                for (let item of cart) {
-                    const params = new URLSearchParams({
-                        action: 'addOrder', id: orderId, cust: item.cust, n: item.n, c: item.c, addr: user.address || 'Standard Shipping'
-                    });
-                    const response = await fetch(`${USER_DB_URL}?${params.toString()}`, { mode: 'no-cors' });
-                    // No-cors won't let us see results, but we assume success if no error thrown
-                }
-                cart = []; updateCartUI(); closeModal('payment-modal'); toggleCart();
-                showToast(`Order ${orderId} saved! Opening Cash App...`, 'success');
-            } catch (e) { 
-                showToast(`Order Failed: ${e.message}`, 'error'); 
-
-                console.error(e); 
-            }
+        function completeCheckout() {
+            showToast(`Opening Cash App...`, 'success');
+            cart = []; updateCartUI(); closeModal('payment-modal'); toggleCart();
         }
 
-        async function renderOrders() {
-            document.getElementById('order-sync-icon').classList.add('loading-spin');
-            try {
-                const res = await fetch(`${USER_DB_URL}?action=getOrders`);
-                if (!res.ok) throw new Error("Cloud Database Offline");
-                const orders = await res.json();
-                document.getElementById('orders-table-body').innerHTML = orders.map(o => `
-                <tr class="hover:bg-white/5 transition">
-                    <td class="p-6 text-sky-400 font-mono text-sm">${o.id}</td>
-                    <td class="p-6 font-bold text-sm text-white">${o.cust}</td>
-                    <td class="p-6 text-sm text-slate-300">${o.n}</td>
-                    <td class="p-6"><span class="px-2 py-1 bg-slate-800 rounded text-[10px] font-black text-[#00d632]">${o.c}</span></td>
-                    <td class="p-6 text-right"><button onclick="archiveOrder('${o.id}')" class="text-orange-400 font-bold uppercase text-xs">Archive</button></td>
-                </tr>`).join('');
-                showToast("Orders refreshed.", 'success');
-
-            } catch (e) {
-                showToast(`Database Sync Error: ${e.message}`, 'error');
-            }
-            finally { document.getElementById('order-sync-icon').classList.remove('loading-spin'); }
-        }
-
-        async function renderArchivedOrders() {
-            document.getElementById('order-sync-icon').classList.add('loading-spin');
-            try {
-                const res = await fetch(`${USER_DB_URL}?action=getArchived`);
-                if (!res.ok) throw new Error("Cloud Archive Offline");
-                const orders = await res.json();
-                document.getElementById('archived-table-body').innerHTML = orders.map(o => {
-                    const expiry = new Date(parseInt(o.time) + (60 * 60 * 1000)).toLocaleTimeString([], { hour: '2-digit', minute: '2-digit' });
-                    return `
-                    <tr class="hover:bg-white/5 transition">
-                        <td class="p-6 text-slate-500 font-mono text-sm">${o.id}</td>
-                        <td class="p-6 text-slate-400 text-sm">${o.cust} (Wipes: ${expiry})</td>
-                        <td class="p-6 text-right flex justify-end gap-6">
-
-                            <button onclick="unarchiveOrder('${o.id}')" class="text-[#00d632] font-bold text-xs uppercase">Unarchive</button>
-                            <button onclick="deleteArchived('${o.id}')" class="text-red-400 font-bold text-xs uppercase">Delete</button>
-                        </td>
-                    </tr>`;
-                }).join('');
-            } catch (e) {
-                showToast(`Archive Sync Error: ${e.message}`, 'error');
-            }
-            finally { document.getElementById('order-sync-icon').classList.remove('loading-spin'); }
-        }
-
-        async function archiveOrder(id) { 
-            try {
-                await fetch(`${USER_DB_URL}?action=archiveOrder&id=${id}`, { mode: 'no-cors' }); 
-                showToast("Order moved to archive.", 'success');
-                refreshCurrentOrderView();
-            } catch (e) { showToast(`Archive Error: ${e.message}`, 'error'); }
-        }
-
-
-        async function unarchiveOrder(id) { 
-            try {
-                await fetch(`${USER_DB_URL}?action=unarchiveOrder&id=${id}`, { mode: 'no-cors' }); 
-                showToast("Order restored to active list.", 'success');
-                refreshCurrentOrderView();
-            } catch (e) { showToast(`Restore Error: ${e.message}`, 'error'); }
-        }
-
-        async function deleteArchived(id) { 
-            try {
-                await fetch(`${USER_DB_URL}?action=deleteArchived&id=${id}`, { mode: 'no-cors' }); 
-                showToast("Order permanently deleted.", 'success');
-                refreshCurrentOrderView();
-            } catch (e) { showToast(`Deletion Error: ${e.message}`, 'error'); }
-        }
-
-        // Updated Toast with Type parameter
         function showToast(m, type = 'success') { 
             const t = document.getElementById('toast'); 
-
             t.innerText = m; 
-            t.className = type; // success or error
+            t.className = type; 
             setTimeout(() => t.className = "", 4000); 
         }
 
         // 3D BACKGROUND
         const scene = new THREE.Scene();
+
         const camera = new THREE.PerspectiveCamera(75, window.innerWidth / window.innerHeight, 0.1, 1000);
         const renderer = new THREE.WebGLRenderer({ alpha: true, antialias: true });
         renderer.setSize(window.innerWidth, window.innerHeight);
@@ -518,7 +332,6 @@
         }
         starGeometry.setAttribute('position', new THREE.Float32BufferAttribute(starVertices, 3));
         const stars = new THREE.Points(starGeometry, starMaterial);
-
         scene.add(stars);
         const knot = new THREE.Mesh(new THREE.TorusKnotGeometry(10, 3, 100, 16), new THREE.MeshBasicMaterial({ color: 0x00d632, wireframe: true }));
         scene.add(knot);
@@ -526,6 +339,7 @@
         let mouseX = 0, mouseY = 0;
         document.addEventListener('mousemove', (e) => { mouseX = (e.clientX/window.innerWidth)-0.5; mouseY = (e.clientY/window.innerHeight)-0.5; });
         function animate() {
+
             requestAnimationFrame(animate);
             knot.rotation.x += 0.002 + (mouseY * 0.02);
             knot.rotation.y += 0.003 + (mouseX * 0.02);
