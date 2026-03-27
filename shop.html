@@ -62,6 +62,7 @@
 
     <main class="max-w-7xl mx-auto px-8">
         
+        <!-- SHOP TAB -->
         <section id="shop-tab" class="tab-content active pt-16 pb-20">
             <div class="flex justify-between items-end mb-12">
                 <div>
@@ -76,13 +77,14 @@
             <div id="product-grid" class="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-4 gap-8"></div>
         </section>
 
+        <!-- ORDERS TAB -->
         <section id="orders-tab" class="tab-content pt-16 pb-20">
             <div class="flex flex-col md:flex-row justify-between items-start md:items-center mb-10 gap-6">
                 <div>
                     <h2 class="text-4xl font-black text-white">Cloud <span class="text-[#00d632]">Database</span></h2>
                     <div class="flex gap-4 mt-4">
                         <button onclick="toggleOrderView('active')" id="btn-active-view" class="sub-tab-btn active px-6 py-2 rounded-full text-xs font-bold uppercase transition">Active Orders</button>
-                        <button onclick="toggleOrderView('archived')" id="btn-archived-view" class="sub-tab-btn bg-white/5 px-6 py-2 rounded-full text-xs font-bold uppercase transition hover:bg-white/10">Archive (Auto-Deletes in 1h)</button>
+                        <button onclick="toggleOrderView('archived')" id="btn-archived-view" class="sub-tab-btn bg-white/5 px-6 py-2 rounded-full text-xs font-bold uppercase transition hover:bg-white/10">Archive</button>
                     </div>
                 </div>
                 <button onclick="refreshCurrentOrderView()" class="text-xs font-bold text-[#00d632] uppercase flex items-center gap-2 bg-white/5 px-6 py-3 rounded-xl hover:bg-white/10 transition">
@@ -190,8 +192,8 @@
     <div id="toast"></div>
 
     <script>
-        // ULTIMATE REPAIR CONFIG
-        const USER_DB_URL = 'https://script.google.com/macros/s/AKfycbyFfb8VEKsdT9qeOfNavk7gSQ8uJvhAj1do4hXjqPj3vvTWSPhqWsBLnx9Z7svO_j30/exec'; 
+        // CONFIG - Syncing with your latest Apps Script
+        const USER_DB_URL = 'https://script.google.com/macros/s/AKfycbwyvljZ6f6jxfr1lXY-NebU3CBSkZ1d2criV-SGPM6XLCU0nODcYpNkDU_496oVjvG5/exec'; 
         const INVENTORY_CSV = 'https://docs.google.com/spreadsheets/d/e/2PACX-1vRVrA_8ndp0w3vWU_rwfKKNFsECqNMN6yW9yHN2VTOXRCIP5kQa1tLznW4DBmEasd_KR-LXcBcKNz9s/pub?gid=0&single=true&output=csv';
 
         let user = JSON.parse(localStorage.getItem('dim3d_user') || 'null');
@@ -242,7 +244,7 @@
             try {
                 const res = await fetch(`${USER_DB_URL}?action=getMessage`);
                 const data = await res.json();
-                contentDiv.innerHTML = data.html || "Set your message in Cell H2!";
+                contentDiv.innerHTML = data.html || "Type your message in Cell H2!";
             } catch (e) { contentDiv.innerHTML = "Sync Error: Check Script."; }
         }
 
@@ -272,7 +274,6 @@
                 password: document.getElementById('sig-pass').value 
             };
             try {
-                // Using no-cors for signup POST
                 await fetch(USER_DB_URL, { method: 'POST', mode: 'no-cors', body: JSON.stringify(signupData) });
                 saveUser({ username: signupData.username, address: signupData.address }); 
                 closeModal('signup-modal');
@@ -355,7 +356,7 @@
         async function completeCheckout() {
             const orderId = '#' + Math.floor(Math.random()*9000 + 1000);
             try {
-                // FORCE SAVE: Using mode: 'no-cors' to bypass all security blocks
+                // FORCE SAVE via GET for reliability
                 for (let item of cart) {
                     const params = new URLSearchParams({
                         action: 'addOrder',
@@ -365,13 +366,11 @@
                         c: item.c,
                         addr: user.address || 'Standard Shipping'
                     });
-                    const target = `${USER_DB_URL}?${params.toString()}`;
-                    console.log("Saving order to Google Sheet:", target);
-                    await fetch(target, { mode: 'no-cors' });
+                    await fetch(`${USER_DB_URL}?${params.toString()}`, { mode: 'no-cors' });
                 }
                 cart = []; updateCartUI(); closeModal('payment-modal'); toggleCart();
-                showToast("Order Saved!");
-            } catch (e) { showToast("Save Error"); console.error(e); }
+                showToast("Order Placed!");
+            } catch (e) { showToast("Save Error"); }
         }
 
         async function renderOrders() {
