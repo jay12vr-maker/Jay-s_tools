@@ -8,8 +8,8 @@
     <script src="https://cdnjs.cloudflare.com/ajax/libs/three.js/r128/three.min.js"></script>
     <style>
         @import url('https://fonts.googleapis.com/css2?family=Inter:wght@300;400;600;800&display=swap');
-        body { font-family: 'Inter', sans-serif; background-color: #0f172a; color: #f8fafc; scroll-behavior: smooth; }
-        #canvas-container { position: fixed; top: 0; left: 0; width: 100%; height: 100%; z-index: -1; opacity: 0.2; }
+        body { font-family: 'Inter', sans-serif; background-color: #0f172a; color: #f8fafc; scroll-behavior: smooth; overflow-x: hidden; }
+        #canvas-container { position: fixed; top: 0; left: 0; width: 100%; height: 100%; z-index: -1; opacity: 0.2; pointer-events: none; }
         .glass-card { background: rgba(30, 41, 59, 0.7); backdrop-filter: blur(12px); border: 1px solid rgba(255, 255, 255, 0.1); transition: all 0.3s cubic-bezier(0.4, 0, 0.2, 1); }
         .glass-card:hover { transform: translateY(-8px); border-color: #00d632; }
         .gradient-text { background: linear-gradient(90deg, #00d632, #38bdf8); -webkit-background-clip: text; -webkit-text-fill-color: transparent; }
@@ -17,12 +17,16 @@
         .color-dot.active { border-color: #00d632; transform: scale(1.1); }
         .modal { display: none; position: fixed; inset: 0; z-index: 1000; background: rgba(0,0,0,0.85); backdrop-filter: blur(12px); align-items: center; justify-content: center; padding: 20px; }
         .modal.active { display: flex; }
-        #toast { visibility: hidden; min-width: 250px; background-color: #00d632; color: #fff; text-align: center; border-radius: 12px; padding: 16px; position: fixed; z-index: 2000; right: 30px; bottom: 30px; }
+
+        #toast { visibility: hidden; min-width: 250px; background-color: #00d632; color: #fff; text-align: center; border-radius: 12px; padding: 16px; position: fixed; z-index: 2000; right: 30px; bottom: 30px; box-shadow: 0 10px 15px -3px rgba(0,0,0,0.4); }
         #toast.show { visibility: visible; animation: fadein 0.5s, fadeout 0.5s 2.5s; }
         @keyframes fadein { from {bottom: 0; opacity: 0;} to {bottom: 30px; opacity: 1;} }
+        @keyframes fadeout { from {bottom: 30px; opacity: 1;} to {bottom: 0; opacity: 0;} }
         @keyframes spin { from { transform: rotate(0deg); } to { transform: rotate(360deg); } }
         .loading-spin { animation: spin 1s linear infinite; }
-        #owner-doc-content { color: #334155; line-height: 1.6; font-size: 1.1rem; }
+        .tab-content { display: none; }
+        .tab-content.active { display: block; }
+        .nav-link.active { color: #00d632; border-bottom: 2px solid #00d632; }
     </style>
 </head>
 <body>
@@ -33,12 +37,12 @@
         <div class="text-2xl font-black tracking-tighter flex items-center gap-2">
             <div class="w-10 h-10 bg-[#00d632] rounded-xl flex items-center justify-center shadow-lg text-white">3D</div>
             <span>Dimension3D</span>
+
         </div>
         <div class="flex items-center gap-8 text-sm font-semibold">
-            <a href="index.html" class="hover:text-[#00d632] transition">Home</a>
+            <button onclick="switchTab('shop')" class="nav-link active py-2 transition">Shop</button>
             <button onclick="openOwnerMessage()" class="hover:text-[#00d632] transition">Message from Owner</button>
-            <a href="#shop" class="hover:text-[#00d632] transition">Shop</a>
-            <a id="nav-orders" href="#orders-section" class="hidden hover:text-[#00d632] transition">Orders</a>
+            <button id="nav-orders" onclick="switchTab('orders')" class="hidden nav-link py-2 transition">Orders</button>
             
             <div id="auth-buttons" class="flex items-center gap-4">
                 <button onclick="openModal('login-modal')" class="hover:text-[#00d632]">Login</button>
@@ -53,49 +57,54 @@
                 Cart <span id="cart-count" class="bg-white text-[#00d632] rounded-full w-5 h-5 flex items-center justify-center text-[10px]">0</span>
             </button>
         </div>
+
     </nav>
 
-    <section id="shop" class="px-8 pt-16 pb-20 max-w-7xl mx-auto">
-        <div class="flex justify-between items-end mb-12">
-            <div>
-                <h1 class="text-5xl font-black mb-2 text-white">For <span class="gradient-text">Sale</span></h1>
-                <p class="text-slate-400">Premium 3D prints delivered to your door.</p>
+    <main class="max-w-7xl mx-auto px-8">
+        <section id="shop-tab" class="tab-content active pt-16 pb-20">
+            <div class="flex justify-between items-end mb-12">
+                <div>
+                    <h1 class="text-5xl font-black mb-2 text-white">For <span class="gradient-text">Sale</span></h1>
+                    <p class="text-slate-400">Premium 3D prints delivered to your door.</p>
+                </div>
+                <button onclick="fetchProducts()" class="flex items-center gap-2 text-xs font-bold text-slate-500 hover:text-[#00d632] uppercase tracking-widest">
+                    <svg id="sync-icon" class="w-4 h-4" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path d="M4 4v5h.582m15.356 2A8.001 8.001 0 004.582 9m0 0H9m11 11v-5h-.581m0 0a8.003 8.003 0 01-15.357-2m15.357 2H15"></path></svg>
+                    Refresh Shop
+                </button>
             </div>
-            <button onclick="fetchProducts()" class="flex items-center gap-2 text-xs font-bold text-slate-500 hover:text-[#00d632] uppercase tracking-widest">
-                <svg id="sync-icon" class="w-4 h-4" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path d="M4 4v5h.582m15.356 2A8.001 8.001 0 004.582 9m0 0H9m11 11v-5h-.581m0 0a8.003 8.003 0 01-15.357-2m15.357 2H15"></path></svg>
-                Refresh Shop
-            </button>
-        </div>
-        <div id="product-grid" class="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-4 gap-8"></div>
-    </section>
+            <div id="product-grid" class="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-4 gap-8"></div>
+        </section>
 
-    <section id="orders-section" class="hidden px-8 py-20 max-w-7xl mx-auto border-t border-white/5 bg-slate-900/40 rounded-[3rem] my-20">
-        <div class="flex justify-between items-center mb-10">
-            <div>
-                <h2 class="text-3xl font-black text-white">Incoming Orders</h2>
-                <p class="text-slate-500">Manage your production queue here.</p>
+        <section id="orders-tab" class="tab-content pt-16 pb-20">
+            <div class="flex justify-between items-center mb-10">
+
+                <div>
+                    <h2 class="text-4xl font-black text-white">Incoming <span class="text-[#00d632]">Orders</span></h2>
+                    <p class="text-slate-500">Real-time production queue from your cloud database.</p>
+                </div>
+                <button onclick="renderOrders()" class="text-xs font-bold text-[#00d632] uppercase flex items-center gap-2 bg-white/5 px-6 py-3 rounded-xl hover:bg-white/10 transition">
+                    <svg id="order-sync-icon" class="w-4 h-4" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path d="M4 4v5h.582m15.356 2A8.001 8.001 0 004.582 9m0 0H9m11 11v-5h-.581m0 0a8.003 8.003 0 01-15.357-2m15.357 2H15"></path></svg>
+                    Refresh Orders
+                </button>
             </div>
-            <button onclick="renderOrders()" class="text-xs font-bold text-[#00d632] uppercase flex items-center gap-2">
-                <svg id="order-sync-icon" class="w-4 h-4" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path d="M4 4v5h.582m15.356 2A8.001 8.001 0 004.582 9m0 0H9m11 11v-5h-.581m0 0a8.003 8.003 0 01-15.357-2m15.357 2H15"></path></svg>
-                Refresh Cloud Orders
-            </button>
-        </div>
-        <div class="glass-card rounded-3xl overflow-hidden overflow-x-auto">
-            <table class="w-full text-left">
-                <thead class="bg-white/5 border-b border-white/10">
-                    <tr>
-                        <th class="p-6 text-[10px] font-bold text-slate-400 uppercase">Order ID</th>
-                        <th class="p-6 text-[10px] font-bold text-slate-400 uppercase">Customer</th>
-                        <th class="p-6 text-[10px] font-bold text-slate-400 uppercase">Item</th>
-                        <th class="p-6 text-[10px] font-bold text-slate-400 uppercase">Color</th>
-                        <th class="p-6 text-[10px] font-bold text-slate-400 uppercase">Address</th>
-                        <th class="p-6 text-[10px] font-bold text-slate-400 uppercase text-right">Action</th>
-                    </tr>
-                </thead>
-                <tbody id="orders-table-body" class="divide-y divide-white/5"></tbody>
-            </table>
-        </div>
-    </section>
+            <div class="glass-card rounded-3xl overflow-hidden overflow-x-auto">
+                <table class="w-full text-left border-collapse">
+                    <thead class="bg-white/5 border-b border-white/10">
+                        <tr>
+                            <th class="p-6 text-[10px] font-bold text-slate-400 uppercase">Order ID</th>
+                            <th class="p-6 text-[10px] font-bold text-slate-400 uppercase">Customer</th>
+                            <th class="p-6 text-[10px] font-bold text-slate-400 uppercase">Item</th>
+                            <th class="p-6 text-[10px] font-bold text-slate-400 uppercase">Color</th>
+                            <th class="p-6 text-[10px] font-bold text-slate-400 uppercase">Address</th>
+                            <th class="p-6 text-[10px] font-bold text-slate-400 uppercase text-right">Action</th>
+
+                        </tr>
+                    </thead>
+                    <tbody id="orders-table-body" class="divide-y divide-white/5"></tbody>
+                </table>
+            </div>
+        </section>
+    </main>
 
     <div id="owner-msg-modal" class="modal">
         <div class="bg-slate-900 p-8 rounded-[2.5rem] w-full max-w-2xl border border-white/10 shadow-2xl flex flex-col">
@@ -107,11 +116,11 @@
                 <div id="owner-doc-content" class="text-slate-800 text-center w-full">
                     <div class="flex items-center justify-center italic text-slate-400">
                         <svg class="w-6 h-6 loading-spin mr-2" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path d="M4 4v5h.582m15.356 2A8.001 8.001 0 004.582 9m0 0H9m11 11v-5h-.581m0 0a8.003 8.003 0 01-15.357-2m15.357 2H15"></path></svg>
-                        Reading from Sheet H2...
+                        Syncing with Sheet H2...
+
                     </div>
                 </div>
             </div>
-            <p class="text-slate-500 text-[10px] mt-4 text-center uppercase tracking-widest font-bold">Syncing from row 2</p>
         </div>
     </div>
 
@@ -121,13 +130,14 @@
                 <span class="text-4xl font-bold">$</span>
             </div>
             <h2 class="text-3xl font-black mb-2 text-white">Cash App Payment</h2>
-            <p class="text-slate-400 mb-8">To finish your order, please pay via Cash App. We will start printing immediately after confirmation!</p>
+            <p class="text-slate-400 mb-8">Pay via Cash App to start your print. Total includes shipping!</p>
             <a id="pay-link-btn" href="#" target="_blank" onclick="completeCheckout()" class="block w-full bg-[#00d632] py-4 rounded-xl font-black text-white hover:bg-[#00c22d] transition mb-4">Pay with Cash App</a>
             <button onclick="closeModal('payment-modal')" class="text-slate-500 text-sm">Cancel</button>
         </div>
     </div>
 
     <div id="login-modal" class="modal">
+
         <div class="bg-slate-900 p-10 rounded-[2.5rem] w-full max-w-md border border-white/10 shadow-2xl">
             <h2 class="text-3xl font-black mb-6">Login</h2>
             <input id="log-user" type="text" placeholder="Username" class="w-full bg-white/5 border border-white/10 p-4 rounded-xl mb-4 outline-none focus:border-[#00d632] text-white">
@@ -147,6 +157,7 @@
             <input id="sig-email" type="email" placeholder="Email" class="w-full bg-white/5 border border-white/10 p-4 rounded-xl mb-4 outline-none focus:border-[#00d632] text-white">
             <input id="sig-addr" type="text" placeholder="Shipping Address" class="w-full bg-white/5 border border-white/10 p-4 rounded-xl mb-4 outline-none focus:border-[#00d632] text-white">
             <input id="sig-user" type="text" placeholder="Username" class="w-full bg-white/5 border border-white/10 p-4 rounded-xl mb-4 outline-none focus:border-[#00d632] text-white">
+
             <input id="sig-pass" type="password" placeholder="Password" class="w-full bg-white/5 border border-white/10 p-4 rounded-xl mb-6 outline-none focus:border-[#00d632] text-white">
             <button onclick="handleSignUp()" class="w-full bg-[#00d632] py-4 rounded-xl font-black text-white">Join Now</button>
             <button onclick="closeModal('signup-modal')" class="w-full text-slate-500 text-sm mt-4">Cancel</button>
@@ -166,12 +177,15 @@
             </div>
             <button onclick="openPaymentModal()" class="w-full bg-[#00d632] py-5 rounded-2xl font-black text-white hover:bg-[#00c22d] transition">Checkout</button>
         </div>
+
     </div>
 
     <div id="toast"></div>
 
     <script>
-        const USER_DB_URL = 'https://script.google.com/macros/s/AKfycbwPQ0XPpvykwy6uwxA9uiFOATq_Logr7Q58hHqpru8FHsgN79G9XYkK6SzMe2pn2M6w/exec'; 
+        // --- CONFIGURATION ---
+        // Updated with your new Web App URL
+        const USER_DB_URL = 'https://script.google.com/macros/s/AKfycbwozGDcyFTDpvzE0ZW-LbEukzWrDuhCfrP8qtuA-S5kT4xaO6FPTxx-ETaJhs7AqNzg/exec'; 
         const INVENTORY_CSV = 'https://docs.google.com/spreadsheets/d/e/2PACX-1vRVrA_8ndp0w3vWU_rwfKKNFsECqNMN6yW9yHN2VTOXRCIP5kQa1tLznW4DBmEasd_KR-LXcBcKNz9s/pub?gid=0&single=true&output=csv';
 
         let user = JSON.parse(localStorage.getItem('dim3d_user') || 'null');
@@ -183,17 +197,26 @@
         function closeModal(id) { document.getElementById(id).classList.remove('active'); }
         function toggleCart() { document.getElementById('cart-sidebar').classList.toggle('translate-x-full'); }
 
+
+        function switchTab(tabId) {
+            document.querySelectorAll('.tab-content').forEach(tab => tab.classList.remove('active'));
+            document.querySelectorAll('.nav-link').forEach(link => link.classList.remove('active'));
+            document.getElementById(tabId + '-tab').classList.add('active');
+            if (event) event.target.classList.add('active');
+            if (tabId === 'orders') renderOrders();
+        }
+
         async function openOwnerMessage() {
             openModal('owner-msg-modal');
             const contentDiv = document.getElementById('owner-doc-content');
             if (cachedOwnerMessage) { contentDiv.innerHTML = cachedOwnerMessage; return; }
             try {
-                // Calls action=getMessage which is now set to Cell H2
                 const res = await fetch(`${USER_DB_URL}?action=getMessage`);
                 const data = await res.json();
                 if (data.html) { cachedOwnerMessage = data.html; contentDiv.innerHTML = data.html; }
             } catch (e) { contentDiv.innerHTML = "<p class='text-red-500'>Error reading H2 message.</p>"; }
         }
+
 
         async function handleLogin() {
             const u = document.getElementById('log-user').value;
@@ -203,18 +226,19 @@
                 closeModal('login-modal'); return;
             }
             try {
-                const res = await fetch(`${USER_DB_URL}?action=login&u=${u}&p=${p}`);
+                const res = await fetch(`${USER_DB_URL}?action=login&u=${encodeURIComponent(u)}&p=${encodeURIComponent(p)}`);
                 const data = await res.json();
                 if (data.success) { saveUser(data.user); closeModal('login-modal'); }
-                else showToast("Login Failed");
-            } catch (e) { showToast("Connection error"); }
+                else showToast("Invalid Credentials");
+            } catch (e) { showToast("Login Error"); }
         }
 
         async function handleSignUp() {
             const u = document.getElementById('sig-user').value;
             try {
-                const check = await fetch(`${USER_DB_URL}?action=check&u=${u}`).then(r => r.json());
-                if (check.exists) { showToast("Account exists!"); closeModal('signup-modal'); openModal('login-modal'); return; }
+                const check = await fetch(`${USER_DB_URL}?action=check&u=${encodeURIComponent(u)}`).then(r => r.json());
+
+                if (check.exists) { showToast("Account already exists!"); closeModal('signup-modal'); openModal('login-modal'); return; }
             } catch (e) {}
 
             const newUser = { 
@@ -230,8 +254,10 @@
                 await fetch(USER_DB_URL, { method: 'POST', body: JSON.stringify(newUser) });
                 saveUser({ firstName: newUser.firstName, username: newUser.username, address: newUser.address }); 
                 closeModal('signup-modal');
-            } catch (e) { showToast("Registration error"); }
+                showToast("Account Created!");
+            } catch (e) { showToast("Registration Failed"); }
         }
+
 
         function saveUser(u) { user = u; localStorage.setItem('dim3d_user', JSON.stringify(user)); updateUI(); }
         function logout() { localStorage.removeItem('dim3d_user'); location.reload(); }
@@ -243,8 +269,6 @@
                 document.getElementById('welcome-name').innerText = user.username;
                 if (user.username === 'jay12vr') {
                     document.getElementById('nav-orders').classList.remove('hidden');
-                    document.getElementById('orders-section').classList.remove('hidden');
-                    renderOrders();
                 }
             }
         }
@@ -254,12 +278,13 @@
             try {
                 const res = await fetch(INVENTORY_CSV);
                 const csv = await res.text();
+
                 const items = csv.split(/\n/).slice(1).filter(l => l.trim()).map((l, i) => {
                     const c = l.split(/,(?=(?:(?:[^"]*"){2})*[^"]*$)/);
                     return { id: i, n: c[0].replace(/"/g,''), p: parseFloat(c[1])||0, d: c[2].replace(/"/g,''), img: c[3].replace(/"/g,'') };
                 });
                 renderProducts(items);
-            } catch (e) { showToast("Inventory Error"); }
+            } catch (e) { showToast("Inventory Load Error"); }
             finally { document.getElementById('sync-icon').classList.remove('loading-spin'); }
         }
 
@@ -273,6 +298,7 @@
                     <div class="flex justify-between mb-4"><h3 class="font-bold text-white">${item.n}</h3><span class="text-[#00d632] font-black">$${item.p.toFixed(2)}</span></div>
                     <div class="flex gap-2 mb-6">
                         <div onclick="selectColor('${item.id}', 'White')" data-color="White" class="color-dot dot-${item.id} bg-white active"></div>
+
                         <div onclick="selectColor('${item.id}', 'Black')" data-color="Black" class="color-dot dot-${item.id} bg-black border border-white/10"></div>
                         <div onclick="selectColor('${item.id}', 'Blue')" data-color="Blue" class="color-dot dot-${item.id} bg-blue-600"></div>
                     </div>
@@ -292,6 +318,7 @@
             updateCartUI(); showToast("Added to Cart!");
         }
 
+
         function updateCartUI() {
             document.getElementById('cart-count').innerText = cart.length;
             const total = cart.reduce((s, i) => s + i.p, 0);
@@ -306,30 +333,37 @@
         function openPaymentModal() {
             if (!cart.length) return;
             const total = cart.reduce((s, i) => s + i.p, 0).toFixed(2);
-            // Cash App link: Prefix https://cash.app/$Jay12vr/ + total suffix
+            // Cash App Prefix: https://cash.app/$Jay12vr/ 
+            // Suffix: Total Amount
             document.getElementById('pay-link-btn').href = `https://cash.app{total}`;
             openModal('payment-modal');
         }
 
+
         async function completeCheckout() {
             const id = '#' + Math.floor(Math.random()*9000 + 1000);
-            showToast("Processing Order...");
+            showToast("Syncing Order...");
             try {
                 for (let item of cart) {
-                    await fetch(USER_DB_URL, { method: 'POST', body: JSON.stringify({ action: 'addOrder', id, ...item }) });
+                    await fetch(USER_DB_URL, { 
+                        method: 'POST', 
+                        mode: 'no-cors', 
+                        body: JSON.stringify({ action: 'addOrder', id, ...item }) 
+                    });
                 }
-                cart = []; updateCartUI(); closeModal('payment-modal'); toggleCart(); renderOrders();
+                cart = []; updateCartUI(); closeModal('payment-modal'); toggleCart();
                 showToast("Order Processed!");
-            } catch (e) { showToast("Error saving order."); }
+            } catch (e) { showToast("Cloud Sync Issue"); }
         }
 
         async function renderOrders() {
             if (!user || user.username !== 'jay12vr') return;
             document.getElementById('order-sync-icon').classList.add('loading-spin');
+
             try {
                 const res = await fetch(`${USER_DB_URL}?action=getOrders`);
                 const orders = await res.json();
-                document.getElementById('orders-table-body').innerHTML = orders.map(o => `
+                document.getElementById('orders-table-body').innerHTML = orders.length ? orders.map(o => `
                 <tr class="hover:bg-white/5 transition">
                     <td class="p-6 text-sky-400 font-mono text-sm">${o.id}</td>
                     <td class="p-6 font-bold text-sm text-white">${o.cust}</td>
@@ -339,18 +373,19 @@
                     <td class="p-6 text-right">
                         <button onclick="deleteOrder('${o.id}')" class="text-red-400 hover:text-red-300 font-bold text-xs uppercase">Remove</button>
                     </td>
-                </tr>`).join('');
+                </tr>`).join('') : `<tr><td colspan="6" class="p-10 text-center text-slate-500 italic">No orders in queue.</td></tr>`;
             } catch (e) {}
             finally { document.getElementById('order-sync-icon').classList.remove('loading-spin'); }
         }
 
         async function deleteOrder(id) {
-            if (!confirm("Remove this order?")) return;
+
+            if (!confirm("Remove this order permanently?")) return;
             showToast("Removing...");
             try {
                 await fetch(`${USER_DB_URL}?action=deleteOrder&id=${id}`);
                 renderOrders();
-                showToast("Removed");
+                showToast("Order Removed");
             } catch (e) { showToast("Action failed"); }
         }
 
@@ -364,11 +399,15 @@
         const torus = new THREE.Mesh(new THREE.TorusGeometry(10, 3, 16, 100), new THREE.MeshBasicMaterial({ color: 0x00d632, wireframe: true }));
         scene.add(torus);
         camera.position.z = 30;
+
         let mouseX = 0, mouseY = 0;
         document.addEventListener('mousemove', (e) => { mouseX = (e.clientX/window.innerWidth)-0.5; mouseY = (e.clientY/window.innerHeight)-0.5; });
         function animate() { requestAnimationFrame(animate); torus.rotation.x += 0.001+(mouseY*0.05); torus.rotation.y += 0.002+(mouseX*0.05); renderer.render(scene, camera); }
+        
         window.onload = () => { updateUI(); fetchProducts(); animate(); };
         window.addEventListener('resize', () => { camera.aspect = window.innerWidth/window.innerHeight; camera.updateProjectionMatrix(); renderer.setSize(window.innerWidth, window.innerHeight); });
     </script>
 </body>
 </html>
+
+
