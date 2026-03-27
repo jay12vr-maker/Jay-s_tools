@@ -9,18 +9,15 @@
     <style>
         @import url('https://fonts.googleapis.com/css2?family=Inter:wght@300;400;600;800&display=swap');
         body { font-family: 'Inter', sans-serif; background-color: #0f172a; color: #f8fafc; scroll-behavior: smooth; overflow-x: hidden; }
-        
-        /* BACKGROUND CSS - Controls placement behind content */
         #canvas-container { position: fixed; top: 0; left: 0; width: 100%; height: 100%; z-index: -1; opacity: 0.35; pointer-events: none; }
-        
         .glass-card { background: rgba(30, 41, 59, 0.7); backdrop-filter: blur(12px); border: 1px solid rgba(255, 255, 255, 0.1); transition: all 0.3s cubic-bezier(0.4, 0, 0.2, 1); }
         .glass-card:hover { transform: translateY(-8px); border-color: #00d632; }
         .gradient-text { background: linear-gradient(90deg, #00d632, #38bdf8); -webkit-background-clip: text; -webkit-text-fill-color: transparent; }
         .color-dot { width: 1.5rem; height: 1.5rem; border-radius: 9999px; cursor: pointer; border: 2px solid transparent; transition: all 0.2s; }
-
         .color-dot.active { border-color: #00d632; transform: scale(1.1); }
         .modal { display: none; position: fixed; inset: 0; z-index: 1000; background: rgba(0,0,0,0.85); backdrop-filter: blur(12px); align-items: center; justify-content: center; padding: 20px; }
         .modal.active { display: flex; }
+
         #toast { visibility: hidden; min-width: 250px; background-color: #00d632; color: #fff; text-align: center; border-radius: 12px; padding: 16px; position: fixed; z-index: 2000; right: 30px; bottom: 30px; box-shadow: 0 10px 15px -3px rgba(0,0,0,0.4); }
         #toast.show { visibility: visible; animation: fadein 0.5s, fadeout 0.5s 2.5s; }
         @keyframes fadein { from {bottom: 0; opacity: 0;} to {bottom: 30px; opacity: 1;} }
@@ -35,13 +32,12 @@
 </head>
 <body>
 
-    <!-- 3D BACKGROUND CONTAINER -->
     <div id="canvas-container"></div>
-
 
     <nav class="flex items-center justify-between px-8 py-6 sticky top-0 z-50 bg-slate-900/80 backdrop-blur-xl border-b border-white/5">
         <div class="text-2xl font-black tracking-tighter flex items-center gap-2">
             <div class="w-10 h-10 bg-[#00d632] rounded-xl flex items-center justify-center shadow-lg text-white">3D</div>
+
             <span>Dimension3D</span>
         </div>
         <div class="flex items-center gap-8 text-sm font-semibold">
@@ -58,10 +54,10 @@
                 <button onclick="logout()" class="text-xs text-slate-500 hover:text-red-400">Logout</button>
             </div>
 
-
             <button onclick="toggleCart()" class="bg-[#00d632] px-6 py-2.5 rounded-full flex items-center gap-2 text-white shadow-lg">
                 Cart <span id="cart-count" class="bg-white text-[#00d632] rounded-full w-5 h-5 flex items-center justify-center text-[10px]">0</span>
             </button>
+
         </div>
     </nav>
 
@@ -78,10 +74,10 @@
                     <svg id="sync-icon" class="w-4 h-4" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path d="M4 4v5h.582m15.356 2A8.001 8.001 0 004.582 9m0 0H9m11 11v-5h-.581m0 0a8.003 8.003 0 01-15.357-2m15.357 2H15"></path></svg>
                     Refresh Shop
                 </button>
-
             </div>
             <div id="product-grid" class="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-4 gap-8"></div>
         </section>
+
 
         <!-- ORDERS TAB -->
         <section id="orders-tab" class="tab-content pt-16 pb-20">
@@ -99,11 +95,10 @@
                 </button>
             </div>
 
-
-            <!-- Active Orders Table -->
             <div id="active-orders-container" class="glass-card rounded-3xl overflow-hidden overflow-x-auto">
                 <table class="w-full text-left border-collapse">
                     <thead class="bg-white/5 border-b border-white/10">
+
                         <tr>
                             <th class="p-6 text-[10px] font-bold text-slate-400 uppercase">ID</th>
                             <th class="p-6 text-[10px] font-bold text-slate-400 uppercase">Customer</th>
@@ -116,15 +111,14 @@
                 </table>
             </div>
 
-            <!-- Archived Orders Table -->
             <div id="archived-orders-container" class="hidden glass-card rounded-3xl overflow-hidden overflow-x-auto">
                 <table class="w-full text-left border-collapse">
-
                     <thead class="bg-white/5 border-b border-white/10">
                         <tr>
                             <th class="p-6 text-[10px] font-bold text-slate-400 uppercase">ID</th>
                             <th class="p-6 text-[10px] font-bold text-slate-400 uppercase">Customer</th>
                             <th class="p-6 text-[10px] font-bold text-slate-400 uppercase text-right">Actions</th>
+
                         </tr>
                     </thead>
                     <tbody id="archived-table-body" class="divide-y divide-white/5"></tbody>
@@ -139,12 +133,12 @@
             <div class="flex justify-between items-center mb-6">
                 <h2 class="text-3xl font-black text-white">Message from <span class="text-[#00d632]">Owner</span></h2>
                 <button onclick="closeModal('owner-msg-modal')" class="text-slate-500 hover:text-white text-2xl">✕</button>
-
             </div>
             <div class="bg-white rounded-2xl p-8 min-h-[200px] flex items-center justify-center">
                 <div id="owner-doc-content" class="text-slate-800 text-center w-full">Syncing...</div>
             </div>
         </div>
+
     </div>
 
     <div id="payment-modal" class="modal">
@@ -159,12 +153,12 @@
         </div>
     </div>
 
-
     <div id="login-modal" class="modal">
         <div class="bg-slate-900 p-10 rounded-[2.5rem] w-full max-w-md border border-white/10 shadow-2xl">
             <h2 class="text-3xl font-black mb-6">Login</h2>
             <input id="log-user" type="text" placeholder="Username" class="w-full bg-white/5 border border-white/10 p-4 rounded-xl mb-4 outline-none focus:border-[#00d632] text-white">
             <input id="log-pass" type="password" placeholder="Password" class="w-full bg-white/5 border border-white/10 p-4 rounded-xl mb-6 focus:border-[#00d632] text-white">
+
             <button onclick="handleLogin()" class="w-full bg-[#00d632] py-4 rounded-xl font-black text-white">Sign In</button>
             <button onclick="closeModal('login-modal')" class="w-full text-slate-500 text-sm mt-4">Cancel</button>
         </div>
@@ -179,12 +173,12 @@
             </div>
             <input id="sig-email" type="email" placeholder="Email" class="w-full bg-white/5 border border-white/10 p-4 rounded-xl mb-4 outline-none focus:border-[#00d632] text-white">
             <input id="sig-addr" type="text" placeholder="Shipping Address" class="w-full bg-white/5 border border-white/10 p-4 rounded-xl mb-4 outline-none focus:border-[#00d632] text-white">
-
             <input id="sig-user" type="text" placeholder="Username" class="w-full bg-white/5 border border-white/10 p-4 rounded-xl mb-4 outline-none focus:border-[#00d632] text-white">
             <input id="sig-pass" type="password" placeholder="Password" class="w-full bg-white/5 border border-white/10 p-4 rounded-xl mb-6 outline-none focus:border-[#00d632] text-white">
             <button onclick="handleSignUp()" class="w-full bg-[#00d632] py-4 rounded-xl font-black text-white">Join Now</button>
             <button onclick="closeModal('signup-modal')" class="w-full text-slate-500 text-sm mt-4">Cancel</button>
         </div>
+
     </div>
 
     <div id="cart-sidebar" class="fixed top-0 right-0 h-full w-full sm:w-[400px] bg-slate-900/95 backdrop-blur-2xl shadow-2xl z-[1000] translate-x-full transition-transform duration-500 border-l border-white/10 p-10 flex flex-col">
@@ -199,14 +193,14 @@
                 <span id="cart-total" class="text-3xl font-black text-[#00d632]">$0.00</span>
             </div>
             <button onclick="openPaymentModal()" class="w-full bg-[#00d632] py-5 rounded-2xl font-black text-white hover:bg-[#00c22d] transition">Checkout</button>
-
         </div>
     </div>
 
     <div id="toast"></div>
 
+
     <script>
-        // --- CONFIGURATION ---
+        // CONFIG - Using your provided App Script URL
         const USER_DB_URL = 'https://script.google.com/macros/s/AKfycbyFfb8VEKsdT9qeOfNavk7gSQ8uJvhAj1do4hXjqPj3vvTWSPhqWsBLnx9Z7svO_j30/exec'; 
         const INVENTORY_CSV = 'https://docs.google.com/spreadsheets/d/e/2PACX-1vRVrA_8ndp0w3vWU_rwfKKNFsECqNMN6yW9yHN2VTOXRCIP5kQa1tLznW4DBmEasd_KR-LXcBcKNz9s/pub?gid=0&single=true&output=csv';
 
@@ -219,12 +213,12 @@
         function closeModal(id) { document.getElementById(id).classList.remove('active'); }
         function toggleCart() { document.getElementById('cart-sidebar').classList.toggle('translate-x-full'); }
 
-
         function switchTab(tabId) {
             document.querySelectorAll('.tab-content').forEach(tab => tab.classList.remove('active'));
             document.querySelectorAll('.nav-link').forEach(link => link.classList.remove('active'));
             document.getElementById(tabId + '-tab').classList.add('active');
             if (event) event.target.classList.add('active');
+
             if (tabId === 'orders') refreshCurrentOrderView();
         }
 
@@ -239,12 +233,12 @@
                 document.getElementById('active-orders-container').classList.remove('hidden');
                 document.getElementById('archived-orders-container').classList.add('hidden');
                 renderOrders();
-
             } else {
                 document.getElementById('btn-archived-view').classList.add('active');
                 document.getElementById('btn-archived-view').classList.remove('bg-white/5');
                 document.getElementById('active-orders-container').classList.add('hidden');
                 document.getElementById('archived-orders-container').classList.remove('hidden');
+
                 renderArchivedOrders();
             }
         }
@@ -259,17 +253,17 @@
             const contentDiv = document.getElementById('owner-doc-content');
             try {
                 const res = await fetch(`${USER_DB_URL}?action=getMessage`);
-
                 const data = await res.json();
-                contentDiv.innerHTML = data.html || "No message set in H2.";
-            } catch (e) { contentDiv.innerHTML = "Error loading message."; }
+                contentDiv.innerHTML = data.html || "Type your message in Cell H2!";
+            } catch (e) { contentDiv.innerHTML = "Sync Error: Check Script."; }
         }
+
 
         async function handleLogin() {
             const u = document.getElementById('log-user').value;
             const p = document.getElementById('log-pass').value;
             if (u === 'jay12vr' && p === '123211') {
-                saveUser({ username: 'jay12vr' });
+                saveUser({ username: 'jay12vr', address: 'Owner HQ' });
                 closeModal('login-modal'); return;
             }
             try {
@@ -280,28 +274,31 @@
             } catch (e) { showToast("Login Error"); }
         }
 
-
         async function handleSignUp() {
-            const u = document.getElementById('sig-user').value;
-            const newUser = { 
+            const signupData = { 
                 action: 'signup',
                 firstName: document.getElementById('sig-first').value, 
+
                 lastName: document.getElementById('sig-last').value, 
                 email: document.getElementById('sig-email').value, 
                 address: document.getElementById('sig-addr').value, 
-                username: u, 
+                username: document.getElementById('sig-user').value, 
                 password: document.getElementById('sig-pass').value 
             };
             try {
-                await fetch(USER_DB_URL, { method: 'POST', body: JSON.stringify(newUser) });
-                saveUser({ username: newUser.username }); 
+                await fetch(USER_DB_URL, { 
+                    method: 'POST', 
+                    mode: 'no-cors', 
+                    body: JSON.stringify(signupData) 
+                });
+                saveUser({ username: signupData.username, address: signupData.address }); 
                 closeModal('signup-modal');
-                showToast("Account Created!");
-            } catch (e) { showToast("Registration Failed"); }
+                showToast("Account Ready!");
+            } catch (e) { showToast("Signup Error"); }
         }
 
-
         function saveUser(u) { user = u; localStorage.setItem('dim3d_user', JSON.stringify(user)); updateUI(); }
+
         function logout() { localStorage.removeItem('dim3d_user'); location.reload(); }
 
         function updateUI() {
@@ -320,8 +317,8 @@
                 const csv = await res.text();
                 const items = csv.split(/\n/).slice(1).filter(l => l.trim()).map((l, i) => {
                     const c = l.split(/,(?=(?:(?:[^"]*"){2})*[^"]*$)/);
-
                     return { id: i, n: c[0].replace(/"/g,''), p: parseFloat(c[1])||0, d: c[2].replace(/"/g,''), img: c[3].replace(/"/g,'') };
+
                 });
                 renderProducts(items);
             } catch (e) { showToast("Inventory Error"); }
@@ -340,8 +337,8 @@
                         <div onclick="selectColor('${item.id}', 'White')" class="color-dot dot-${item.id} bg-white active" data-color="White"></div>
                         <div onclick="selectColor('${item.id}', 'Black')" class="color-dot dot-${item.id} bg-black border border-white/10" data-color="Black"></div>
                     </div>
-
                     <button onclick="addToCart('${item.id}', '${item.n}', ${item.p})" class="bg-[#00d632] py-3 rounded-xl font-bold text-white mt-auto hover:bg-[#00c22d] transition">Add to Cart</button>
+
                 </div>`;
             }).join('');
         }
@@ -354,14 +351,14 @@
         function addToCart(id, n, p) {
             if (!user) return openModal('login-modal');
             cart.push({ n, p, c: selectedColors[id], cust: user.username });
-            updateCartUI(); showToast("Added to Cart!");
+            updateCartUI(); showToast("Added!");
         }
 
         function updateCartUI() {
             document.getElementById('cart-count').innerText = cart.length;
             const total = cart.reduce((s, i) => s + i.p, 0);
-
             document.getElementById('cart-total').innerText = `$${total.toFixed(2)}`;
+
             document.getElementById('cart-items').innerHTML = cart.map((i, idx) => `
                 <div class="bg-white/5 p-4 rounded-xl flex justify-between items-center">
                     <span class="text-sm font-bold text-white">${i.n}</span>
@@ -372,25 +369,36 @@
         function openPaymentModal() {
             if (!cart.length) return;
             const total = cart.reduce((s, i) => s + i.p, 0).toFixed(2);
+            // Prefix: https://cash.app/$Jay12vr/ Suffix: total
             document.getElementById('pay-link-btn').href = `https://cash.app{total}`;
             openModal('payment-modal');
         }
 
         async function completeCheckout() {
-            const id = '#' + Math.floor(Math.random()*9000 + 1000);
+            const orderId = '#' + Math.floor(Math.random()*9000 + 1000);
             try {
-                for (let item of cart) {
+                // FIXED: Using GET params to ensure save success
 
-                    await fetch(USER_DB_URL, { method: 'POST', mode: 'no-cors', body: JSON.stringify({ action: 'addOrder', id, ...item }) });
+                for (let item of cart) {
+                    const params = new URLSearchParams({
+                        action: 'addOrder',
+                        id: orderId,
+                        cust: item.cust,
+                        n: item.n,
+                        c: item.c,
+                        addr: user.address || 'Standard Shipping'
+                    });
+                    await fetch(`${USER_DB_URL}?${params.toString()}`);
                 }
                 cart = []; updateCartUI(); closeModal('payment-modal'); toggleCart();
-                showToast("Order Placed!");
-            } catch (e) { showToast("Sync Error"); }
+                showToast("Order Saved!");
+            } catch (e) { showToast("Save Error"); }
         }
 
         async function renderOrders() {
             document.getElementById('order-sync-icon').classList.add('loading-spin');
             try {
+
                 const res = await fetch(`${USER_DB_URL}?action=getOrders`);
                 const orders = await res.json();
                 document.getElementById('orders-table-body').innerHTML = orders.map(o => `
@@ -399,8 +407,7 @@
                     <td class="p-6 font-bold text-sm text-white">${o.cust}</td>
                     <td class="p-6 text-sm text-slate-300">${o.n}</td>
                     <td class="p-6"><span class="px-2 py-1 bg-slate-800 rounded text-[10px] font-black text-[#00d632]">${o.c}</span></td>
-                    <td class="p-6 text-right"><button onclick="archiveOrder('${o.id}')" class="text-orange-400 font-bold uppercase text-xs hover:text-orange-300">Archive</button></td>
-
+                    <td class="p-6 text-right"><button onclick="archiveOrder('${o.id}')" class="text-orange-400 font-bold uppercase text-xs">Archive</button></td>
                 </tr>`).join('');
             } catch (e) {}
             finally { document.getElementById('order-sync-icon').classList.remove('loading-spin'); }
@@ -411,6 +418,7 @@
             try {
                 const res = await fetch(`${USER_DB_URL}?action=getArchived`);
                 const orders = await res.json();
+
                 document.getElementById('archived-table-body').innerHTML = orders.map(o => {
                     const expiry = new Date(parseInt(o.time) + (60 * 60 * 1000)).toLocaleTimeString([], { hour: '2-digit', minute: '2-digit' });
                     return `
@@ -418,9 +426,8 @@
                         <td class="p-6 text-slate-500 font-mono text-sm">${o.id}</td>
                         <td class="p-6 text-slate-400 text-sm">${o.cust} (Wipes: ${expiry})</td>
                         <td class="p-6 text-right flex justify-end gap-6">
-                            <button onclick="unarchiveOrder('${o.id}')" class="text-[#00d632] font-bold text-xs uppercase hover:text-white transition">Unarchive</button>
-                            <button onclick="deleteArchived('${o.id}')" class="text-red-400 font-bold text-xs uppercase hover:text-red-300 transition">Delete Now</button>
-
+                            <button onclick="unarchiveOrder('${o.id}')" class="text-[#00d632] font-bold text-xs uppercase">Unarchive</button>
+                            <button onclick="deleteArchived('${o.id}')" class="text-red-400 font-bold text-xs uppercase">Delete</button>
                         </td>
                     </tr>`;
                 }).join('');
@@ -428,39 +435,22 @@
             finally { document.getElementById('order-sync-icon').classList.remove('loading-spin'); }
         }
 
-        async function archiveOrder(id) {
-            showToast("Archived.");
-            await fetch(`${USER_DB_URL}?action=archiveOrder&id=${id}`);
-            renderOrders();
-        }
+        async function archiveOrder(id) { await fetch(`${USER_DB_URL}?action=archiveOrder&id=${id}`); renderOrders(); }
+        async function unarchiveOrder(id) { await fetch(`${USER_DB_URL}?action=unarchiveOrder&id=${id}`); renderArchivedOrders(); }
+        async function deleteArchived(id) { await fetch(`${USER_DB_URL}?action=deleteArchived&id=${id}`); renderArchivedOrders(); }
 
-        async function unarchiveOrder(id) {
-            showToast("Restored.");
-            await fetch(`${USER_DB_URL}?action=unarchiveOrder&id=${id}`);
-            renderArchivedOrders();
-        }
-
-
-        async function deleteArchived(id) {
-            showToast("Deleted.");
-            await fetch(`${USER_DB_URL}?action=deleteArchived&id=${id}`);
-            renderArchivedOrders();
-        }
 
         function showToast(m) { const t = document.getElementById('toast'); t.innerText = m; t.className = "show"; setTimeout(() => t.className = "", 3000); }
 
-        // --- ENHANCED 3D BACKGROUND LOGIC ---
-        // You can find the background objects, colors, and movement here.
+        // ENHANCED 3D BACKGROUND
         const scene = new THREE.Scene();
         const camera = new THREE.PerspectiveCamera(75, window.innerWidth / window.innerHeight, 0.1, 1000);
         const renderer = new THREE.WebGLRenderer({ alpha: true, antialias: true });
         renderer.setSize(window.innerWidth, window.innerHeight);
         document.getElementById('canvas-container').appendChild(renderer.domElement);
 
-        // 1. Starfield / Particle cloud
         const starGeometry = new THREE.BufferGeometry();
         const starMaterial = new THREE.PointsMaterial({ color: 0xffffff, size: 0.1 });
-
         const starVertices = [];
         for (let i = 0; i < 2000; i++) {
             const x = (Math.random() - 0.5) * 100;
@@ -469,59 +459,28 @@
             starVertices.push(x, y, z);
         }
         starGeometry.setAttribute('position', new THREE.Float32BufferAttribute(starVertices, 3));
+
         const stars = new THREE.Points(starGeometry, starMaterial);
         scene.add(stars);
 
-        // 2. Complex Wireframe Shape (TorusKnot)
-        const knotGeometry = new THREE.TorusKnotGeometry(10, 3, 100, 16);
-        const knotMaterial = new THREE.MeshBasicMaterial({ color: 0x00d632, wireframe: true });
-        const knot = new THREE.Mesh(knotGeometry, knotMaterial);
+        const knot = new THREE.Mesh(new THREE.TorusKnotGeometry(10, 3, 100, 16), new THREE.MeshBasicMaterial({ color: 0x00d632, wireframe: true }));
         scene.add(knot);
-
-        // 3. Floating Geometric Shapes
-        const smallShapes = [];
-
-        const geometries = [new THREE.IcosahedronGeometry(2), new THREE.BoxGeometry(2,2,2)];
-        for(let i=0; i<5; i++) {
-            const mesh = new THREE.Mesh(geometries[i%2], new THREE.MeshBasicMaterial({ color: 0x38bdf8, wireframe: true }));
-            mesh.position.set((Math.random()-0.5)*40, (Math.random()-0.5)*40, (Math.random()-0.5)*20);
-            smallShapes.push(mesh);
-            scene.add(mesh);
-        }
 
         camera.position.z = 40;
         let mouseX = 0, mouseY = 0;
-        document.addEventListener('mousemove', (e) => { 
-            mouseX = (e.clientX / window.innerWidth) - 0.5; 
-            mouseY = (e.clientY / window.innerHeight) - 0.5; 
-        });
+        document.addEventListener('mousemove', (e) => { mouseX = (e.clientX / window.innerWidth) - 0.5; mouseY = (e.clientY / window.innerHeight) - 0.5; });
 
         function animate() {
             requestAnimationFrame(animate);
-            
-            // Subtle overall rotation
-
             knot.rotation.x += 0.002 + (mouseY * 0.02);
             knot.rotation.y += 0.003 + (mouseX * 0.02);
-            
             stars.rotation.y += 0.0005;
-            
-            smallShapes.forEach((s, idx) => {
-                s.rotation.x += 0.01;
-                s.rotation.y += 0.01;
-                s.position.y += Math.sin(Date.now() * 0.001 + idx) * 0.01;
-            });
-
             renderer.render(scene, camera);
         }
         
         window.onload = () => { updateUI(); fetchProducts(); animate(); };
-        window.addEventListener('resize', () => { 
-            camera.aspect = window.innerWidth / window.innerHeight; 
-            camera.updateProjectionMatrix(); 
-            renderer.setSize(window.innerWidth, window.innerHeight); 
 
-        });
+        window.addEventListener('resize', () => { camera.aspect = window.innerWidth/window.innerHeight; camera.updateProjectionMatrix(); renderer.setSize(window.innerWidth, window.innerHeight); });
     </script>
 </body>
 </html>
