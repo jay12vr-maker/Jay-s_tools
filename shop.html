@@ -106,18 +106,24 @@
         <div class="bg-slate-900 p-8 rounded-[2.5rem] w-full max-w-4xl border border-white/10 shadow-2xl flex flex-col h-[80vh]">
             <div class="flex justify-between items-center mb-6">
                 <h2 class="text-3xl font-black">Message from <span class="text-[#00d632]">Owner</span></h2>
-                <button onclick="closeModal('owner-msg-modal')" class="text-slate-500 hover:text-white text-2xl">✕</button>
+                <div class="flex gap-4">
+                    <a id="doc-external-link" href="#" target="_blank" class="text-xs bg-white/10 px-4 py-2 rounded-full hover:bg-[#00d632] transition">Open in New Tab</a>
+                    <button onclick="closeModal('owner-msg-modal')" class="text-slate-500 hover:text-white text-2xl">✕</button>
+                </div>
             </div>
-            <div class="flex-grow bg-white rounded-2xl overflow-hidden">
-                <!-- URL is hardcoded here for reliability -->
-                <iframe id="owner-doc-frame" class="w-full h-full border-none" src="https://docs.google.com"></iframe>
+            <div class="flex-grow bg-white rounded-2xl overflow-hidden relative">
+                <!-- If the frame fails to connect, the background text below will show -->
+                <div class="absolute inset-0 flex items-center justify-center text-slate-400 text-center p-10 z-0">
+                    <p>If the message doesn't load, please click "Open in New Tab" above.<br>Google sometimes blocks embedding for security.</p>
+                </div>
+                <iframe id="owner-doc-frame" class="w-full h-full border-none relative z-10" src="about:blank"></iframe>
+
             </div>
             <p class="text-slate-500 text-xs mt-4 text-center">Live updates directly from Jay's desk.</p>
         </div>
     </div>
 
     <!-- Payment Modal (Cash App) -->
-
     <div id="payment-modal" class="modal">
         <div class="bg-slate-900 p-10 rounded-[2.5rem] w-full max-w-md border border-white/10 text-center">
             <div class="w-20 h-20 bg-[#00d632]/20 text-[#00d632] rounded-full flex items-center justify-center mx-auto mb-6">
@@ -131,13 +137,13 @@
     </div>
 
     <!-- Modals -->
+
     <div id="login-modal" class="modal">
         <div class="bg-slate-900 p-10 rounded-[2.5rem] w-full max-w-md border border-white/10 shadow-2xl">
             <h2 class="text-3xl font-black mb-6">Login</h2>
             <input id="log-user" type="text" placeholder="Username" class="w-full bg-white/5 border border-white/10 p-4 rounded-xl mb-4 outline-none focus:border-[#00d632]">
             <input id="log-pass" type="password" placeholder="Password" class="w-full bg-white/5 border border-white/10 p-4 rounded-xl mb-6 focus:border-[#00d632]">
             <button onclick="handleLogin()" class="w-full bg-[#00d632] py-4 rounded-xl font-black text-white">Sign In</button>
-
             <button onclick="closeModal('login-modal')" class="w-full text-slate-500 text-sm mt-4">Cancel</button>
         </div>
     </div>
@@ -151,13 +157,13 @@
             </div>
             <input id="sig-email" type="email" placeholder="Email" class="w-full bg-white/5 border border-white/10 p-4 rounded-xl mb-4 outline-none focus:border-[#00d632]">
             <input id="sig-addr" type="text" placeholder="Shipping Address" class="w-full bg-white/5 border border-white/10 p-4 rounded-xl mb-4 outline-none focus:border-[#00d632]">
+
             <input id="sig-user" type="text" placeholder="Username" class="w-full bg-white/5 border border-white/10 p-4 rounded-xl mb-4 outline-none focus:border-[#00d632]">
             <input id="sig-pass" type="password" placeholder="Password" class="w-full bg-white/5 border border-white/10 p-4 rounded-xl mb-6 outline-none focus:border-[#00d632]">
             <button onclick="handleSignUp()" class="w-full bg-[#00d632] py-4 rounded-xl font-black text-white">Join Now</button>
             <button onclick="closeModal('signup-modal')" class="w-full text-slate-500 text-sm mt-4">Cancel</button>
         </div>
     </div>
-
 
     <!-- Cart Sidebar -->
     <div id="cart-sidebar" class="fixed top-0 right-0 h-full w-full sm:w-[400px] bg-slate-900/95 backdrop-blur-2xl shadow-2xl z-[1000] translate-x-full transition-transform duration-500 border-l border-white/10 p-10 flex flex-col">
@@ -171,6 +177,7 @@
                 <span class="text-slate-400">Total</span>
                 <span id="cart-total" class="text-3xl font-black text-[#00d632]">$0.00</span>
             </div>
+
             <button onclick="openPaymentModal()" class="w-full bg-[#00d632] py-5 rounded-2xl font-black text-white hover:bg-[#00c22d] transition">Checkout</button>
         </div>
     </div>
@@ -178,10 +185,11 @@
     <div id="toast"></div>
 
     <script>
-
         // CONFIG
         const USER_DB_URL = 'https://script.google.com/macros/s/AKfycbwPQ0XPpvykwy6uwxA9uiFOATq_Logr7Q58hHqpru8FHsgN79G9XYkK6SzMe2pn2M6w/exec'; 
         const INVENTORY_CSV = 'https://docs.google.com/spreadsheets/d/e/2PACX-1vRVrA_8ndp0w3vWU_rwfKKNFsECqNMN6yW9yHN2VTOXRCIP5kQa1tLznW4DBmEasd_KR-LXcBcKNz9s/pub?gid=0&single=true&output=csv';
+        // Your specific Google Doc Embed URL
+        const OWNER_DOC_URL = 'https://docs.google.com';
 
         let user = JSON.parse(localStorage.getItem('dim3d_user') || 'null');
         let cart = [];
@@ -189,18 +197,27 @@
 
         function openModal(id) { 
             document.getElementById(id).classList.add('active'); 
+
+            if (id === 'owner-msg-modal') {
+                document.getElementById('owner-doc-frame').src = OWNER_DOC_URL;
+                // Update external link too
+                document.getElementById('doc-external-link').href = OWNER_DOC_URL.replace('?embedded=true', '');
+            }
         }
         function closeModal(id) { 
             document.getElementById(id).classList.remove('active'); 
+            if (id === 'owner-msg-modal') {
+                document.getElementById('owner-doc-frame').src = 'about:blank';
+            }
         }
         function toggleCart() { document.getElementById('cart-sidebar').classList.toggle('translate-x-full'); }
 
         // AUTH
         async function handleLogin() {
             const u = document.getElementById('log-user').value;
-
             const p = document.getElementById('log-pass').value;
             if (u === 'jay12vr' && p === '123211') {
+
                 saveUser({ firstName: 'Jay', username: 'jay12vr', role: 'owner', address: 'HQ' });
                 closeModal('login-modal'); return;
             }
@@ -218,9 +235,9 @@
                 const check = await fetch(`${USER_DB_URL}?action=check&u=${u}`).then(r => r.json());
                 if (check.exists) {
                     showToast("Account exists! Redirecting...");
-
                     closeModal('signup-modal'); openModal('login-modal'); return;
                 }
+
             } catch (e) {}
 
             const newUser = { firstName: document.getElementById('sig-first').value, lastName: document.getElementById('sig-last').value, email: document.getElementById('sig-email').value, address: document.getElementById('sig-addr').value, username: u, password: document.getElementById('sig-pass').value };
@@ -238,9 +255,9 @@
                 document.getElementById('auth-buttons').classList.add('hidden');
                 document.getElementById('user-display').classList.remove('hidden');
                 document.getElementById('welcome-name').innerText = user.firstName;
-
                 if (user.username === 'jay12vr') {
                     document.getElementById('nav-orders').classList.remove('hidden');
+
                     document.getElementById('orders-section').classList.remove('hidden');
                     renderOrders();
                 }
@@ -258,9 +275,9 @@
                     return { id: i, n: c[0].replace(/"/g,''), p: parseFloat(c[1])||0, d: c[2].replace(/"/g,''), img: c[3].replace(/"/g,'') };
                 });
                 renderProducts(items);
-
             } catch (e) { showToast("Inventory Error"); }
             finally { document.getElementById('sync-icon').classList.remove('loading-spin'); }
+
         }
 
         function renderProducts(items) {
@@ -278,9 +295,9 @@
                     </div>
                     <button onclick="addToCart('${item.id}', '${item.n.replace(/'/g,"")}', ${item.p})" class="bg-[#00d632] py-3 rounded-xl font-bold text-white mt-auto">Add to Cart</button>
                 </div>`;
-
             }).join('');
         }
+
 
         function selectColor(id, c) {
             selectedColors[id] = c;
@@ -298,10 +315,10 @@
             document.getElementById('cart-count').innerText = cart.length;
             const total = cart.reduce((s, i) => s + i.p, 0);
             document.getElementById('cart-total').innerText = `$${total.toFixed(2)}`;
-
             document.getElementById('cart-items').innerHTML = cart.map((i, idx) => `
                 <div class="bg-white/5 p-4 rounded-xl flex justify-between items-center">
                     <div><div class="font-bold text-sm">${i.n}</div><div class="text-[10px] text-[#00d632] font-black">${i.c}</div></div>
+
                     <button onclick="cart.splice(${idx},1);updateCartUI();" class="text-red-400 text-xs">✕</button>
                 </div>`).join('');
         }
@@ -309,7 +326,7 @@
         function openPaymentModal() {
             if (!cart.length) return;
             const total = cart.reduce((s, i) => s + i.p, 0).toFixed(2);
-            // Hardcoded recipient strictly to $jay12vr
+            // Hardcoded Cash App link as requested
             document.getElementById('pay-link-btn').href = `https://cash.app{total}`;
             openModal('payment-modal');
         }
@@ -318,10 +335,10 @@
             const id = '#' + Math.floor(Math.random()*9000 + 1000);
             for (let item of cart) {
                 await fetch(USER_DB_URL, { method: 'POST', body: JSON.stringify({ action: 'addOrder', id, ...item }) });
-
             }
             cart = []; updateCartUI(); closeModal('payment-modal'); toggleCart(); renderOrders();
             showToast("Order Sent to Cloud!");
+
         }
 
         // ORDER DASHBOARD
@@ -338,10 +355,10 @@
                     <td class="p-6"><span class="px-2 py-1 bg-slate-800 rounded text-[10px] font-black">${o.c}</span></td>
                     <td class="p-6 text-slate-500 text-xs">${o.addr}</td>
                     <td class="p-6 text-right">
-
                         <button onclick="deleteOrder('${o.id}')" class="text-red-400 hover:text-red-300 font-bold text-xs uppercase">Remove</button>
                     </td>
                 </tr>`).join('');
+
             } catch (e) {}
         }
 
@@ -358,10 +375,10 @@
         function showToast(m) { const t = document.getElementById('toast'); t.innerText = m; t.className = "show"; setTimeout(() => t.className = "", 3000); }
 
         // 3D Background with Mouse Interaction
-
         const scene = new THREE.Scene();
         const camera = new THREE.PerspectiveCamera(75, window.innerWidth / window.innerHeight, 0.1, 1000);
         const renderer = new THREE.WebGLRenderer({ alpha: true });
+
         renderer.setSize(window.innerWidth, window.innerHeight);
         document.getElementById('canvas-container').appendChild(renderer.domElement);
 
@@ -378,11 +395,12 @@
         document.addEventListener('mousemove', (event) => {
             mouseX = (event.clientX / window.innerWidth) - 0.5;
             mouseY = (event.clientY / window.innerHeight) - 0.5;
-
         });
 
         function animate() {
+
             requestAnimationFrame(animate);
+            // Slow rotation + mouse responsiveness
             torus.rotation.x += 0.001 + (mouseY * 0.05);
             torus.rotation.y += 0.002 + (mouseX * 0.05);
             renderer.render(scene, camera);
@@ -398,7 +416,6 @@
             camera.aspect = window.innerWidth / window.innerHeight;
             camera.updateProjectionMatrix();
             renderer.setSize(window.innerWidth, window.innerHeight);
-
         });
     </script>
 </body>
