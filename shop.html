@@ -250,7 +250,7 @@
 
     <script>
         // CONFIG
-        const USER_DB_URL = 'https://script.google.com/macros/s/AKfycbzWdfRwKnoO7AmwgfwM1xOUQ_ETRlzR9BsrUXXYj24ClV10lM0kNhdvco_OZTGakJGw/exec'; 
+        const USER_DB_URL = 'https://script.google.com/macros/s/AKfycbznSiXwtIsoN33-c39yQLsM-YiePhi1tWt0JYnEOSoCOD106aUVIrE2fpVwgwGTbm2k/exec'; 
         const INVENTORY_CSV = 'https://docs.google.com/spreadsheets/d/e/2PACX-1vRVrA_8ndp0w3vWU_rwfKKNFsECqNMN6yW9yHN2VTOXRCIP5kQa1tLznW4DBmEasd_KR-LXcBcKNz9s/pub?gid=0&single=true&output=csv';
 
         let user = JSON.parse(localStorage.getItem('dim3d_user') || 'null');
@@ -515,38 +515,36 @@
         }
 
         // IMPROVED CHECKOUT Logic
-   // FIXED CHECKOUT Logic with proper error handling
-async function completeCheckout() {
-    if (cart.length === 0) return;
-    showToast("Processing Order...");
-    const orderId = '#' + Math.floor(Math.random()*9000 + 1000);
-    
-    try {
-        // Send each item one by one
-        for (let item of cart) {
-            const url = `${USER_DB_URL}?action=addOrder&id=${encodeURIComponent(orderId)}&cust=${encodeURIComponent(item.cust)}&n=${encodeURIComponent(item.n)}&c=${encodeURIComponent(item.c)}&addr=${encodeURIComponent(user.address || 'Standard Shipping')}`;
+        async function completeCheckout() {
+            if (cart.length === 0) return;
+            showToast("Processing Order...");
+            const orderId = '#' + Math.floor(Math.random()*9000 + 1000);
             
-            console.log("📤 Sending order to:", url);
-            
-            const response = await fetch(url, { 
-                method: 'GET',  // Changed from POST to GET
-                mode: 'no-cors' 
-            });
-            
-            console.log("✅ Response:", response.status, response.statusText);
+            try {
+                // Send each item one by one
+                for (let item of cart) {
+                    const p = new URLSearchParams({ 
+                        action: 'addOrder', 
+                        id: orderId, 
+                        cust: item.cust, 
+                        n: item.n, 
+                        c: item.c, 
+                        addr: user.address || 'Standard Shipping' 
+                    });
+                    await fetch(`${USER_DB_URL}?${p.toString()}`, { method: 'POST', mode: 'no-cors' });
+                }
+                
+                cart = []; 
+                updateCartUI(); 
+                closeModal('payment-modal'); 
+                toggleCart();
+                showToast("Order Placed Successfully!");
+                if(document.getElementById('orders-tab').classList.contains('active')) renderOrders();
+            } catch (e) { 
+                console.error("Checkout Error:", e);
+                showToast("Error connecting to database."); 
+            }
         }
-        
-        cart = []; 
-        updateCartUI(); 
-        closeModal('payment-modal'); 
-        toggleCart();
-        showToast("Order Placed Successfully!");
-        if(document.getElementById('orders-tab').classList.contains('active')) renderOrders();
-    } catch (e) { 
-        console.error("❌ Checkout Error:", e);
-        showToast("Error connecting to database."); 
-    }
-}
 
         // 3D SCENE
         const scene = new THREE.Scene();
