@@ -17,7 +17,6 @@
         .gradient-text { background: linear-gradient(90deg, #00d632, #38bdf8); -webkit-background-clip: text; -webkit-text-fill-color: transparent; }
         .color-dot { width: 1.5rem; height: 1.5rem; border-radius: 9999px; cursor: pointer; border: 2px solid transparent; transition: all 0.2s; }
         .color-dot.active { border-color: #00d632; transform: scale(1.1); }
-
         
         /* Modal Styles */
         .modal { display: none; position: fixed; inset: 0; z-index: 1000; background: rgba(0,0,0,0.85); backdrop-filter: blur(12px); align-items: center; justify-content: center; padding: 20px; opacity: 0; transition: opacity 0.3s ease; }
@@ -37,7 +36,6 @@
         .sub-tab-btn.active { background: #00d632; color: white; border-color: #00d632; }
 
         .input-field { background: rgba(255, 255, 255, 0.05); border: 1px solid rgba(255, 255, 255, 0.1); transition: all 0.2s; }
-
         .input-field:focus { border-color: #00d632; box-shadow: 0 0 15px rgba(0, 214, 50, 0.2); outline: none; }
         
         /* Order Badge Colors */
@@ -57,7 +55,6 @@
         </a>
         
         <div class="flex items-center gap-8 text-sm font-semibold">
-
             <a href="index.html" class="nav-link active py-2 transition">Home</a>
             <button onclick="switchTab('shop')" class="hover:text-[#00d632] transition">Shop</button>
             <button onclick="openOwnerMessage()" class="hover:text-[#00d632] transition">Messages</button>
@@ -77,7 +74,6 @@
 
             <button onclick="toggleCart()" class="bg-[#00d632] px-6 py-2.5 rounded-full flex items-center gap-2 text-white shadow-lg shadow-[#00d632]/20 active:scale-95 transition-all">
                 Cart <span id="cart-count" class="bg-white text-[#00d632] rounded-full w-5 h-5 flex items-center justify-center text-[10px] font-black">0</span>
-
             </button>
         </div>
     </nav>
@@ -97,7 +93,6 @@
                 </button>
             </div>
             <div id="product-grid" class="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-4 gap-8"></div>
-
         </section>
 
         <!-- ORDERS TAB -->
@@ -117,7 +112,6 @@
                 <div class="col-span-full py-20 text-center text-slate-500">
                     <div class="animate-pulse mb-4 text-4xl">📦</div>
                     Checking the cloud database...
-
                 </div>
             </div>
         </section>
@@ -136,7 +130,6 @@
                         </div>
                         <button onclick="logout()" class="ml-auto bg-red-500/10 text-red-500 px-6 py-2 rounded-full text-xs font-bold hover:bg-red-500 hover:text-white transition">Logout Account</button>
                     </div>
-
 
                     <div class="grid grid-cols-1 md:grid-cols-2 gap-12">
                         <div>
@@ -157,7 +150,6 @@
                             <div class="bg-white/5 rounded-2xl p-6 border border-white/5">
                                 <p class="text-slate-300 leading-relaxed" id="profile-address">123 Dimension Drive, Shop HQ</p>
                             </div>
-
                             <button onclick="showToast('Address editing coming soon!')" class="mt-4 text-[#00d632] text-xs font-bold hover:underline">Update Address</button>
                         </div>
                     </div>
@@ -177,7 +169,6 @@
             </div>
             <button id="btn-login-submit" onclick="handleLogin()" class="w-full bg-[#00d632] py-5 rounded-2xl font-black text-white mt-8 hover:bg-[#00c22d] transition-all active:scale-95 flex items-center justify-center gap-3">Sign In</button>
             <p class="text-center text-slate-500 text-xs mt-8">Don't have an account? <button onclick="closeModal('login-modal'); openModal('signup-modal');" class="text-[#00d632] font-bold hover:underline">Sign Up</button></p>
-
             <button onclick="closeModal('login-modal')" class="absolute top-6 right-6 text-slate-600 hover:text-white transition">✕</button>
         </div>
     </div>
@@ -197,7 +188,6 @@
                     <input id="sig-user" type="text" placeholder="Username" class="input-field p-4 rounded-2xl text-white">
                     <input id="sig-pass" type="password" placeholder="Password" class="input-field p-4 rounded-2xl text-white">
                 </div>
-
             </div>
             <button id="btn-signup-submit" onclick="handleSignUp()" class="w-full bg-[#00d632] py-5 rounded-2xl font-black text-white mt-8 hover:bg-[#00c22d] transition-all active:scale-95">Join Now</button>
             <button onclick="closeModal('signup-modal')" class="absolute top-6 right-6 text-slate-600 hover:text-white transition">✕</button>
@@ -217,7 +207,6 @@
                         </div>
                     </div>
                     <button onclick="closeModal('owner-msg-modal')" class="w-10 h-10 rounded-full bg-white/5 flex items-center justify-center text-slate-500 hover:text-white transition">✕</button>
-
                 </div>
                 <div class="bg-white/5 border border-white/10 rounded-[2rem] p-10 min-h-[250px] relative overflow-hidden">
                     <div class="absolute top-0 left-0 w-1 h-full bg-[#00d632]"></div>
@@ -237,7 +226,6 @@
             <button onclick="toggleCart()" class="text-slate-400">✕</button>
         </div>
         <div id="cart-items" class="flex-grow space-y-4 overflow-y-auto"></div>
-
         <div class="pt-8 border-t border-white/10 mt-8">
             <div class="flex justify-between mb-8">
                 <span class="text-slate-400">Total</span>
@@ -258,7 +246,6 @@
         </div>
     </div>
 
-
     <div id="toast"></div>
 
     <script>
@@ -278,7 +265,6 @@
 
         // TABS & NAVIGATION
         function switchTab(tabId) {
-
             document.querySelectorAll('.tab-content').forEach(tab => tab.classList.remove('active'));
             document.querySelectorAll('.nav-link').forEach(link => link.classList.remove('active'));
             
@@ -298,7 +284,6 @@
             document.querySelectorAll('.sub-tab-btn').forEach(btn => btn.classList.remove('active'));
             if (view === 'active') {
                 document.getElementById('btn-active-view').classList.add('active');
-
                 renderOrders();
             } else {
                 document.getElementById('btn-archived-view').classList.add('active');
@@ -317,7 +302,6 @@
                 closeModal('login-modal');
                 return;
             }
-
 
             btn.disabled = true; btn.innerHTML = "Syncing...";
             try {
@@ -339,7 +323,6 @@
 
             if (!f || !u || !p) return showToast("Fill required fields.");
 
-
             try {
                 const signupData = { action: 'signup', firstName: f, lastName: l, email: e, address: a, username: u, password: p };
                 await fetch(USER_DB_URL, { method: 'POST', mode: 'no-cors', body: JSON.stringify(signupData) });
@@ -359,7 +342,6 @@
                 document.getElementById('welcome-name').innerText = user.username;
                 document.getElementById('user-avatar').innerText = user.username.charAt(0).toUpperCase();
                 document.getElementById('nav-orders').innerText = user.username === 'jay12vr' ? "Master Queue" : "My Orders";
-
             }
         }
 
@@ -379,7 +361,6 @@
             
             try {
                 const res = await fetch(`${USER_DB_URL}?action=getOrders`);
-
                 const data = await res.json();
                 
                 // Ensure data is an array
@@ -399,7 +380,6 @@
                     </div>
                     <h4 class="text-xl font-black text-white mb-1">${o.n || 'Custom Print'}</h4>
                     <p class="text-slate-400 text-xs mb-6">Commissioned by <span class="text-white">${o.cust || 'Unknown'}</span></p>
-
                     <div class="flex items-center gap-2 mb-8">
                         <div class="w-3 h-3 rounded-full bg-${o.c && o.c.toLowerCase() === 'black' ? 'black border border-white/20' : 'white'} shadow-sm"></div>
                         <span class="text-xs font-bold text-slate-300 uppercase">${o.c || 'PLA'} Filament</span>
@@ -419,7 +399,6 @@
         }
 
         async function renderArchivedOrders() {
-
             const dashboard = document.getElementById('orders-dashboard');
             try {
                 const res = await fetch(`${USER_DB_URL}?action=getArchived`);
@@ -439,7 +418,6 @@
                         <button onclick="unarchiveOrder('${o.id}')" class="text-[#00d632] text-xs font-black uppercase">Unarchive</button>
                         <button onclick="deleteArchived('${o.id}')" class="text-red-400 text-xs font-black uppercase">Delete</button>
                     </div>` : ''}
-
                 </div>`).join('');
             } catch (e) {
                 dashboard.innerHTML = `<div class="col-span-full py-20 text-center text-red-400">Archive Sync Error.</div>`;
@@ -459,7 +437,6 @@
                 const res = await fetch(`${USER_DB_URL}?action=getMessage`);
                 const data = await res.json();
                 if (user && user.username === 'jay12vr') {
-
                     contentDiv.innerHTML = `<textarea id="edit-owner-msg" class="w-full h-40 bg-transparent border-none text-white outline-none resize-none italic">${data.text || ""}</textarea>`;
                     footerDiv.innerHTML = `<button onclick="saveOwnerMessage()" class="bg-[#00d632] px-8 py-3 rounded-full text-sm font-black text-white hover:bg-[#00c22d] transition">Save Message</button>`;
                 } else {
@@ -479,7 +456,6 @@
         async function fetchProducts() {
             document.getElementById('sync-icon').classList.add('loading-spin');
             try {
-
                 const res = await fetch(INVENTORY_CSV);
                 const csv = await res.text();
                 const items = csv.split(/\n/).slice(1).filter(l => l.trim()).map((l, i) => {
@@ -499,7 +475,6 @@
                 <div class="glass-card rounded-[2rem] p-6 flex flex-col h-full">
                     <img src="${item.img || 'https://placehold.co/400'}" class="rounded-2xl aspect-square object-cover mb-6">
                     <div class="flex justify-between mb-4"><h3 class="font-bold text-white">${item.n}</h3><span class="text-[#00d632] font-black">$${item.p.toFixed(2)}</span></div>
-
                     <div class="flex gap-2 mb-6">
                         <div onclick="selectColor('${item.id}', 'White')" class="color-dot dot-${item.id} bg-white active" data-color="White"></div>
                         <div onclick="selectColor('${item.id}', 'Black')" class="color-dot dot-${item.id} bg-black border border-white/10" data-color="Black"></div>
@@ -520,7 +495,6 @@
             updateCartUI(); showToast("Added!");
         }
 
-
         function updateCartUI() {
             document.getElementById('cart-count').innerText = cart.length;
             const total = cart.reduce((s, i) => s + i.p, 0);
@@ -535,12 +509,12 @@
         function openPaymentModal() {
             if (!cart.length) return showToast("Cart is empty!");
             const total = cart.reduce((s, i) => s + i.p, 0).toFixed(2);
-            document.getElementById('pay-link-btn').href = `https://cash.app{total}`;
+            // UPDATED CASH APP LINK AS REQUESTED
+            document.getElementById('pay-link-btn').href = `https://cash.app/$jay12vr/${total}`;
             openModal('payment-modal');
         }
 
         // IMPROVED CHECKOUT Logic
-
         async function completeCheckout() {
             if (cart.length === 0) return;
             showToast("Processing Order...");
@@ -560,7 +534,6 @@
                     await fetch(`${USER_DB_URL}?${p.toString()}`, { method: 'POST', mode: 'no-cors' });
                 }
                 
-
                 cart = []; 
                 updateCartUI(); 
                 closeModal('payment-modal'); 
@@ -580,7 +553,6 @@
         renderer.setSize(window.innerWidth, window.innerHeight);
         document.getElementById('canvas-container').appendChild(renderer.domElement);
         const stars = new THREE.Points(new THREE.BufferGeometry(), new THREE.PointsMaterial({ color: 0xffffff, size: 0.1 }));
-
         const starV = []; for (let i = 0; i < 2000; i++) starV.push((Math.random()-0.5)*100, (Math.random()-0.5)*100, (Math.random()-0.5)*100);
         stars.geometry.setAttribute('position', new THREE.Float32BufferAttribute(starV, 3)); scene.add(stars);
         const knot = new THREE.Mesh(new THREE.TorusKnotGeometry(10, 3, 100, 16), new THREE.MeshBasicMaterial({ color: 0x00d632, wireframe: true })); scene.add(knot);
@@ -592,5 +564,3 @@
     </script>
 </body>
 </html>
-
-
