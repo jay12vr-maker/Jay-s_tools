@@ -17,20 +17,18 @@
         .gradient-text { background: linear-gradient(90deg, #00d632, #38bdf8); -webkit-background-clip: text; -webkit-text-fill-color: transparent; }
         .color-dot { width: 1.5rem; height: 1.5rem; border-radius: 9999px; cursor: pointer; border: 2px solid transparent; transition: all 0.2s; }
         .color-dot.active { border-color: #00d632; transform: scale(1.1); }
-        
-        .modal { display: none; position: fixed; inset: 0; z-index: 1000; background: rgba(0,0,0,0.85); backdrop-filter: blur(12px); align-items: center; justify-content: center; padding: 20px; overflow-y: auto; }
+        .modal { display: none; position: fixed; inset: 0; z-index: 1000; background: rgba(0,0,0,0.85); backdrop-filter: blur(12px); align-items: center; justify-content: center; padding: 20px; }
         .modal.active { display: flex; }
-        
-        #toast { visibility: hidden; min-width: 300px; color: #fff; text-align: left; border-radius: 16px; padding: 20px; position: fixed; z-index: 2000; right: 30px; bottom: 30px; box-shadow: 0 20px 25px -5px rgba(0,0,0,0.5); font-weight: 600; border-left: 8px solid rgba(0,0,0,0.2); }
-        #toast.success { background-color: #00d632; visibility: visible; animation: fadein 0.5s, fadeout 0.5s 3.5s; }
-        #toast.error { background-color: #ef4444; visibility: visible; animation: fadein 0.5s, fadeout 0.5s 5.5s; }
-        
+        #toast { visibility: hidden; min-width: 250px; background-color: #00d632; color: #fff; text-align: center; border-radius: 12px; padding: 16px; position: fixed; z-index: 2000; right: 30px; bottom: 30px; box-shadow: 0 10px 15px -3px rgba(0,0,0,0.4); }
+        #toast.show { visibility: visible; animation: fadein 0.5s, fadeout 0.5s 2.5s; }
         @keyframes fadein { from {bottom: 0; opacity: 0;} to {bottom: 30px; opacity: 1;} }
         @keyframes fadeout { from {bottom: 30px; opacity: 1;} to {bottom: 0; opacity: 0;} }
-        
-        .tab-btn.active { color: #00d632; border-bottom: 2px solid #00d632; }
         @keyframes spin { from { transform: rotate(0deg); } to { transform: rotate(360deg); } }
         .loading-spin { animation: spin 1s linear infinite; }
+        .tab-content { display: none; }
+        .tab-content.active { display: block; }
+        .nav-link.active { color: #00d632; border-bottom: 2px solid #00d632; }
+        .sub-tab-btn.active { background: #00d632; color: white; }
     </style>
 </head>
 <body>
@@ -38,14 +36,18 @@
     <div id="canvas-container"></div>
 
     <nav class="flex items-center justify-between px-8 py-6 sticky top-0 z-50 bg-slate-900/80 backdrop-blur-xl border-b border-white/5">
-        <div class="text-2xl font-black tracking-tighter flex items-center gap-2">
+        <!-- LOGO NOW LINKS TO index.html -->
+        <a href="index.html" class="text-2xl font-black tracking-tighter flex items-center gap-2 hover:opacity-80 transition cursor-pointer">
             <div class="w-10 h-10 bg-[#00d632] rounded-xl flex items-center justify-center shadow-lg text-white">3D</div>
             <span>Dimension3D</span>
-        </div>
+        </a>
+        
         <div class="flex items-center gap-8 text-sm font-semibold">
-            <button onclick="showTab('shop')" class="tab-btn active py-2" id="nav-shop">Shop</button>
-            <button id="nav-orders" onclick="showTab('orders')" class="tab-btn py-2 hidden">Orders</button>
-            <button onclick="fetchMessage()" class="text-slate-400 hover:text-white">Message</button>
+            <!-- HOME BUTTON NOW LINKS TO index.html -->
+            <a href="index.html" class="nav-link active py-2 transition">Home</a>
+            <button onclick="switchTab('shop')" class="hover:text-[#00d632] transition">Shop</button>
+            <button onclick="openOwnerMessage()" class="hover:text-[#00d632] transition">Message from Owner</button>
+            <button id="nav-orders" onclick="switchTab('orders')" class="hidden nav-link py-2 transition">Orders</button>
             
             <div id="auth-buttons" class="flex items-center gap-4">
                 <button onclick="openModal('login-modal')" class="hover:text-[#00d632]">Login</button>
@@ -63,8 +65,9 @@
     </nav>
 
     <main class="max-w-7xl mx-auto px-8">
-        <!-- SHOP VIEW -->
-        <section id="shop-view" class="pt-16 pb-20">
+        
+        <!-- SHOP TAB -->
+        <section id="shop-tab" class="tab-content active pt-16 pb-20">
             <div class="flex justify-between items-end mb-12">
                 <div>
                     <h1 class="text-5xl font-black mb-2 text-white">For <span class="gradient-text">Sale</span></h1>
@@ -78,66 +81,103 @@
             <div id="product-grid" class="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-4 gap-8"></div>
         </section>
 
-        <!-- ORDERS VIEW (FOR OWNER) -->
-        <section id="orders-view" class="pt-16 pb-20 hidden">
-            <h1 class="text-5xl font-black mb-12 text-white">Order <span class="gradient-text">Management</span></h1>
-            <div id="orders-list" class="space-y-4"></div>
+        <!-- ORDERS TAB -->
+        <section id="orders-tab" class="tab-content pt-16 pb-20">
+            <div class="flex flex-col md:flex-row justify-between items-start md:items-center mb-10 gap-6">
+                <div>
+                    <h2 class="text-4xl font-black text-white">Cloud <span class="text-[#00d632]">Database</span></h2>
+                    <div class="flex gap-4 mt-4">
+                        <button onclick="toggleOrderView('active')" id="btn-active-view" class="sub-tab-btn active px-6 py-2 rounded-full text-xs font-bold uppercase transition">Active Orders</button>
+                        <button onclick="toggleOrderView('archived')" id="btn-archived-view" class="sub-tab-btn bg-white/5 px-6 py-2 rounded-full text-xs font-bold uppercase transition hover:bg-white/10">Archive</button>
+                    </div>
+                </div>
+                <button onclick="refreshCurrentOrderView()" class="text-xs font-bold text-[#00d632] uppercase flex items-center gap-2 bg-white/5 px-6 py-3 rounded-xl hover:bg-white/10 transition">
+                    <svg id="order-sync-icon" class="w-4 h-4" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path d="M4 4v5h.582m15.356 2A8.001 8.001 0 004.582 9m0 0H9m11 11v-5h-.581m0 0a8.003 8.003 0 01-15.357-2m15.357 2H15"></path></svg>
+                    Refresh Data
+                </button>
+            </div>
+
+            <div id="active-orders-container" class="glass-card rounded-3xl overflow-hidden overflow-x-auto">
+                <table class="w-full text-left border-collapse">
+                    <thead class="bg-white/5 border-b border-white/10">
+                        <tr>
+                            <th class="p-6 text-[10px] font-bold text-slate-400 uppercase">ID</th>
+                            <th class="p-6 text-[10px] font-bold text-slate-400 uppercase">Customer</th>
+                            <th class="p-6 text-[10px] font-bold text-slate-400 uppercase">Item</th>
+                            <th class="p-6 text-[10px] font-bold text-slate-400 uppercase">Color</th>
+                            <th class="p-6 text-[10px] font-bold text-slate-400 uppercase text-right">Action</th>
+                        </tr>
+                    </thead>
+                    <tbody id="orders-table-body" class="divide-y divide-white/5"></tbody>
+                </table>
+            </div>
+
+            <div id="archived-orders-container" class="hidden glass-card rounded-3xl overflow-hidden overflow-x-auto">
+                <table class="w-full text-left border-collapse">
+                    <thead class="bg-white/5 border-b border-white/10">
+                        <tr>
+                            <th class="p-6 text-[10px] font-bold text-slate-400 uppercase">ID</th>
+                            <th class="p-6 text-[10px] font-bold text-slate-400 uppercase">Customer</th>
+                            <th class="p-6 text-[10px] font-bold text-slate-400 uppercase text-right">Actions</th>
+                        </tr>
+                    </thead>
+                    <tbody id="archived-table-body" class="divide-y divide-white/5"></tbody>
+                </table>
+            </div>
         </section>
     </main>
 
-    <!-- MESSAGE MODAL -->
-    <div id="message-modal" class="modal">
-        <div class="bg-slate-900 p-10 rounded-[2.5rem] w-full max-w-lg border border-white/10 shadow-2xl text-center">
-            <div class="w-16 h-16 bg-[#00d632]/20 text-[#00d632] rounded-full flex items-center justify-center mx-auto mb-6">
-                <svg class="w-8 h-8" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path d="M8 10h.01M12 10h.01M16 10h.01M9 16H5a2 2 0 01-2-2V6a2 2 0 012-2h14a2 2 0 012 2v8a2 2 0 01-2 2h-5l-5 5v-5z"></path></svg>
+    <!-- MODALS -->
+    <div id="owner-msg-modal" class="modal">
+        <div class="bg-slate-900 p-8 rounded-[2.5rem] w-full max-w-2xl border border-white/10 shadow-2xl flex flex-col">
+            <div class="flex justify-between items-center mb-6">
+                <h2 class="text-3xl font-black text-white">Message from <span class="text-[#00d632]">Owner</span></h2>
+                <button onclick="closeModal('owner-msg-modal')" class="text-slate-500 hover:text-white text-2xl">✕</button>
             </div>
-            <h2 class="text-2xl font-black mb-4">Message from Owner</h2>
-            <div id="owner-msg-content" class="text-slate-300 leading-relaxed bg-white/5 p-6 rounded-2xl italic">Loading message...</div>
-            <button onclick="closeModal('message-modal')" class="mt-8 bg-[#00d632] px-8 py-3 rounded-xl font-bold text-white shadow-lg">Close</button>
-        </div>
-    </div>
-
-    <!-- AUTH MODALS -->
-    <div id="login-modal" class="modal">
-        <div class="bg-slate-900 p-10 rounded-[2.5rem] w-full max-w-md border border-white/10 shadow-2xl">
-            <h2 class="text-3xl font-black mb-6 text-white">Login</h2>
-            <input id="log-user" type="text" placeholder="Username" class="w-full bg-white/5 border border-white/10 p-4 rounded-xl mb-4 outline-none focus:border-[#00d632] text-white">
-            <input id="log-pass" type="password" placeholder="Password" class="w-full bg-white/5 border border-white/10 p-4 rounded-xl mb-6 focus:border-[#00d632] text-white">
-            <button onclick="handleLogin()" class="w-full bg-[#00d632] py-4 rounded-xl font-black text-white shadow-lg">Sign In</button>
-            <button onclick="closeModal('login-modal')" class="w-full text-slate-500 text-sm mt-4">Cancel</button>
-        </div>
-    </div>
-
-    <div id="signup-modal" class="modal">
-        <div class="bg-slate-900 p-10 rounded-[2.5rem] w-full max-w-md border border-white/10 shadow-2xl overflow-y-auto max-h-[90vh]">
-            <h2 class="text-3xl font-black mb-6 text-center text-white">Sign Up</h2>
-            <div class="grid grid-cols-2 gap-4 mb-4">
-                <input id="reg-fn" type="text" placeholder="First Name" class="bg-white/5 border border-white/10 p-4 rounded-xl outline-none focus:border-[#00d632] text-white">
-                <input id="reg-ln" type="text" placeholder="Last Name" class="bg-white/5 border border-white/10 p-4 rounded-xl outline-none focus:border-[#00d632] text-white">
+            <div class="bg-white rounded-2xl p-8 min-h-[200px] flex items-center justify-center">
+                <div id="owner-doc-content" class="text-slate-800 text-center w-full">Syncing...</div>
             </div>
-            <input id="reg-em" type="email" placeholder="Email Address" class="w-full bg-white/5 border border-white/10 p-4 rounded-xl mb-4 outline-none focus:border-[#00d632] text-white">
-            <input id="reg-ad" type="text" placeholder="Shipping Address" class="w-full bg-white/5 border border-white/10 p-4 rounded-xl mb-4 outline-none focus:border-[#00d632] text-white">
-            <input id="reg-u" type="text" placeholder="Choose Username" class="w-full bg-white/5 border border-white/10 p-4 rounded-xl mb-4 outline-none focus:border-[#00d632] text-white">
-            <input id="reg-p" type="password" placeholder="Choose Password" class="w-full bg-white/5 border border-white/10 p-4 rounded-xl mb-6 outline-none focus:border-[#00d632] text-white">
-            <button id="signup-btn" onclick="handleSignUp()" class="w-full bg-[#00d632] py-4 rounded-xl font-black text-white shadow-lg">Create Account</button>
-            <button onclick="closeModal('signup-modal')" class="w-full text-slate-500 text-sm mt-4">Cancel</button>
         </div>
     </div>
 
-    <!-- PAYMENT MODAL -->
     <div id="payment-modal" class="modal">
         <div class="bg-slate-900 p-10 rounded-[2.5rem] w-full max-w-md border border-white/10 text-center">
             <div class="w-20 h-20 bg-[#00d632]/20 text-[#00d632] rounded-full flex items-center justify-center mx-auto mb-6">
                 <span class="text-4xl font-bold">$</span>
             </div>
             <h2 class="text-3xl font-black mb-2 text-white">Cash App Payment</h2>
-            <p class="text-slate-400 mb-8">Click below to pay via Cash App. Total is shown on the Cash App page.</p>
+            <p class="text-slate-400 mb-8">Click below to pay via Cash App. We'll start production immediately!</p>
             <a id="pay-link-btn" href="#" target="_blank" onclick="completeCheckout()" class="block w-full bg-[#00d632] py-4 rounded-xl font-black text-white hover:bg-[#00c22d] transition mb-4">Pay with Cash App</a>
             <button onclick="closeModal('payment-modal')" class="text-slate-500 text-sm">Cancel</button>
         </div>
     </div>
 
-    <!-- CART SIDEBAR -->
+    <div id="login-modal" class="modal">
+        <div class="bg-slate-900 p-10 rounded-[2.5rem] w-full max-w-md border border-white/10 shadow-2xl">
+            <h2 class="text-3xl font-black mb-6">Login</h2>
+            <input id="log-user" type="text" placeholder="Username" class="w-full bg-white/5 border border-white/10 p-4 rounded-xl mb-4 outline-none focus:border-[#00d632] text-white">
+            <input id="log-pass" type="password" placeholder="Password" class="w-full bg-white/5 border border-white/10 p-4 rounded-xl mb-6 focus:border-[#00d632] text-white">
+            <button onclick="handleLogin()" class="w-full bg-[#00d632] py-4 rounded-xl font-black text-white">Sign In</button>
+            <button onclick="closeModal('login-modal')" class="w-full text-slate-500 text-sm mt-4">Cancel</button>
+        </div>
+    </div>
+
+    <div id="signup-modal" class="modal">
+        <div class="bg-slate-900 p-10 rounded-[2.5rem] w-full max-w-md border border-white/10 shadow-2xl">
+            <h2 class="text-3xl font-black mb-6 text-white">Sign Up</h2>
+            <div class="grid grid-cols-2 gap-4 mb-4">
+                <input id="sig-first" type="text" placeholder="First" class="bg-white/5 border border-white/10 p-4 rounded-xl outline-none focus:border-[#00d632] text-white">
+                <input id="sig-last" type="text" placeholder="Last" class="bg-white/5 border border-white/10 p-4 rounded-xl outline-none focus:border-[#00d632] text-white">
+            </div>
+            <input id="sig-email" type="email" placeholder="Email" class="w-full bg-white/5 border border-white/10 p-4 rounded-xl mb-4 outline-none focus:border-[#00d632] text-white">
+            <input id="sig-addr" type="text" placeholder="Shipping Address" class="w-full bg-white/5 border border-white/10 p-4 rounded-xl mb-4 outline-none focus:border-[#00d632] text-white">
+            <input id="sig-user" type="text" placeholder="Username" class="w-full bg-white/5 border border-white/10 p-4 rounded-xl mb-4 outline-none focus:border-[#00d632] text-white">
+            <input id="sig-pass" type="password" placeholder="Password" class="w-full bg-white/5 border border-white/10 p-4 rounded-xl mb-6 outline-none focus:border-[#00d632] text-white">
+            <button onclick="handleSignUp()" class="w-full bg-[#00d632] py-4 rounded-xl font-black text-white">Join Now</button>
+            <button onclick="closeModal('signup-modal')" class="w-full text-slate-500 text-sm mt-4">Cancel</button>
+        </div>
+    </div>
+
     <div id="cart-sidebar" class="fixed top-0 right-0 h-full w-full sm:w-[400px] bg-slate-900/95 backdrop-blur-2xl shadow-2xl z-[1000] translate-x-full transition-transform duration-500 border-l border-white/10 p-10 flex flex-col">
         <div class="flex justify-between items-center mb-10">
             <h3 class="text-3xl font-black text-white">Your Cart</h3>
@@ -149,87 +189,111 @@
                 <span class="text-slate-400">Total</span>
                 <span id="cart-total" class="text-3xl font-black text-[#00d632]">$0.00</span>
             </div>
-            <button onclick="openPaymentModal()" class="w-full bg-[#00d632] py-5 rounded-2xl font-black text-white shadow-lg">Checkout</button>
+            <button onclick="openPaymentModal()" class="w-full bg-[#00d632] py-5 rounded-2xl font-black text-white hover:bg-[#00c22d] transition">Checkout</button>
         </div>
     </div>
 
     <div id="toast"></div>
 
     <script>
-        // CONFIG
+        // CONFIG - Syncing with your latest Apps Script
+        const USER_DB_URL = 'https://script.google.com/macros/s/AKfycbwyvljZ6f6jxfr1lXY-NebU3CBSkZ1d2criV-SGPM6XLCU0nODcYpNkDU_496oVjvG5/exec'; 
         const INVENTORY_CSV = 'https://docs.google.com/spreadsheets/d/e/2PACX-1vRVrA_8ndp0w3vWU_rwfKKNFsECqNMN6yW9yHN2VTOXRCIP5kQa1tLznW4DBmEasd_KR-LXcBcKNz9s/pub?gid=0&single=true&output=csv';
-        const USERS_CSV = 'https://docs.google.com/spreadsheets/d/e/2PACX-1vRrOQlzrUkEikdKt1_ni46XpSa0LIw6yF7RnBFpIjP_M1zwJK16J3MAvnWcF34wgl33GLT2t3xTlSvT/pub?gid=0&single=true&output=csv';
-        const ORDERS_CSV = 'https://docs.google.com/spreadsheets/d/e/2PACX-1vRrOQlzrUkEikdKt1_ni46XpSa0LIw6yF7RnBFpIjP_M1zwJK16J3MAvnWcF34wgl33GLT2t3xTlSvT/pub?gid=928570742&single=true&output=csv';
-        
-        // PASTE YOUR SIGN-UP/ORDER SCRIPT URL HERE
-        const USER_DB_URL = 'https://script.google.com/macros/s/AKfycbxGb2KfbeiMwTyhVN9fEx0-FnnGpJqndf5a8xt7dVkuhoYf6wbQZqJlHRj4W6fNUwx2/exec';
 
         let user = JSON.parse(localStorage.getItem('dim3d_user') || 'null');
         let cart = [];
         let selectedColors = {};
+        let currentOrderView = 'active';
 
         function openModal(id) { document.getElementById(id).classList.add('active'); }
         function closeModal(id) { document.getElementById(id).classList.remove('active'); }
         function toggleCart() { document.getElementById('cart-sidebar').classList.toggle('translate-x-full'); }
-        
-        function showTab(tab) {
-            document.getElementById('shop-view').classList.add('hidden');
-            document.getElementById('orders-view').classList.add('hidden');
-            document.getElementById(`nav-shop`).classList.remove('active');
-            document.getElementById(`nav-orders`).classList.remove('active');
+
+        function switchTab(tabId) {
+            document.querySelectorAll('.tab-content').forEach(tab => tab.classList.remove('active'));
+            document.querySelectorAll('.nav-link').forEach(link => link.classList.remove('active'));
+            document.getElementById(tabId + '-tab').classList.add('active');
             
-            document.getElementById(`${tab}-view`).classList.remove('hidden');
-            document.getElementById(`nav-${tab}`).classList.add('active');
-            if (tab === 'orders') fetchOrders();
+            // Highlight button
+            const links = document.querySelectorAll('.nav-link');
+            links.forEach(l => {
+                if(l.innerText.toLowerCase() === tabId || (tabId === 'shop' && l.innerText === 'Home')) {
+                    l.classList.add('active');
+                }
+            });
+
+            // Auto-scroll to top when switching view
+            window.scrollTo({ top: 0, behavior: 'smooth' });
+
+            if (tabId === 'orders') refreshCurrentOrderView();
         }
 
-        // MESSAGE READER (Uses CSV - fetches H2 from Users Sheet)
-        async function fetchMessage() {
-            openModal('message-modal');
-            try {
-                const res = await fetch(USERS_CSV);
-                const csv = await res.text();
-                const rows = csv.split(/\n/);
-                // Row 2 is index 1. Column H is index 7.
-                const msg = rows[1]?.split(/,(?=(?:(?:[^"]*"){2})*[^"]*$)/)[7]?.replace(/"/g,'');
-                document.getElementById('owner-msg-content').innerText = msg || "Welcome to the shop!";
-            } catch (e) {
-                document.getElementById('owner-msg-content').innerText = "Sync Error: Could not read message.";
+        function toggleOrderView(view) {
+            currentOrderView = view;
+            document.querySelectorAll('.sub-tab-btn').forEach(btn => btn.classList.remove('active', 'bg-white/5'));
+            document.querySelectorAll('.sub-tab-btn').forEach(btn => btn.classList.add('bg-white/5'));
+            
+            if (view === 'active') {
+                document.getElementById('btn-active-view').classList.add('active');
+                document.getElementById('btn-active-view').classList.remove('bg-white/5');
+                document.getElementById('active-orders-container').classList.remove('hidden');
+                document.getElementById('archived-orders-container').classList.add('hidden');
+                renderOrders();
+            } else {
+                document.getElementById('btn-archived-view').classList.add('active');
+                document.getElementById('btn-archived-view').classList.remove('bg-white/5');
+                document.getElementById('active-orders-container').classList.add('hidden');
+                document.getElementById('archived-orders-container').classList.remove('hidden');
+                renderArchivedOrders();
             }
         }
 
-        async function handleSignUp() {
-            const fn = document.getElementById('reg-fn').value;
-            const ln = document.getElementById('reg-ln').value;
-            const em = document.getElementById('reg-em').value;
-            const ad = document.getElementById('reg-ad').value;
-            const u = document.getElementById('reg-u').value;
-            const p = document.getElementById('reg-p').value;
-            if(!fn || !u || !p) return showToast("Required fields missing", "error");
+        function refreshCurrentOrderView() {
+            if (currentOrderView === 'active') renderOrders();
+            else renderArchivedOrders();
+        }
 
-            const url = `${USER_DB_URL}?action=signup&fn=${encodeURIComponent(fn)}&ln=${encodeURIComponent(ln)}&em=${encodeURIComponent(em)}&ad=${encodeURIComponent(ad)}&u=${encodeURIComponent(u)}&p=${encodeURIComponent(p)}`;
+        async function openOwnerMessage() {
+            openModal('owner-msg-modal');
+            const contentDiv = document.getElementById('owner-doc-content');
             try {
-                const res = await fetch(url);
+                const res = await fetch(`${USER_DB_URL}?action=getMessage`);
                 const data = await res.json();
-                if(data.success) { showToast("Sign Up Successful!", "success"); closeModal('signup-modal'); }
-            } catch (e) { showToast("Sign Up Error", "error"); }
+                contentDiv.innerHTML = data.html || "Type your message in Cell H2!";
+            } catch (e) { contentDiv.innerHTML = "Sync Error: Check Script."; }
         }
 
         async function handleLogin() {
             const u = document.getElementById('log-user').value;
             const p = document.getElementById('log-pass').value;
-            if (u === 'jay12vr' && p === '123211') { saveUser({ username: 'jay12vr' }); closeModal('login-modal'); return; }
+            if (u === 'jay12vr' && p === '123211') {
+                saveUser({ username: 'jay12vr', address: 'Owner HQ' });
+                closeModal('login-modal'); return;
+            }
             try {
-                const res = await fetch(USERS_CSV);
-                const csv = await res.text();
-                const users = csv.split(/\n/).slice(1).filter(l => l.trim()).map(l => {
-                    const c = l.split(/,(?=(?:(?:[^"]*"){2})*[^"]*$)/);
-                    return { u: c[4]?.trim(), p: c[5]?.trim(), ad: c[3]?.trim() };
-                });
-                const found = users.find(usr => usr.u === u && usr.p === p);
-                if (found) { saveUser({ username: u, address: found.ad }); closeModal('login-modal'); }
-                else showToast("Invalid login", "error");
-            } catch (e) { showToast("Login Error", "error"); }
+                const res = await fetch(`${USER_DB_URL}?action=login&u=${encodeURIComponent(u)}&p=${encodeURIComponent(p)}`);
+                const data = await res.json();
+                if (data.success) { saveUser(data.user); closeModal('login-modal'); }
+                else showToast("Invalid Credentials");
+            } catch (e) { showToast("Login Error"); }
+        }
+
+        async function handleSignUp() {
+            const signupData = { 
+                action: 'signup',
+                firstName: document.getElementById('sig-first').value, 
+                lastName: document.getElementById('sig-last').value, 
+                email: document.getElementById('sig-email').value, 
+                address: document.getElementById('sig-addr').value, 
+                username: document.getElementById('sig-user').value, 
+                password: document.getElementById('sig-pass').value 
+            };
+            try {
+                await fetch(USER_DB_URL, { method: 'POST', mode: 'no-cors', body: JSON.stringify(signupData) });
+                saveUser({ username: signupData.username, address: signupData.address }); 
+                closeModal('signup-modal');
+                showToast("Account Ready!");
+            } catch (e) { showToast("Signup Error"); }
         }
 
         function saveUser(u) { user = u; localStorage.setItem('dim3d_user', JSON.stringify(user)); updateUI(); }
@@ -239,74 +303,38 @@
             if (user) {
                 document.getElementById('auth-buttons').classList.add('hidden');
                 document.getElementById('user-display').classList.remove('hidden');
-                document.getElementById('welcome-name').innerText = user.username;
+                document.getElementById('welcome-name').innerText = user.username; 
                 if (user.username === 'jay12vr') document.getElementById('nav-orders').classList.remove('hidden');
             }
         }
 
-        async function completeCheckout() {
-            for(let item of cart) {
-                const orderId = `D3D-${Math.floor(Math.random()*99999)}`;
-                const url = `${USER_DB_URL}?action=addOrder&id=${orderId}&cust=${encodeURIComponent(user.username)}&n=${encodeURIComponent(item.n)}&c=${encodeURIComponent(item.c)}&addr=${encodeURIComponent(user.address || 'Local Pick-up')}`;
-                await fetch(url);
-            }
-            showToast("Orders saved to spreadsheet!", "success");
-            cart = []; updateCartUI(); closeModal('payment-modal'); toggleCart();
-        }
-
-        async function fetchOrders() {
-            const list = document.getElementById('orders-list');
-            list.innerHTML = "Fetching orders...";
-            try {
-                const res = await fetch(ORDERS_CSV);
-                const csv = await res.text();
-                const orders = csv.split(/\n/).slice(1).filter(l => l.trim()).map(l => {
-                    const c = l.split(/,(?=(?:(?:[^"]*"){2})*[^"]*$)/);
-                    return { id: c[0], cust: c[1], n: c[2], c: c[3], addr: c[4] };
-                });
-                list.innerHTML = orders.map(o => `
-                    <div class="glass-card p-6 rounded-2xl flex justify-between items-center border border-white/5">
-                        <div><p class="font-bold text-[#00d632] tracking-wider">${o.id}</p><p class="text-sm text-white">${o.cust}: ${o.n} (${o.c})</p><p class="text-[10px] text-slate-500 mt-1">${o.addr}</p></div>
-                        <button onclick="removeOrder('${o.id}')" class="bg-red-500/10 text-red-500 px-5 py-2.5 rounded-xl text-xs font-black hover:bg-red-500 hover:text-white transition uppercase">Remove</button>
-                    </div>`).join('') || "No active orders found.";
-            } catch (e) { list.innerHTML = "Error: Check if Orders tab is published as CSV."; }
-        }
-
-        async function removeOrder(id) {
-            const url = `${USER_DB_URL}?action=deleteOrder&id=${id}`;
-            await fetch(url);
-            showToast("Order removed", "success");
-            fetchOrders();
-        }
-
-        // --- SHOP & UI ---
         async function fetchProducts() {
-            const syncIcon = document.getElementById('sync-icon');
-            if (syncIcon) syncIcon.classList.add('loading-spin');
+            document.getElementById('sync-icon').classList.add('loading-spin');
             try {
                 const res = await fetch(INVENTORY_CSV);
                 const csv = await res.text();
                 const items = csv.split(/\n/).slice(1).filter(l => l.trim()).map((l, i) => {
                     const c = l.split(/,(?=(?:(?:[^"]*"){2})*[^"]*$)/);
-                    return { id: i, n: c[0].replace(/"/g,''), p: parseFloat(c[1])||0, img: c[3].replace(/"/g,'') };
+                    return { id: i, n: c[0].replace(/"/g,''), p: parseFloat(c[1])||0, d: c[2].replace(/"/g,''), img: c[3].replace(/"/g,'') };
                 });
                 renderProducts(items);
-            } catch (e) { showToast("Sync Error", 'error'); }
-            finally { if (syncIcon) syncIcon.classList.remove('loading-spin'); }
+            } catch (e) { showToast("Inventory Error"); }
+            finally { document.getElementById('sync-icon').classList.remove('loading-spin'); }
         }
 
         function renderProducts(items) {
-            document.getElementById('product-grid').innerHTML = items.map(item => {
+            const grid = document.getElementById('product-grid');
+            grid.innerHTML = items.map(item => {
                 selectedColors[item.id] = 'White';
                 return `
-                <div class="glass-card rounded-[2.5rem] p-7 flex flex-col h-full">
-                    <img src="${item.img || 'https://placehold.co/400'}" class="rounded-3xl aspect-square object-cover mb-6">
-                    <div class="flex justify-between mb-4"><h3 class="font-bold text-white text-lg">${item.n}</h3><span class="text-[#00d632] font-black">$${item.p.toFixed(2)}</span></div>
+                <div class="glass-card rounded-[2rem] p-6 flex flex-col h-full">
+                    <img src="${item.img || 'https://placehold.co/400'}" class="rounded-2xl aspect-square object-cover mb-6">
+                    <div class="flex justify-between mb-4"><h3 class="font-bold text-white">${item.n}</h3><span class="text-[#00d632] font-black">$${item.p.toFixed(2)}</span></div>
                     <div class="flex gap-2 mb-6">
                         <div onclick="selectColor('${item.id}', 'White')" class="color-dot dot-${item.id} bg-white active" data-color="White"></div>
                         <div onclick="selectColor('${item.id}', 'Black')" class="color-dot dot-${item.id} bg-black border border-white/10" data-color="Black"></div>
                     </div>
-                    <button onclick="addToCart('${item.id}', '${item.n}', ${item.p})" class="bg-[#00d632] py-4 rounded-2xl font-bold text-white mt-auto hover:bg-[#00c22d] shadow-lg transition">Add to Cart</button>
+                    <button onclick="addToCart('${item.id}', '${item.n}', ${item.p})" class="bg-[#00d632] py-3 rounded-xl font-bold text-white mt-auto hover:bg-[#00c22d] transition">Add to Cart</button>
                 </div>`;
             }).join('');
         }
@@ -318,9 +346,8 @@
 
         function addToCart(id, n, p) {
             if (!user) return openModal('login-modal');
-            cart.push({ n, p, c: selectedColors[id] });
-            updateCartUI(); 
-            showToast(`${n} added to cart!`, 'success');
+            cart.push({ n, p, c: selectedColors[id], cust: user.username });
+            updateCartUI(); showToast("Added!");
         }
 
         function updateCartUI() {
@@ -328,43 +355,110 @@
             const total = cart.reduce((s, i) => s + i.p, 0);
             document.getElementById('cart-total').innerText = `$${total.toFixed(2)}`;
             document.getElementById('cart-items').innerHTML = cart.map((i, idx) => `
-                <div class="bg-white/5 p-4 rounded-2xl flex justify-between items-center border border-white/5">
-                    <div class="flex flex-col"><span class="text-sm font-bold text-white">${i.n}</span><span class="text-[10px] text-slate-400">${i.c}</span></div>
+                <div class="bg-white/5 p-4 rounded-xl flex justify-between items-center">
+                    <span class="text-sm font-bold text-white">${i.n}</span>
                     <button onclick="cart.splice(${idx},1);updateCartUI();" class="text-red-400 text-xs">✕</button>
                 </div>`).join('');
         }
 
         function openPaymentModal() {
-            if (!cart.length) return showToast("Cart is empty!", 'error');
+            if (!cart.length) return;
             const total = cart.reduce((s, i) => s + i.p, 0).toFixed(2);
             document.getElementById('pay-link-btn').href = `https://cash.app{total}`;
             openModal('payment-modal');
         }
 
-        function showToast(m, type = 'success') { 
-            const t = document.getElementById('toast'); 
-            t.innerText = m; t.className = type; 
-            setTimeout(() => t.className = "", 4000); 
+        async function completeCheckout() {
+            const orderId = '#' + Math.floor(Math.random()*9000 + 1000);
+            try {
+                // FORCE SAVE via GET for reliability
+                for (let item of cart) {
+                    const params = new URLSearchParams({
+                        action: 'addOrder',
+                        id: orderId,
+                        cust: item.cust,
+                        n: item.n,
+                        c: item.c,
+                        addr: user.address || 'Standard Shipping'
+                    });
+                    await fetch(`${USER_DB_URL}?${params.toString()}`, { mode: 'no-cors' });
+                }
+                cart = []; updateCartUI(); closeModal('payment-modal'); toggleCart();
+                showToast("Order Placed!");
+            } catch (e) { showToast("Save Error"); }
         }
 
-        // 3D BACKGROUND
+        async function renderOrders() {
+            document.getElementById('order-sync-icon').classList.add('loading-spin');
+            try {
+                const res = await fetch(`${USER_DB_URL}?action=getOrders`);
+                const orders = await res.json();
+                document.getElementById('orders-table-body').innerHTML = orders.map(o => `
+                <tr class="hover:bg-white/5 transition">
+                    <td class="p-6 text-sky-400 font-mono text-sm">${o.id}</td>
+                    <td class="p-6 font-bold text-sm text-white">${o.cust}</td>
+                    <td class="p-6 text-sm text-slate-300">${o.n}</td>
+                    <td class="p-6"><span class="px-2 py-1 bg-slate-800 rounded text-[10px] font-black text-[#00d632]">${o.c}</span></td>
+                    <td class="p-6 text-right"><button onclick="archiveOrder('${o.id}')" class="text-orange-400 font-bold uppercase text-xs">Archive</button></td>
+                </tr>`).join('');
+            } catch (e) {}
+            finally { document.getElementById('order-sync-icon').classList.remove('loading-spin'); }
+        }
+
+        async function renderArchivedOrders() {
+            document.getElementById('order-sync-icon').classList.add('loading-spin');
+            try {
+                const res = await fetch(`${USER_DB_URL}?action=getArchived`);
+                const orders = await res.json();
+                document.getElementById('archived-table-body').innerHTML = orders.map(o => {
+                    const expiry = new Date(parseInt(o.time) + (60 * 60 * 1000)).toLocaleTimeString([], { hour: '2-digit', minute: '2-digit' });
+                    return `
+                    <tr class="hover:bg-white/5 transition">
+                        <td class="p-6 text-slate-500 font-mono text-sm">${o.id}</td>
+                        <td class="p-6 text-slate-400 text-sm">${o.cust} (Wipes: ${expiry})</td>
+                        <td class="p-6 text-right flex justify-end gap-6">
+                            <button onclick="unarchiveOrder('${o.id}')" class="text-[#00d632] font-bold text-xs uppercase">Unarchive</button>
+                            <button onclick="deleteArchived('${o.id}')" class="text-red-400 font-bold text-xs uppercase">Delete</button>
+                        </td>
+                    </tr>`;
+                }).join('');
+            } catch (e) {}
+            finally { document.getElementById('order-sync-icon').classList.remove('loading-spin'); }
+        }
+
+        async function archiveOrder(id) { await fetch(`${USER_DB_URL}?action=archiveOrder&id=${id}`, { mode: 'no-cors' }); renderOrders(); }
+        async function unarchiveOrder(id) { await fetch(`${USER_DB_URL}?action=unarchiveOrder&id=${id}`, { mode: 'no-cors' }); renderArchivedOrders(); }
+        async function deleteArchived(id) { await fetch(`${USER_DB_URL}?action=deleteArchived&id=${id}`, { mode: 'no-cors' }); renderArchivedOrders(); }
+
+        function showToast(m) { const t = document.getElementById('toast'); t.innerText = m; t.className = "show"; setTimeout(() => t.className = "", 3000); }
+
+        // ENHANCED 3D BACKGROUND
         const scene = new THREE.Scene();
         const camera = new THREE.PerspectiveCamera(75, window.innerWidth / window.innerHeight, 0.1, 1000);
         const renderer = new THREE.WebGLRenderer({ alpha: true, antialias: true });
         renderer.setSize(window.innerWidth, window.innerHeight);
         document.getElementById('canvas-container').appendChild(renderer.domElement);
+
         const starGeometry = new THREE.BufferGeometry();
         const starMaterial = new THREE.PointsMaterial({ color: 0xffffff, size: 0.1 });
         const starVertices = [];
-        for (let i = 0; i < 2000; i++) starVertices.push((Math.random()-0.5)*100, (Math.random()-0.5)*100, (Math.random()-0.5)*100);
+        for (let i = 0; i < 2000; i++) {
+            const x = (Math.random() - 0.5) * 100;
+            const y = (Math.random() - 0.5) * 100;
+            const z = (Math.random() - 0.5) * 100;
+            starVertices.push(x, y, z);
+        }
         starGeometry.setAttribute('position', new THREE.Float32BufferAttribute(starVertices, 3));
         const stars = new THREE.Points(starGeometry, starMaterial);
         scene.add(stars);
+
         const knot = new THREE.Mesh(new THREE.TorusKnotGeometry(10, 3, 100, 16), new THREE.MeshBasicMaterial({ color: 0x00d632, wireframe: true }));
         scene.add(knot);
+
         camera.position.z = 40;
         let mouseX = 0, mouseY = 0;
-        document.addEventListener('mousemove', (e) => { mouseX = (e.clientX/window.innerWidth)-0.5; mouseY = (e.clientY/window.innerHeight)-0.5; });
+        document.addEventListener('mousemove', (e) => { mouseX = (e.clientX / window.innerWidth) - 0.5; mouseY = (e.clientY / window.innerHeight) - 0.5; });
+
         function animate() {
             requestAnimationFrame(animate);
             knot.rotation.x += 0.002 + (mouseY * 0.02);
@@ -372,6 +466,7 @@
             stars.rotation.y += 0.0005;
             renderer.render(scene, camera);
         }
+        
         window.onload = () => { updateUI(); fetchProducts(); animate(); };
         window.addEventListener('resize', () => { camera.aspect = window.innerWidth/window.innerHeight; camera.updateProjectionMatrix(); renderer.setSize(window.innerWidth, window.innerHeight); });
     </script>
