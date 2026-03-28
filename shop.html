@@ -38,7 +38,6 @@
         .input-field { background: rgba(255, 255, 255, 0.05); border: 1px solid rgba(255, 255, 255, 0.1); transition: all 0.2s; }
         .input-field:focus { border-color: #00d632; box-shadow: 0 0 15px rgba(0, 214, 50, 0.2); outline: none; }
         
-        /* Order Badge Colors */
         .badge-pending { background: rgba(234, 179, 8, 0.15); color: #eab308; }
         .badge-printing { background: rgba(56, 189, 248, 0.15); color: #38bdf8; }
         .badge-shipped { background: rgba(0, 214, 50, 0.15); color: #00d632; }
@@ -80,7 +79,6 @@
 
     <main class="max-w-7xl mx-auto px-8">
         
-        <!-- SHOP TAB -->
         <section id="shop-tab" class="tab-content active pt-16 pb-20">
             <div class="flex justify-between items-end mb-12">
                 <div>
@@ -95,7 +93,6 @@
             <div id="product-grid" class="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-4 gap-8"></div>
         </section>
 
-        <!-- ORDERS TAB -->
         <section id="orders-tab" class="tab-content pt-16 pb-20">
             <div class="flex flex-col md:flex-row justify-between items-start md:items-center mb-10 gap-6">
                 <div>
@@ -107,50 +104,32 @@
                     <button onclick="toggleOrderView('archived')" id="btn-archived-view" class="sub-tab-btn bg-white/5 px-6 py-3 rounded-2xl text-xs font-bold uppercase border border-transparent transition hover:bg-white/10">Archive</button>
                 </div>
             </div>
-
-            <div id="orders-dashboard" class="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-6">
-                <div class="col-span-full py-20 text-center text-slate-500">
-                    <div class="animate-pulse mb-4 text-4xl">📦</div>
-                    Checking the cloud database...
-                </div>
-            </div>
+            <div id="orders-dashboard" class="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-6"></div>
         </section>
 
-        <!-- ACCOUNT TAB -->
         <section id="account-tab" class="tab-content pt-16 pb-20">
             <div class="max-w-4xl mx-auto">
                 <div class="glass-card rounded-[3rem] p-12 relative overflow-hidden">
                     <div class="absolute top-0 right-0 w-64 h-64 bg-[#00d632]/5 blur-[100px] -z-10"></div>
-                    
                     <div class="flex items-center gap-8 mb-12 pb-12 border-b border-white/5">
                         <div class="w-24 h-24 bg-[#00d632] rounded-[2rem] flex items-center justify-center text-white text-4xl font-black shadow-2xl shadow-[#00d632]/30" id="profile-avatar">J</div>
                         <div>
-                            <h2 class="text-4xl font-black text-white" id="profile-username">Jay12vr</h2>
+                            <h2 class="text-4xl font-black text-white" id="profile-username">User</h2>
                             <p class="text-[#00d632] font-bold uppercase tracking-widest text-xs mt-1">Verified Member</p>
                         </div>
-                        <button onclick="logout()" class="ml-auto bg-red-500/10 text-red-500 px-6 py-2 rounded-full text-xs font-bold hover:bg-red-500 hover:text-white transition">Logout Account</button>
+                        <button onclick="logout()" class="ml-auto bg-red-500/10 text-red-500 px-6 py-2 rounded-full text-xs font-bold hover:bg-red-500 hover:text-white transition">Logout</button>
                     </div>
-
                     <div class="grid grid-cols-1 md:grid-cols-2 gap-12">
                         <div>
-                            <h3 class="text-xs font-black text-slate-500 uppercase tracking-widest mb-6">Contact Information</h3>
+                            <h3 class="text-xs font-black text-slate-500 uppercase tracking-widest mb-6">Information</h3>
                             <div class="space-y-6">
-                                <div>
-                                    <span class="text-xs text-slate-500 block mb-1">Full Name</span>
-                                    <span class="text-lg text-white font-semibold" id="profile-full-name">Jay Owner</span>
-                                </div>
-                                <div>
-                                    <span class="text-xs text-slate-500 block mb-1">Email Address</span>
-                                    <span class="text-lg text-white font-semibold" id="profile-email">owner@dimension3d.com</span>
-                                </div>
+                                <div><span class="text-xs text-slate-500 block mb-1">Full Name</span><span class="text-lg text-white font-semibold" id="profile-full-name">Name</span></div>
+                                <div><span class="text-xs text-slate-500 block mb-1">Email</span><span class="text-lg text-white font-semibold" id="profile-email">Email</span></div>
                             </div>
                         </div>
                         <div>
-                            <h3 class="text-xs font-black text-slate-500 uppercase tracking-widest mb-6">Primary Shipping Address</h3>
-                            <div class="bg-white/5 rounded-2xl p-6 border border-white/5">
-                                <p class="text-slate-300 leading-relaxed" id="profile-address">123 Dimension Drive, Shop HQ</p>
-                            </div>
-                            <button onclick="showToast('Address editing coming soon!')" class="mt-4 text-[#00d632] text-xs font-bold hover:underline">Update Address</button>
+                            <h3 class="text-xs font-black text-slate-500 uppercase tracking-widest mb-6">Shipping Address</h3>
+                            <div class="bg-white/5 rounded-2xl p-6 border border-white/5"><p class="text-slate-300 leading-relaxed" id="profile-address">Address</p></div>
                         </div>
                     </div>
                 </div>
@@ -158,30 +137,27 @@
         </section>
     </main>
 
-    <!-- AUTH MODALS -->
+    <!-- MODALS -->
     <div id="login-modal" class="modal">
-        <div class="modal-content bg-slate-900 p-10 rounded-[3rem] w-full max-w-md border border-white/10 shadow-2xl relative overflow-hidden">
-            <h2 class="text-4xl font-black mb-2 text-white">Welcome <span class="text-[#00d632]">Back</span></h2>
-            <p class="text-slate-400 text-sm mb-8">Enter your credentials to manage your prints.</p>
-            <div class="space-y-4">
+        <div class="modal-content bg-slate-900 p-10 rounded-[3rem] w-full max-w-md border border-white/10 relative">
+            <h2 class="text-4xl font-black mb-2 text-white">Sign <span class="text-[#00d632]">In</span></h2>
+            <div class="space-y-4 mt-8">
                 <input id="log-user" type="text" placeholder="Username" class="input-field w-full p-4 rounded-2xl text-white">
                 <input id="log-pass" type="password" placeholder="Password" class="input-field w-full p-4 rounded-2xl text-white">
             </div>
-            <button id="btn-login-submit" onclick="handleLogin()" class="w-full bg-[#00d632] py-5 rounded-2xl font-black text-white mt-8 hover:bg-[#00c22d] transition-all active:scale-95 flex items-center justify-center gap-3">Sign In</button>
-            <p class="text-center text-slate-500 text-xs mt-8">Don't have an account? <button onclick="closeModal('login-modal'); openModal('signup-modal');" class="text-[#00d632] font-bold hover:underline">Sign Up</button></p>
+            <button id="btn-login-submit" onclick="handleLogin()" class="w-full bg-[#00d632] py-5 rounded-2xl font-black text-white mt-8 hover:bg-[#00c22d] transition">Sign In</button>
             <button onclick="closeModal('login-modal')" class="absolute top-6 right-6 text-slate-600 hover:text-white transition">✕</button>
         </div>
     </div>
 
     <div id="signup-modal" class="modal">
-        <div class="modal-content bg-slate-900 p-10 rounded-[3rem] w-full max-w-lg border border-white/10 shadow-2xl relative">
+        <div class="modal-content bg-slate-900 p-10 rounded-[3rem] w-full max-w-lg border border-white/10 relative">
             <h2 class="text-4xl font-black mb-2 text-white">Create <span class="text-[#00d632]">Account</span></h2>
-            <p class="text-slate-400 text-sm mb-8">Join Dimension3D to start your collection.</p>
-            <div class="grid grid-cols-2 gap-4 mb-4">
+            <div class="grid grid-cols-2 gap-4 mt-8">
                 <input id="sig-first" type="text" placeholder="First Name" class="input-field p-4 rounded-2xl text-white">
                 <input id="sig-last" type="text" placeholder="Last Name" class="input-field p-4 rounded-2xl text-white">
             </div>
-            <div class="space-y-4">
+            <div class="space-y-4 mt-4">
                 <input id="sig-email" type="email" placeholder="Email" class="input-field w-full p-4 rounded-2xl text-white">
                 <input id="sig-addr" type="text" placeholder="Shipping Address" class="input-field w-full p-4 rounded-2xl text-white">
                 <div class="grid grid-cols-2 gap-4">
@@ -189,67 +165,40 @@
                     <input id="sig-pass" type="password" placeholder="Password" class="input-field p-4 rounded-2xl text-white">
                 </div>
             </div>
-            <button id="btn-signup-submit" onclick="handleSignUp()" class="w-full bg-[#00d632] py-5 rounded-2xl font-black text-white mt-8 hover:bg-[#00c22d] transition-all active:scale-95">Join Now</button>
+            <button id="btn-signup-submit" onclick="handleSignUp()" class="w-full bg-[#00d632] py-5 rounded-2xl font-black text-white mt-8 hover:bg-[#00c22d] transition">Join Now</button>
             <button onclick="closeModal('signup-modal')" class="absolute top-6 right-6 text-slate-600 hover:text-white transition">✕</button>
         </div>
     </div>
 
-    <!-- OWNER MSG MODAL -->
     <div id="owner-msg-modal" class="modal">
-        <div class="modal-content bg-slate-900 p-1 rounded-[2.5rem] w-full max-w-2xl border border-white/10 shadow-2xl overflow-hidden">
-            <div class="bg-gradient-to-br from-slate-900 to-slate-800 p-8">
-                <div class="flex justify-between items-center mb-8">
-                    <div class="flex items-center gap-4">
-                        <div class="w-12 h-12 bg-[#00d632] rounded-full flex items-center justify-center text-white font-black text-xl shadow-lg">J</div>
-                        <div>
-                            <h2 class="text-xl font-black text-white leading-tight">Jay12vr</h2>
-                            <p class="text-[10px] text-[#00d632] font-bold uppercase tracking-widest">Shop Owner</p>
-                        </div>
-                    </div>
-                    <button onclick="closeModal('owner-msg-modal')" class="w-10 h-10 rounded-full bg-white/5 flex items-center justify-center text-slate-500 hover:text-white transition">✕</button>
-                </div>
-                <div class="bg-white/5 border border-white/10 rounded-[2rem] p-10 min-h-[250px] relative overflow-hidden">
-                    <div class="absolute top-0 left-0 w-1 h-full bg-[#00d632]"></div>
-                    <div id="owner-doc-content" class="text-slate-200 text-lg leading-relaxed italic">Syncing message...</div>
-                </div>
-                <div id="owner-msg-footer-actions" class="mt-8 flex justify-end">
-                    <button onclick="closeModal('owner-msg-modal')" class="bg-white/10 px-8 py-3 rounded-full text-sm font-bold hover:bg-white/20 transition">Got it</button>
-                </div>
-            </div>
+        <div class="modal-content bg-slate-900 p-8 rounded-[2.5rem] w-full max-w-2xl border border-white/10 shadow-2xl">
+            <div id="owner-doc-content" class="text-slate-200 text-lg leading-relaxed italic mb-8">Syncing...</div>
+            <div id="owner-msg-footer-actions" class="flex justify-end"></div>
         </div>
     </div>
 
-    <!-- CART SIDEBAR -->
-    <div id="cart-sidebar" class="fixed top-0 right-0 h-full w-full sm:w-[400px] bg-slate-900/95 backdrop-blur-2xl shadow-2xl z-[1000] translate-x-full transition-transform duration-500 border-l border-white/10 p-10 flex flex-col">
-        <div class="flex justify-between items-center mb-10">
-            <h3 class="text-3xl font-black text-white">Your Cart</h3>
-            <button onclick="toggleCart()" class="text-slate-400">✕</button>
-        </div>
+    <div id="cart-sidebar" class="fixed top-0 right-0 h-full w-full sm:w-[400px] bg-slate-900/95 backdrop-blur-2xl z-[1000] translate-x-full transition-transform duration-500 border-l border-white/10 p-10 flex flex-col">
+        <h3 class="text-3xl font-black text-white mb-10">Cart</h3>
         <div id="cart-items" class="flex-grow space-y-4 overflow-y-auto"></div>
         <div class="pt-8 border-t border-white/10 mt-8">
-            <div class="flex justify-between mb-8">
-                <span class="text-slate-400">Total</span>
-                <span id="cart-total" class="text-3xl font-black text-[#00d632]">$0.00</span>
-            </div>
+            <div class="flex justify-between mb-8"><span class="text-slate-400">Total</span><span id="cart-total" class="text-3xl font-black text-[#00d632]">$0.00</span></div>
             <button onclick="openPaymentModal()" class="w-full bg-[#00d632] py-5 rounded-2xl font-black text-white hover:bg-[#00c22d] transition">Checkout</button>
         </div>
     </div>
 
-    <!-- PAYMENT MODAL -->
     <div id="payment-modal" class="modal">
-        <div class="bg-slate-900 p-10 rounded-[2.5rem] w-full max-w-md border border-white/10 text-center">
+        <div class="bg-slate-900 p-10 rounded-[2.5rem] border border-white/10 text-center w-full max-w-md">
             <div class="w-20 h-20 bg-[#00d632]/20 text-[#00d632] rounded-full flex items-center justify-center mx-auto mb-6"><span class="text-4xl font-bold">$</span></div>
             <h2 class="text-3xl font-black mb-2 text-white">Cash App</h2>
-            <p class="text-slate-400 mb-8">Click below to pay. We'll start production immediately!</p>
+            <p class="text-slate-400 mb-8">Complete your payment below.</p>
             <a id="pay-link-btn" href="#" target="_blank" onclick="completeCheckout()" class="block w-full bg-[#00d632] py-4 rounded-xl font-black text-white hover:bg-[#00c22d] transition mb-4">Pay via Cash App</a>
-            <button onclick="closeModal('payment-modal')" class="text-slate-500 text-sm">Cancel</button>
+            <button onclick="closeModal('payment-modal')" class="text-slate-500">Cancel</button>
         </div>
     </div>
 
     <div id="toast"></div>
 
     <script>
-        // CONFIG
         const USER_DB_URL = 'https://script.google.com/macros/s/AKfycbznSiXwtIsoN33-c39yQLsM-YiePhi1tWt0JYnEOSoCOD106aUVIrE2fpVwgwGTbm2k/exec'; 
         const INVENTORY_CSV = 'https://docs.google.com/spreadsheets/d/e/2PACX-1vRVrA_8ndp0w3vWU_rwfKKNFsECqNMN6yW9yHN2VTOXRCIP5kQa1tLznW4DBmEasd_KR-LXcBcKNz9s/pub?gid=0&single=true&output=csv';
 
@@ -263,44 +212,25 @@
         const closeModal = (id) => document.getElementById(id).classList.remove('active');
         const toggleCart = () => document.getElementById('cart-sidebar').classList.toggle('translate-x-full');
 
-        // TABS & NAVIGATION
         function switchTab(tabId) {
             document.querySelectorAll('.tab-content').forEach(tab => tab.classList.remove('active'));
             document.querySelectorAll('.nav-link').forEach(link => link.classList.remove('active'));
-            
             const activeTab = document.getElementById(tabId + '-tab');
             if (activeTab) activeTab.classList.add('active');
-            
             if (tabId === 'shop') document.querySelector('.nav-link[href="index.html"]')?.classList.add('active');
-            
             window.scrollTo({ top: 0, behavior: 'smooth' });
-            
             if (tabId === 'orders') renderOrders();
             if (tabId === 'account') updateAccountUI();
         }
 
-        function toggleOrderView(view) {
-            currentOrderView = view;
-            document.querySelectorAll('.sub-tab-btn').forEach(btn => btn.classList.remove('active'));
-            if (view === 'active') {
-                document.getElementById('btn-active-view').classList.add('active');
-                renderOrders();
-            } else {
-                document.getElementById('btn-archived-view').classList.add('active');
-                renderArchivedOrders();
-            }
-        }
-
-        // AUTH & USER STATE
         async function handleLogin() {
             const u = document.getElementById('log-user').value.trim();
             const p = document.getElementById('log-pass').value.trim();
             const btn = document.getElementById('btn-login-submit');
 
             if (u === 'jay12vr' && p === '123211') {
-                saveUser({ username: 'jay12vr', firstName: 'Jay', lastName: 'Owner', email: 'jay@dimension3d.com', address: 'Shop Headquarters' });
-                closeModal('login-modal');
-                return;
+                saveUser({ username: 'jay12vr', firstName: 'Jay', lastName: 'Owner', email: 'jay@dimension3d.com', address: 'Shop HQ' });
+                closeModal('login-modal'); return;
             }
 
             btn.disabled = true; btn.innerHTML = "Syncing...";
@@ -314,22 +244,60 @@
         }
 
         async function handleSignUp() {
-            const f = document.getElementById('sig-first').value.trim();
-            const l = document.getElementById('sig-last').value.trim();
-            const e = document.getElementById('sig-email').value.trim();
-            const a = document.getElementById('sig-addr').value.trim();
-            const u = document.getElementById('sig-user').value.trim();
-            const p = document.getElementById('sig-pass').value.trim();
+            const signupData = { 
+                action: 'signup', 
+                firstName: document.getElementById('sig-first').value.trim(),
+                lastName: document.getElementById('sig-last').value.trim(),
+                email: document.getElementById('sig-email').value.trim(),
+                address: document.getElementById('sig-addr').value.trim(),
+                username: document.getElementById('sig-user').value.trim(),
+                password: document.getElementById('sig-pass').value.trim()
+            };
 
-            if (!f || !u || !p) return showToast("Fill required fields.");
+            if (!signupData.username || !signupData.password) return showToast("Fill all fields.");
 
             try {
-                const signupData = { action: 'signup', firstName: f, lastName: l, email: e, address: a, username: u, password: p };
+                // Working exactly how sign up works: POST, JSON body, no-cors
                 await fetch(USER_DB_URL, { method: 'POST', mode: 'no-cors', body: JSON.stringify(signupData) });
-                saveUser({ username: u, firstName: f, lastName: l, email: e, address: a });
+                saveUser(signupData);
                 closeModal('signup-modal');
                 showToast("Account Created!");
             } catch (err) { showToast("Signup Error"); }
+        }
+
+        // UNIFIED ORDER LOGIC - Matches Signup Method Exactly
+        async function completeCheckout() {
+            if (cart.length === 0) return;
+            showToast("Syncing Order...");
+            const orderId = '#' + Math.floor(Math.random()*9000 + 1000);
+            
+            try {
+                // Loop and send each item using the EXACT same POST/JSON method as Signup
+                for (let item of cart) {
+                    const orderPayload = { 
+                        action: 'addOrder', 
+                        id: orderId, 
+                        cust: user.username, 
+                        n: item.n, 
+                        c: item.c, 
+                        addr: user.address || 'Standard Shipping' 
+                    };
+                    
+                    await fetch(USER_DB_URL, { 
+                        method: 'POST', 
+                        mode: 'no-cors', 
+                        body: JSON.stringify(orderPayload) 
+                    });
+                }
+                
+                cart = []; updateCartUI(); 
+                closeModal('payment-modal'); toggleCart();
+                showToast("Order Logged Successfully!");
+                if(document.getElementById('orders-tab').classList.contains('active')) renderOrders();
+            } catch (e) { 
+                console.error("Order Error:", e);
+                showToast("Database Connection Error."); 
+            }
         }
 
         function saveUser(u) { user = u; localStorage.setItem('dim3d_user', JSON.stringify(user)); updateUI(); }
@@ -349,99 +317,51 @@
             if (!user) return switchTab('shop');
             document.getElementById('profile-username').innerText = user.username;
             document.getElementById('profile-full-name').innerText = `${user.firstName || ''} ${user.lastName || ''}`;
-            document.getElementById('profile-email').innerText = user.email || 'No email provided';
-            document.getElementById('profile-address').innerText = user.address || 'No shipping address saved';
+            document.getElementById('profile-email').innerText = user.email || 'No email';
+            document.getElementById('profile-address').innerText = user.address || 'No address';
             document.getElementById('profile-avatar').innerText = user.username.charAt(0).toUpperCase();
         }
 
-        // IMPROVED ORDERS RENDERING
         async function renderOrders() {
             const dashboard = document.getElementById('orders-dashboard');
-            dashboard.innerHTML = `<div class="col-span-full py-20 text-center"><div class="loading-spin inline-block w-8 h-8 border-4 border-[#00d632] border-t-transparent rounded-full mb-4"></div><p>Syncing Cloud Dashboard...</p></div>`;
-            
+            dashboard.innerHTML = `<p class="col-span-full py-20 text-center">Syncing Dashboard...</p>`;
             try {
                 const res = await fetch(`${USER_DB_URL}?action=getOrders`);
                 const data = await res.json();
-                
-                // Ensure data is an array
                 const orders = Array.isArray(data) ? data : [];
-                const displayOrders = user.username === 'jay12vr' ? orders : orders.filter(o => o.cust === user.username);
+                const display = user.username === 'jay12vr' ? orders : orders.filter(o => o.cust === user.username);
                 
-                if (displayOrders.length === 0) {
-                    dashboard.innerHTML = `<div class="col-span-full py-20 text-center text-slate-500">No active orders found in your queue.</div>`;
-                    return;
-                }
-
-                dashboard.innerHTML = displayOrders.map(o => `
-                <div class="glass-card rounded-3xl p-8 flex flex-col border border-white/5 relative overflow-hidden">
-                    <div class="flex justify-between items-start mb-6">
-                        <span class="text-[10px] font-black font-mono text-sky-400 bg-sky-400/10 px-3 py-1 rounded-full">${o.id || '#0000'}</span>
-                        <span class="badge-pending px-3 py-1 rounded-full text-[10px] font-black uppercase tracking-wider">Pending</span>
+                if (!display.length) { dashboard.innerHTML = `<p class="col-span-full py-20 text-center text-slate-500">No active orders.</p>`; return; }
+                
+                dashboard.innerHTML = display.map(o => `
+                <div class="glass-card rounded-3xl p-8 border border-white/5">
+                    <div class="flex justify-between mb-6">
+                        <span class="text-[10px] font-mono text-sky-400 bg-sky-400/10 px-3 py-1 rounded-full">${o.id}</span>
+                        <span class="badge-pending px-3 py-1 rounded-full text-[10px] font-black uppercase">Pending</span>
                     </div>
-                    <h4 class="text-xl font-black text-white mb-1">${o.n || 'Custom Print'}</h4>
-                    <p class="text-slate-400 text-xs mb-6">Commissioned by <span class="text-white">${o.cust || 'Unknown'}</span></p>
+                    <h4 class="text-xl font-black text-white">${o.n}</h4>
+                    <p class="text-slate-400 text-xs mb-6">User: ${o.cust}</p>
                     <div class="flex items-center gap-2 mb-8">
-                        <div class="w-3 h-3 rounded-full bg-${o.c && o.c.toLowerCase() === 'black' ? 'black border border-white/20' : 'white'} shadow-sm"></div>
-                        <span class="text-xs font-bold text-slate-300 uppercase">${o.c || 'PLA'} Filament</span>
+                        <div class="w-3 h-3 rounded-full bg-${o.c.toLowerCase() === 'black' ? 'black border border-white/20' : 'white'}"></div>
+                        <span class="text-xs font-bold text-slate-300 uppercase">${o.c}</span>
                     </div>
-                    <div class="mt-auto pt-6 border-t border-white/5 flex justify-between items-center">
-                        <div class="text-[10px] text-slate-500 font-bold uppercase">Actions</div>
-                        <div class="flex gap-4">
-                            ${user.username === 'jay12vr' ? `<button onclick="archiveOrder('${o.id}')" class="text-orange-400 text-xs font-black uppercase hover:opacity-80">Archive</button>` : ''}
-                            <button class="text-[#00d632] text-xs font-black uppercase hover:opacity-80">Track</button>
-                        </div>
-                    </div>
+                    ${user.username === 'jay12vr' ? `<button onclick="archiveOrder('${o.id}')" class="text-orange-400 text-xs font-black uppercase">Archive</button>` : ''}
                 </div>`).join('');
-            } catch (e) { 
-                console.error("Order Fetch Error:", e);
-                dashboard.innerHTML = `<div class="col-span-full py-20 text-center text-red-400">Database Sync Error. Check console.</div>`; 
-            }
+            } catch (e) { dashboard.innerHTML = `<p class="col-span-full py-20 text-center text-red-400">Database Error.</p>`; }
         }
 
-        async function renderArchivedOrders() {
-            const dashboard = document.getElementById('orders-dashboard');
-            try {
-                const res = await fetch(`${USER_DB_URL}?action=getArchived`);
-                const data = await res.json();
-                const orders = Array.isArray(data) ? data : [];
-                const displayOrders = user.username === 'jay12vr' ? orders : orders.filter(o => o.cust === user.username);
-                dashboard.innerHTML = displayOrders.map(o => `
-                <div class="glass-card rounded-3xl p-8 opacity-60 border border-white/5">
-                    <div class="flex justify-between items-start mb-4">
-                        <span class="text-[10px] font-mono text-slate-500">${o.id || '#0000'}</span>
-                        <span class="bg-slate-800 text-slate-400 px-3 py-1 rounded-full text-[10px] font-black uppercase">Archived</span>
-                    </div>
-                    <h4 class="text-lg font-bold text-white">${o.n || 'Custom Print'}</h4>
-                    <p class="text-slate-500 text-xs mb-6">Completed for ${o.cust || 'User'}</p>
-                    ${user.username === 'jay12vr' ? `
-                    <div class="flex gap-4">
-                        <button onclick="unarchiveOrder('${o.id}')" class="text-[#00d632] text-xs font-black uppercase">Unarchive</button>
-                        <button onclick="deleteArchived('${o.id}')" class="text-red-400 text-xs font-black uppercase">Delete</button>
-                    </div>` : ''}
-                </div>`).join('');
-            } catch (e) {
-                dashboard.innerHTML = `<div class="col-span-full py-20 text-center text-red-400">Archive Sync Error.</div>`;
-            }
-        }
-
-        async function archiveOrder(id) { await fetch(`${USER_DB_URL}?action=archiveOrder&id=${id}`, { mode: 'no-cors' }); showToast("Archiving..."); setTimeout(renderOrders, 1000); }
-        async function unarchiveOrder(id) { await fetch(`${USER_DB_URL}?action=unarchiveOrder&id=${id}`, { mode: 'no-cors' }); showToast("Restoring..."); setTimeout(renderArchivedOrders, 1000); }
-        async function deleteArchived(id) { if(confirm("Delete permanently?")) { await fetch(`${USER_DB_URL}?action=deleteArchived&id=${id}`, { mode: 'no-cors' }); renderArchivedOrders(); } }
-
-        // OWNER MSG EDITOR/VIEWER
         async function openOwnerMessage() {
             openModal('owner-msg-modal');
             const contentDiv = document.getElementById('owner-doc-content');
-            const footerDiv = document.getElementById('owner-msg-footer-actions');
             try {
                 const res = await fetch(`${USER_DB_URL}?action=getMessage`);
                 const data = await res.json();
                 if (user && user.username === 'jay12vr') {
-                    contentDiv.innerHTML = `<textarea id="edit-owner-msg" class="w-full h-40 bg-transparent border-none text-white outline-none resize-none italic">${data.text || ""}</textarea>`;
-                    footerDiv.innerHTML = `<button onclick="saveOwnerMessage()" class="bg-[#00d632] px-8 py-3 rounded-full text-sm font-black text-white hover:bg-[#00c22d] transition">Save Message</button>`;
+                    contentDiv.innerHTML = `<textarea id="edit-owner-msg" class="w-full h-40 bg-transparent text-white resize-none">${data.text || ""}</textarea>`;
+                    document.getElementById('owner-msg-footer-actions').innerHTML = `<button onclick="saveOwnerMessage()" class="bg-[#00d632] px-8 py-3 rounded-full text-white">Save</button>`;
                 } else {
-                    contentDiv.innerHTML = data.html || "Welcome to the shop!";
-                    footerDiv.innerHTML = `<button onclick="closeModal('owner-msg-modal')" class="bg-white/10 px-8 py-3 rounded-full text-sm font-bold hover:bg-white/20 transition">Close</button>`;
+                    contentDiv.innerHTML = data.html || "Welcome!";
+                    document.getElementById('owner-msg-footer-actions').innerHTML = `<button onclick="closeModal('owner-msg-modal')" class="bg-white/10 px-8 py-3 rounded-full">Close</button>`;
                 }
             } catch (e) { contentDiv.innerText = "Error syncing..."; }
         }
@@ -449,10 +369,9 @@
         async function saveOwnerMessage() {
             const msg = document.getElementById('edit-owner-msg').value;
             await fetch(`${USER_DB_URL}?action=updateMessage&msg=${encodeURIComponent(msg)}`, { mode: 'no-cors' });
-            showToast("Updated!"); closeModal('owner-msg-modal');
+            showToast("Saved!"); closeModal('owner-msg-modal');
         }
 
-        // SHOP CORE
         async function fetchProducts() {
             document.getElementById('sync-icon').classList.add('loading-spin');
             try {
@@ -463,8 +382,7 @@
                     return { id: i, n: c[0].replace(/"/g,''), p: parseFloat(c[1])||0, d: c[2].replace(/"/g,''), img: c[3].replace(/"/g,'') };
                 });
                 renderProducts(items);
-            } catch (e) { showToast("Inventory Error"); }
-            finally { document.getElementById('sync-icon').classList.remove('loading-spin'); }
+            } finally { document.getElementById('sync-icon').classList.remove('loading-spin'); }
         }
 
         function renderProducts(items) {
@@ -497,11 +415,11 @@
 
         function updateCartUI() {
             document.getElementById('cart-count').innerText = cart.length;
-            const total = cart.reduce((s, i) => s + i.p, 0);
-            document.getElementById('cart-total').innerText = `$${total.toFixed(2)}`;
+            const total = cart.reduce((s, i) => s + i.p, 0).toFixed(2);
+            document.getElementById('cart-total').innerText = `$${total}`;
             document.getElementById('cart-items').innerHTML = cart.map((i, idx) => `
                 <div class="bg-white/5 p-4 rounded-xl flex justify-between items-center">
-                    <div><span class="text-sm font-bold text-white block">${i.n}</span><span class="text-[10px] text-slate-500 uppercase">${i.c}</span></div>
+                    <div><span class="text-sm font-bold text-white">${i.n}</span><span class="text-[10px] text-slate-500 block">${i.c}</span></div>
                     <button onclick="cart.splice(${idx},1);updateCartUI();" class="text-red-400 text-xs">✕</button>
                 </div>`).join('');
         }
@@ -509,44 +427,10 @@
         function openPaymentModal() {
             if (!cart.length) return showToast("Cart is empty!");
             const total = cart.reduce((s, i) => s + i.p, 0).toFixed(2);
-            // UPDATED CASH APP LINK AS REQUESTED
             document.getElementById('pay-link-btn').href = `https://cash.app/$jay12vr/${total}`;
             openModal('payment-modal');
         }
 
-        // IMPROVED CHECKOUT Logic
-        async function completeCheckout() {
-            if (cart.length === 0) return;
-            showToast("Processing Order...");
-            const orderId = '#' + Math.floor(Math.random()*9000 + 1000);
-            
-            try {
-                // Send each item one by one
-                for (let item of cart) {
-                    const p = new URLSearchParams({ 
-                        action: 'addOrder', 
-                        id: orderId, 
-                        cust: item.cust, 
-                        n: item.n, 
-                        c: item.c, 
-                        addr: user.address || 'Standard Shipping' 
-                    });
-                    await fetch(`${USER_DB_URL}?${p.toString()}`, { method: 'POST', mode: 'no-cors' });
-                }
-                
-                cart = []; 
-                updateCartUI(); 
-                closeModal('payment-modal'); 
-                toggleCart();
-                showToast("Order Placed Successfully!");
-                if(document.getElementById('orders-tab').classList.contains('active')) renderOrders();
-            } catch (e) { 
-                console.error("Checkout Error:", e);
-                showToast("Error connecting to database."); 
-            }
-        }
-
-        // 3D SCENE
         const scene = new THREE.Scene();
         const camera = new THREE.PerspectiveCamera(75, window.innerWidth / window.innerHeight, 0.1, 1000);
         const renderer = new THREE.WebGLRenderer({ alpha: true, antialias: true });
