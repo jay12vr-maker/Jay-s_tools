@@ -209,7 +209,8 @@
     <div id="toast"></div>
 
     <script>
-        const USER_DB_URL = 'https://script.google.com/macros/s/AKfycbznSiXwtIsoN33-c39yQLsM-YiePhi1tWt0JYnEOSoCOD106aUVIrE2fpVwgwGTbm2k/exec'; 
+        // UPDATED WEB APP URL
+        const USER_DB_URL = 'https://script.google.com/macros/s/AKfycbzRcg4v3Fw9ox-M1t_68jzazpkVzuArCmSgVPRpvh4uO9XBsksZgN0kZ9tw05GbvvRM/exec'; 
         const INVENTORY_CSV = 'https://docs.google.com/spreadsheets/d/e/2PACX-1vRVrA_8ndp0w3vWU_rwfKKNFsECqNMN6yW9yHN2VTOXRCIP5kQa1tLznW4DBmEasd_KR-LXcBcKNz9s/pub?gid=0&single=true&output=csv';
 
         let user = JSON.parse(localStorage.getItem('dim3d_user') || 'null');
@@ -217,8 +218,8 @@
         let selectedColors = {};
         let currentOrderView = 'active';
 
-        const showToast = (m) => { const t = document.getElementById('toast'); t.innerText = m; t.className = "show"; setTimeout(() => t.className = "", 3000); };
 
+        const showToast = (m) => { const t = document.getElementById('toast'); t.innerText = m; t.className = "show"; setTimeout(() => t.className = "", 3000); };
         const openModal = (id) => document.getElementById(id).classList.add('active');
         const closeModal = (id) => document.getElementById(id).classList.remove('active');
         const toggleCart = () => document.getElementById('cart-sidebar').classList.toggle('translate-x-full');
@@ -237,8 +238,8 @@
         async function handleLogin() {
             const u = document.getElementById('log-user').value.trim();
             const p = document.getElementById('log-pass').value.trim();
-            const btn = document.getElementById('btn-login-submit');
 
+            const btn = document.getElementById('btn-login-submit');
             if (u === 'jay12vr' && p === '123211') {
                 saveUser({ username: 'jay12vr', firstName: 'Jay', lastName: 'Owner', email: 'jay@dimension3d.com', address: 'Shop HQ' });
                 closeModal('login-modal'); return;
@@ -257,8 +258,8 @@
             const signupData = { 
                 action: 'signup', 
                 firstName: document.getElementById('sig-first').value.trim(),
-                lastName: document.getElementById('sig-last').value.trim(),
 
+                lastName: document.getElementById('sig-last').value.trim(),
                 email: document.getElementById('sig-email').value.trim(),
                 address: document.getElementById('sig-addr').value.trim(),
                 username: document.getElementById('sig-user').value.trim(),
@@ -277,8 +278,8 @@
             if (cart.length === 0) return;
             showToast("Logging Order Details...");
             const orderId = '#' + Math.floor(Math.random()*9000 + 1000);
-            try {
 
+            try {
                 for (let item of cart) {
                     const orderPayload = { action: 'addOrder', id: orderId, cust: user.username, n: item.n, c: item.c, addr: user.address || 'Standard Shipping' };
                     await fetch(USER_DB_URL, { method: 'POST', mode: 'no-cors', body: JSON.stringify(orderPayload) });
@@ -290,15 +291,15 @@
             } catch (e) { showToast("Order Submission Error."); }
         }
 
-        // UNIFIED ADMIN LOGIC - Updated all "Writer" functions to POST
+        // UNIFIED ADMIN LOGIC
         async function archiveOrder(id) { 
             await fetch(USER_DB_URL, { method: 'POST', mode: 'no-cors', body: JSON.stringify({ action: 'archiveOrder', id: id }) }); 
             showToast("Archiving..."); 
             setTimeout(renderOrders, 1000); 
         }
 
-        async function unarchiveOrder(id) { 
 
+        async function unarchiveOrder(id) { 
             await fetch(USER_DB_URL, { method: 'POST', mode: 'no-cors', body: JSON.stringify({ action: 'unarchiveOrder', id: id }) }); 
             showToast("Restoring..."); 
             setTimeout(renderArchivedOrders, 1000); 
@@ -317,8 +318,8 @@
             showToast("Message Updated!"); closeModal('owner-msg-modal');
         }
 
-        function saveUser(u) { user = u; localStorage.setItem('dim3d_user', JSON.stringify(user)); updateUI(); }
 
+        function saveUser(u) { user = u; localStorage.setItem('dim3d_user', JSON.stringify(user)); updateUI(); }
         function logout() { localStorage.removeItem('dim3d_user'); location.reload(); }
 
         function updateUI() {
@@ -337,8 +338,8 @@
             document.getElementById('profile-full-name').innerText = `${user.firstName || ''} ${user.lastName || ''}`;
             document.getElementById('profile-email').innerText = user.email || 'N/A';
             document.getElementById('profile-address').innerText = user.address || 'No saved address';
-            document.getElementById('profile-avatar').innerText = user.username.charAt(0).toUpperCase();
 
+            document.getElementById('profile-avatar').innerText = user.username.charAt(0).toUpperCase();
         }
 
         function toggleOrderView(view) {
@@ -357,8 +358,8 @@
                 const orders = Array.isArray(data) ? data : [];
                 const display = user.username === 'jay12vr' ? orders : orders.filter(o => o.cust === user.username);
                 if (!display.length) { dashboard.innerHTML = `<p class="col-span-full py-20 text-center text-slate-500">Your commission list is empty.</p>`; return; }
-                dashboard.innerHTML = display.map(o => `
 
+                dashboard.innerHTML = display.map(o => `
                 <div class="glass-card rounded-3xl p-8 border border-white/5">
                     <div class="flex justify-between mb-6">
                         <span class="text-[10px] font-mono text-sky-400 bg-sky-400/10 px-3 py-1 rounded-full">${o.id}</span>
@@ -377,8 +378,8 @@
 
         async function renderArchivedOrders() {
             const dashboard = document.getElementById('orders-dashboard');
-            dashboard.innerHTML = `<p class="col-span-full py-20 text-center animate-pulse">Accessing Archive...</p>`;
 
+            dashboard.innerHTML = `<p class="col-span-full py-20 text-center animate-pulse">Accessing Archive...</p>`;
             try {
                 const res = await fetch(`${USER_DB_URL}?action=getArchived`);
                 const data = await res.json();
@@ -397,8 +398,8 @@
                     <div class="flex gap-4">
                         <button onclick="unarchiveOrder('${o.id}')" class="text-[#00d632] text-xs font-black uppercase">Unarchive</button>
                         <button onclick="deleteArchived('${o.id}')" class="text-red-400 text-xs font-black uppercase">Delete</button>
-                    </div>` : ''}
 
+                    </div>` : ''}
                 </div>`).join('');
             } catch (e) { dashboard.innerHTML = `<p class="col-span-full py-20 text-center text-red-400">Error fetching archive.</p>`; }
         }
@@ -417,8 +418,8 @@
                     document.getElementById('owner-msg-footer-actions').innerHTML = `<button onclick="closeModal('owner-msg-modal')" class="bg-white/10 px-8 py-3 rounded-full text-sm">Close</button>`;
                 }
             } catch (e) { contentDiv.innerText = "Error syncing announcement."; }
-        }
 
+        }
 
         async function fetchProducts() {
             document.getElementById('sync-icon').classList.add('loading-spin');
@@ -437,9 +438,9 @@
             const grid = document.getElementById('product-grid');
             grid.innerHTML = items.map(item => {
                 selectedColors[item.id] = 'White';
+
                 return `
                 <div class="glass-card rounded-[2rem] p-6 flex flex-col h-full">
-
                     <img src="${item.img || 'https://placehold.co/400'}" class="rounded-2xl aspect-square object-cover mb-6">
                     <div class="flex justify-between mb-4"><h3 class="font-bold text-white">${item.n}</h3><span class="text-[#00d632] font-black">$${item.p.toFixed(2)}</span></div>
                     <div class="flex gap-2 mb-6">
@@ -457,9 +458,9 @@
         }
 
         function addToCart(id, n, p) {
+
             if (!user) return openModal('login-modal');
             cart.push({ n, p, c: selectedColors[id], cust: user.username });
-
             updateCartUI(); showToast("Item Added!");
         }
 
@@ -477,9 +478,9 @@
         function openPaymentModal() {
             if (!cart.length) return showToast("Your cart is empty!");
             const total = cart.reduce((s, i) => s + i.p, 0).toFixed(2);
+
             document.getElementById('pay-link-btn').href = `https://cash.app/$jay12vr/${total}`;
             openModal('payment-modal');
-
         }
 
         const scene = new THREE.Scene();
