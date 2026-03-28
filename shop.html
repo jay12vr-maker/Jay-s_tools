@@ -17,6 +17,7 @@
         .gradient-text { background: linear-gradient(90deg, #00d632, #38bdf8); -webkit-background-clip: text; -webkit-text-fill-color: transparent; }
         .color-dot { width: 1.5rem; height: 1.5rem; border-radius: 9999px; cursor: pointer; border: 2px solid transparent; transition: all 0.2s; }
         .color-dot.active { border-color: #00d632; transform: scale(1.1); }
+
         .modal { display: none; position: fixed; inset: 0; z-index: 1000; background: rgba(0,0,0,0.85); backdrop-filter: blur(12px); align-items: center; justify-content: center; padding: 20px; }
         .modal.active { display: flex; }
         #toast { visibility: hidden; min-width: 250px; background-color: #00d632; color: #fff; text-align: center; border-radius: 12px; padding: 16px; position: fixed; z-index: 2000; right: 30px; bottom: 30px; box-shadow: 0 10px 15px -3px rgba(0,0,0,0.4); }
@@ -36,6 +37,7 @@
     <div id="canvas-container"></div>
 
     <nav class="flex items-center justify-between px-8 py-6 sticky top-0 z-50 bg-slate-900/80 backdrop-blur-xl border-b border-white/5">
+
         <!-- LOGO NOW LINKS TO index.html -->
         <a href="index.html" class="text-2xl font-black tracking-tighter flex items-center gap-2 hover:opacity-80 transition cursor-pointer">
             <div class="w-10 h-10 bg-[#00d632] rounded-xl flex items-center justify-center shadow-lg text-white">3D</div>
@@ -55,6 +57,7 @@
             </div>
             <div id="user-display" class="hidden flex items-center gap-4">
                 <span id="welcome-name" class="text-slate-300 font-normal"></span>
+
                 <button onclick="logout()" class="text-xs text-slate-500 hover:text-red-400">Logout</button>
             </div>
 
@@ -74,6 +77,7 @@
                     <p class="text-slate-400">Premium 3D prints delivered to your door.</p>
                 </div>
                 <button onclick="fetchProducts()" class="flex items-center gap-2 text-xs font-bold text-slate-500 hover:text-[#00d632] uppercase tracking-widest">
+
                     <svg id="sync-icon" class="w-4 h-4" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path d="M4 4v5h.582m15.356 2A8.001 8.001 0 004.582 9m0 0H9m11 11v-5h-.581m0 0a8.003 8.003 0 01-15.357-2m15.357 2H15"></path></svg>
                     Refresh Shop
                 </button>
@@ -93,6 +97,7 @@
                 </div>
                 <button onclick="refreshCurrentOrderView()" class="text-xs font-bold text-[#00d632] uppercase flex items-center gap-2 bg-white/5 px-6 py-3 rounded-xl hover:bg-white/10 transition">
                     <svg id="order-sync-icon" class="w-4 h-4" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path d="M4 4v5h.582m15.356 2A8.001 8.001 0 004.582 9m0 0H9m11 11v-5h-.581m0 0a8.003 8.003 0 01-15.357-2m15.357 2H15"></path></svg>
+
                     Refresh Data
                 </button>
             </div>
@@ -111,6 +116,7 @@
                     <tbody id="orders-table-body" class="divide-y divide-white/5"></tbody>
                 </table>
             </div>
+
 
             <div id="archived-orders-container" class="hidden glass-card rounded-3xl overflow-hidden overflow-x-auto">
                 <table class="w-full text-left border-collapse">
@@ -131,6 +137,7 @@
     <div id="owner-msg-modal" class="modal">
         <div class="bg-slate-900 p-8 rounded-[2.5rem] w-full max-w-2xl border border-white/10 shadow-2xl flex flex-col">
             <div class="flex justify-between items-center mb-6">
+
                 <h2 class="text-3xl font-black text-white">Message from <span class="text-[#00d632]">Owner</span></h2>
                 <button onclick="closeModal('owner-msg-modal')" class="text-slate-500 hover:text-white text-2xl">✕</button>
             </div>
@@ -150,6 +157,7 @@
             <a id="pay-link-btn" href="#" target="_blank" onclick="completeCheckout()" class="block w-full bg-[#00d632] py-4 rounded-xl font-black text-white hover:bg-[#00c22d] transition mb-4">Pay with Cash App</a>
             <button onclick="closeModal('payment-modal')" class="text-slate-500 text-sm">Cancel</button>
         </div>
+
     </div>
 
     <div id="login-modal" class="modal">
@@ -169,6 +177,7 @@
                 <input id="sig-first" type="text" placeholder="First" class="bg-white/5 border border-white/10 p-4 rounded-xl outline-none focus:border-[#00d632] text-white">
                 <input id="sig-last" type="text" placeholder="Last" class="bg-white/5 border border-white/10 p-4 rounded-xl outline-none focus:border-[#00d632] text-white">
             </div>
+
             <input id="sig-email" type="email" placeholder="Email" class="w-full bg-white/5 border border-white/10 p-4 rounded-xl mb-4 outline-none focus:border-[#00d632] text-white">
             <input id="sig-addr" type="text" placeholder="Shipping Address" class="w-full bg-white/5 border border-white/10 p-4 rounded-xl mb-4 outline-none focus:border-[#00d632] text-white">
             <input id="sig-user" type="text" placeholder="Username" class="w-full bg-white/5 border border-white/10 p-4 rounded-xl mb-4 outline-none focus:border-[#00d632] text-white">
@@ -188,6 +197,7 @@
             <div class="flex justify-between mb-8">
                 <span class="text-slate-400">Total</span>
                 <span id="cart-total" class="text-3xl font-black text-[#00d632]">$0.00</span>
+
             </div>
             <button onclick="openPaymentModal()" class="w-full bg-[#00d632] py-5 rounded-2xl font-black text-white hover:bg-[#00c22d] transition">Checkout</button>
         </div>
@@ -196,8 +206,8 @@
     <div id="toast"></div>
 
     <script>
-        // CONFIG - Syncing with your latest Apps Script
-        const USER_DB_URL = 'https://script.google.com/macros/s/AKfycbwyvljZ6f6jxfr1lXY-NebU3CBSkZ1d2criV-SGPM6XLCU0nODcYpNkDU_496oVjvG5/exec'; 
+        // CONFIG - Syncing with your latest Apps Script URL provided
+        const USER_DB_URL = 'https://script.google.com/macros/s/AKfycbznSiXwtIsoN33-c39yQLsM-YiePhi1tWt0JYnEOSoCOD106aUVIrE2fpVwgwGTbm2k/exec'; 
         const INVENTORY_CSV = 'https://docs.google.com/spreadsheets/d/e/2PACX-1vRVrA_8ndp0w3vWU_rwfKKNFsECqNMN6yW9yHN2VTOXRCIP5kQa1tLznW4DBmEasd_KR-LXcBcKNz9s/pub?gid=0&single=true&output=csv';
 
         let user = JSON.parse(localStorage.getItem('dim3d_user') || 'null');
@@ -207,6 +217,7 @@
 
         function openModal(id) { document.getElementById(id).classList.add('active'); }
         function closeModal(id) { document.getElementById(id).classList.remove('active'); }
+
         function toggleCart() { document.getElementById('cart-sidebar').classList.toggle('translate-x-full'); }
 
         function switchTab(tabId) {
@@ -226,6 +237,7 @@
             window.scrollTo({ top: 0, behavior: 'smooth' });
 
             if (tabId === 'orders') refreshCurrentOrderView();
+
         }
 
         function toggleOrderView(view) {
@@ -245,6 +257,7 @@
                 document.getElementById('active-orders-container').classList.add('hidden');
                 document.getElementById('archived-orders-container').classList.remove('hidden');
                 renderArchivedOrders();
+
             }
         }
 
@@ -264,6 +277,7 @@
         }
 
         async function handleLogin() {
+
             const u = document.getElementById('log-user').value;
             const p = document.getElementById('log-pass').value;
             if (u === 'jay12vr' && p === '123211') {
@@ -283,6 +297,7 @@
                 action: 'signup',
                 firstName: document.getElementById('sig-first').value, 
                 lastName: document.getElementById('sig-last').value, 
+
                 email: document.getElementById('sig-email').value, 
                 address: document.getElementById('sig-addr').value, 
                 username: document.getElementById('sig-user').value, 
@@ -302,6 +317,7 @@
         function updateUI() {
             if (user) {
                 document.getElementById('auth-buttons').classList.add('hidden');
+
                 document.getElementById('user-display').classList.remove('hidden');
                 document.getElementById('welcome-name').innerText = user.username; 
                 if (user.username === 'jay12vr') document.getElementById('nav-orders').classList.remove('hidden');
@@ -322,6 +338,7 @@
             finally { document.getElementById('sync-icon').classList.remove('loading-spin'); }
         }
 
+
         function renderProducts(items) {
             const grid = document.getElementById('product-grid');
             grid.innerHTML = items.map(item => {
@@ -341,6 +358,7 @@
 
         function selectColor(id, c) {
             selectedColors[id] = c;
+
             document.querySelectorAll(`.dot-${id}`).forEach(d => { d.classList.remove('active'); if (d.getAttribute('data-color') === c) d.classList.add('active'); });
         }
 
@@ -361,6 +379,7 @@
                 </div>`).join('');
         }
 
+
         function openPaymentModal() {
             if (!cart.length) return;
             const total = cart.reduce((s, i) => s + i.p, 0).toFixed(2);
@@ -380,6 +399,7 @@
                         n: item.n,
                         c: item.c,
                         addr: user.address || 'Standard Shipping'
+
                     });
                     await fetch(`${USER_DB_URL}?${params.toString()}`, { mode: 'no-cors' });
                 }
@@ -399,6 +419,7 @@
                     <td class="p-6 font-bold text-sm text-white">${o.cust}</td>
                     <td class="p-6 text-sm text-slate-300">${o.n}</td>
                     <td class="p-6"><span class="px-2 py-1 bg-slate-800 rounded text-[10px] font-black text-[#00d632]">${o.c}</span></td>
+
                     <td class="p-6 text-right"><button onclick="archiveOrder('${o.id}')" class="text-orange-400 font-bold uppercase text-xs">Archive</button></td>
                 </tr>`).join('');
             } catch (e) {}
@@ -418,6 +439,7 @@
                         <td class="p-6 text-slate-400 text-sm">${o.cust} (Wipes: ${expiry})</td>
                         <td class="p-6 text-right flex justify-end gap-6">
                             <button onclick="unarchiveOrder('${o.id}')" class="text-[#00d632] font-bold text-xs uppercase">Unarchive</button>
+
                             <button onclick="deleteArchived('${o.id}')" class="text-red-400 font-bold text-xs uppercase">Delete</button>
                         </td>
                     </tr>`;
@@ -437,6 +459,7 @@
         const camera = new THREE.PerspectiveCamera(75, window.innerWidth / window.innerHeight, 0.1, 1000);
         const renderer = new THREE.WebGLRenderer({ alpha: true, antialias: true });
         renderer.setSize(window.innerWidth, window.innerHeight);
+
         document.getElementById('canvas-container').appendChild(renderer.domElement);
 
         const starGeometry = new THREE.BufferGeometry();
@@ -456,6 +479,7 @@
         scene.add(knot);
 
         camera.position.z = 40;
+
         let mouseX = 0, mouseY = 0;
         document.addEventListener('mousemove', (e) => { mouseX = (e.clientX / window.innerWidth) - 0.5; mouseY = (e.clientY / window.innerHeight) - 0.5; });
 
@@ -472,3 +496,5 @@
     </script>
 </body>
 </html>
+
+
