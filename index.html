@@ -345,6 +345,8 @@
         #ascii-output { background: black; color: var(--accent-primary); font-family: 'Courier New', monospace; font-size: 4px; line-height: 4px; white-space: pre; overflow: auto; width: 100%; max-height: 500px; padding: 1rem; border-radius: 12px; border: 1px solid var(--accent-primary); }
         .architect-name-swap::before { content: 'Jay'; }
         body.owner-active .architect-name-swap::before { content: 'Jairden'; }
+        .liability-uplink { cursor: pointer; text-decoration: underline; transition: 0.3s; }
+        .liability-uplink:hover { color: var(--neon-red); }
     </style>
 </head>
 <body>
@@ -387,13 +389,13 @@
         </div>
     </div>
     <main class="min-h-screen flex items-center justify-center p-6">
-        <section id="landing-view" class="w-full max-w-2xl py-12">
+        <section id="landing-view" class="w-full max-w-2xl py-12 view-hidden">
             <div class="glass-card p-12 text-center" style="border-color: var(--neon-red)">
                 <h1 class="text-4xl font-bold text-red-500 mb-8 heading-font">Liability Protocol</h1>
                 <div class="disclaimer-box mb-10">
                     <p class="footer-text text-white opacity-90 mb-4" style="font-size: 0.85rem">Legal Notice:</p>
                     <p class="text-sm text-gray-300">
-                        By entering this terminal, you acknowledge and agree that the owner and creator of this website is <b class="text-white">not responsible</b> for any damages, data loss, system anomalies, or real-world consequences caused by the use or misuse of these tools. Proceeding confirms your full acceptance of these terms.
+                        By entering this terminal, you acknowledge and agree that the owner of this website is <b class="text-white">not responsible</b> if your computer/chrome book gets taken away because of this website. Proceeding confirms your full acceptance of these terms.
                     </p>
                 </div>
                 <button class="neon-btn" style="border-color: var(--neon-red); color: var(--neon-red)" onclick="acceptDisclaimer()">Agree & Initialize</button>
@@ -463,9 +465,10 @@
                         <input type="text" id="drive-id-output" class="id-output-box" readonly placeholder="https://drive.google.com">
                     </div>
                 </div>
-                <div class="mt-12 text-center" id="system-disclaimer">
+                <div class="mt-12 text-center space-y-2" id="system-disclaimer">
                     <p class="footer-text" style="opacity: 0.3">some buttons do not work yet</p>
-                    <p class="footer-text" style="opacity: 0.3; margin-top: 0.25rem;">scientific calculator is broken</p>
+                    <p class="footer-text" style="opacity: 0.3">scientific calculator is broken</p>
+                    <p class="footer-text liability-uplink" onclick="openLiability()">Liability Protocol</p>
                 </div>
             </div>
         </section>
@@ -474,9 +477,9 @@
                 <div class="exit-btn" onclick="closeMore()">✕</div>
                 <h1 class="text-4xl font-bold text-gradient mb-8">More Tools</h1>
                 <div class="grid grid-cols-2 md:grid-cols-3 gap-6">
-                    <div class="vault-btn" onclick="openEncrypter()"><span class="text-4xl">🔐</span><span class="footer-text">Encrypter</span></div>
+                    <div class="vault-btn" onclick="openCipherSuite()"><span class="text-4xl">🔐</span><span class="footer-text">Cipher Suite</span></div>
                     <div class="vault-btn" onclick="openSettings()"><span class="text-4xl">⚙️</span><span class="footer-text">Settings</span></div>
-                    <div class="vault-btn" onclick="openPassGen()"><span class="text-4xl">🔑</span><span class="footer-text">Pass Maker</span></div>
+                    <div class="vault-btn" onclick="alert('PROTOCOL OFFLINE: Access to Pass Maker logic has been removed.')"><span class="text-4xl">🔑</span><span class="footer-text">Pass Maker</span></div>
                     <div class="vault-btn" onclick="openASCII()"><span class="text-4xl">📡</span><span class="footer-text">ASCII Art</span></div>
                     <div class="vault-btn" onclick="window.location.href='shop.html'"><span class="text-4xl">🛒</span><span class="footer-text">Shop</span></div>
                     <div class="vault-btn"><span class="text-4xl">✨</span><span class="footer-text">Extras</span></div>
@@ -528,26 +531,6 @@
                         <p class="text-xs text-cyan-400">Safe Protocol: ENABLED</p>
                         <p class="text-xs text-red-400">No Summarization: ACTIVE</p>
                     </div>
-                </div>
-            </div>
-        </section>
-        <section id="passgen-view" class="w-full max-w-4xl py-12 view-hidden">
-            <div class="glass-card p-12 text-center">
-                <div class="exit-btn" onclick="closePassGen()">✕</div>
-                <h1 class="text-4xl font-bold text-gradient mb-8">Password Maker</h1>
-                <div class="space-y-8 max-w-md mx-auto">
-                    <div class="time-input-group">
-                        <label class="footer-text">Security Level</label>
-                        <div class="select-wrapper">
-                            <select id="pass-level" class="time-select w-full">
-                                <option value="weak">Level 1: Basic (8 Chars)</option>
-                                <option value="medium" selected>Level 2: Standard (12 Chars)</option>
-                                <option value="strong">Level 3: Secure (16 Chars)</option>
-                            </select>
-                        </div>
-                    </div>
-                    <div class="result-box"><span id="pass-output">********</span></div>
-                    <button class="neon-btn w-auto" onclick="generatePassword()">Generate Key</button>
                 </div>
             </div>
         </section>
@@ -709,21 +692,24 @@
                 </div>
             </div>
         </section>
-        <section id="encrypter-view" class="w-full max-w-4xl py-12 view-hidden">
+        <section id="ciphersuite-view" class="w-full max-w-4xl py-12 view-hidden">
             <div class="glass-card p-12 text-center">
-                <div class="exit-btn" onclick="closeEncrypter()">✕</div>
-                <h1 class="text-4xl font-bold text-gradient mb-8">Encrypter Protocol</h1>
+                <div class="exit-btn" onclick="closeCipherSuite()">✕</div>
+                <h1 class="text-4xl font-bold text-gradient mb-8">Cipher Suite</h1>
                 <div class="space-y-6 text-left">
                     <div>
-                        <label class="footer-text block mb-2">Alpha Uplink (Letters)</label>
-                        <textarea id="enc-input" class="enc-textarea" placeholder="Enter plain text..."></textarea>
+                        <label class="footer-text block mb-2">Input Payload</label>
+                        <textarea id="cipher-input" class="enc-textarea" placeholder="Enter text to process..."></textarea>
                     </div>
-                    <div class="flex justify-center">
-                        <button class="neon-btn w-auto" onclick="runEncryption()">Execute Encryption</button>
+                    <div class="grid grid-cols-2 md:grid-cols-4 gap-4">
+                        <button class="neon-btn text-xs py-2 px-0" onclick="runCipherAction('b64-enc')">B64 Encode</button>
+                        <button class="neon-btn text-xs py-2 px-0" onclick="runCipherAction('b64-dec')">B64 Decode</button>
+                        <button class="neon-btn text-xs py-2 px-0" onclick="runCipherAction('hex-enc')">Hex Encode</button>
+                        <button class="neon-btn text-xs py-2 px-0" onclick="runCipherAction('hex-dec')">Hex Decode</button>
                     </div>
                     <div>
-                        <label class="footer-text block mb-2">Numerical Cipher (Numbers)</label>
-                        <textarea id="enc-output" class="enc-textarea" readonly placeholder="Numerical output will appear here..."></textarea>
+                        <label class="footer-text block mb-2">Resultant Output</label>
+                        <textarea id="cipher-output" class="enc-textarea" readonly placeholder="Result will appear here..."></textarea>
                     </div>
                 </div>
             </div>
@@ -799,7 +785,7 @@
             { name: "TikTok", desc: "The destination for short-form mobile video and global trends.", url: "https://www.tiktok.com", tags: ["video", "social", "trends", "short", "entertainment"] },
             { name: "Netflix", desc: "Streaming service offering a wide variety of award-winning TV shows and films.", url: "https://www.netflix.com", tags: ["movie", "watch", "show", "streaming", "entertainment"] },
             { name: "DuoLingo", desc: "Gamified platform for learning over 30 global languages for free.", url: "https://www.duolingo.com", tags: ["learn", "language", "study", "spanish", "french"] },
-            { name: "itch.io", desc: "The marketplace for independent digital creators and indie games.", url: "https://itch.io", tags: ["game", "indie", "dev", "play", "download"] },
+            { name: "itch.io", desc: "The marketplace for independent digital creators and indie games.", url: "itch.io", tags: ["game", "indie", "dev", "play", "download"] },
             { name: "Medium", desc: "The platform where everyone has a story to share and ideas to read.", url: "https://medium.com", tags: ["read", "blog", "write", "ideas", "articles"] },
             { name: "Pinterest", desc: "Visual discovery engine for finding ideas like recipes and home inspo.", url: "https://www.pinterest.com", tags: ["image", "idea", "inspo", "visual", "design"] },
             { name: "NASA", desc: "Official site for the National Aeronautics and Space Administration.", url: "https://www.nasa.gov", tags: ["space", "science", "stars", "moon", "nasa"] },
@@ -841,19 +827,41 @@
         let calcString = "";
         let isSciMode = false;
         let userSettings = JSON.parse(localStorage.getItem('j_settings')) || { primary: "#00f2ff", secondary: "#bc13fe", float: true };
+        
+        window.onload = function() {
+            if (localStorage.getItem('j_liability_accepted') === 'true') {
+                document.getElementById('main-view').classList.remove('view-hidden');
+            } else {
+                document.getElementById('landing-view').classList.remove('view-hidden');
+            }
+            applyTheme();
+            loadNote(activeIdx);
+        };
+
         document.addEventListener('mousemove', e => {
             const x = (e.clientX / window.innerWidth) * 100;
             const y = (e.clientY / window.innerHeight) * 100;
             const bg = document.getElementById('bg-glow');
             if (bg) { bg.style.setProperty('--x', `${x}%`); bg.style.setProperty('--y', `${y}%`); bg.style.setProperty('--x2', `${100-x}%`); bg.style.setProperty('--y2', `${100-y}%`); }
         });
+
         function acceptDisclaimer() {
+            localStorage.setItem('j_liability_accepted', 'true');
             document.getElementById('landing-view').classList.add('view-hidden');
             setTimeout(() => {
                 document.getElementById('main-view').classList.remove('view-hidden');
                 document.getElementById('landing-view').style.display = 'none';
             }, 500);
         }
+
+        function openLiability() {
+            document.getElementById('main-view').classList.add('view-hidden');
+            document.getElementById('landing-view').style.display = 'block';
+            setTimeout(() => {
+                document.getElementById('landing-view').classList.remove('view-hidden');
+            }, 50);
+        }
+
         function toggleOwnerMode() {
             const btns = document.querySelectorAll('.vault-btn');
             btns.forEach((btn, i) => { setTimeout(() => { btn.classList.add('crumble-effect'); }, i * 50); });
@@ -933,14 +941,12 @@
         function closeArchive() { document.getElementById('archive-view').classList.add('view-hidden'); document.getElementById('main-view').classList.remove('view-hidden'); }
         function openMore() { document.getElementById('main-view').classList.add('view-hidden'); document.getElementById('more-view').classList.remove('view-hidden'); }
         function closeMore() { document.getElementById('more-view').classList.add('view-hidden'); document.getElementById('main-view').classList.remove('view-hidden'); }
-        function openEncrypter() { document.getElementById('more-view').classList.add('view-hidden'); document.getElementById('encrypter-view').classList.remove('view-hidden'); }
-        function closeEncrypter() { document.getElementById('encrypter-view').classList.add('view-hidden'); document.getElementById('more-view').classList.remove('view-hidden'); }
         function openSettings() { document.getElementById('more-view').classList.add('view-hidden'); document.getElementById('settings-view').classList.remove('view-hidden'); document.getElementById('theme-primary').value = userSettings.primary; document.getElementById('theme-secondary').value = userSettings.secondary; document.getElementById('float-toggle').classList.toggle('toggle-active', userSettings.float); }
         function closeSettings() { document.getElementById('settings-view').classList.add('view-hidden'); document.getElementById('more-view').classList.remove('view-hidden'); }
-        function openPassGen() { document.getElementById('more-view').classList.add('view-hidden'); document.getElementById('passgen-view').classList.remove('view-hidden'); }
-        function closePassGen() { document.getElementById('passgen-view').classList.add('view-hidden'); document.getElementById('more-view').classList.remove('view-hidden'); }
         function openASCII() { document.getElementById('more-view').classList.add('view-hidden'); document.getElementById('ascii-view').classList.remove('view-hidden'); }
         function closeASCII() { document.getElementById('ascii-view').classList.add('view-hidden'); document.getElementById('more-view').classList.remove('view-hidden'); }
+        function openCipherSuite() { document.getElementById('more-view').classList.add('view-hidden'); document.getElementById('ciphersuite-view').classList.remove('view-hidden'); }
+        function closeCipherSuite() { document.getElementById('ciphersuite-view').classList.add('view-hidden'); document.getElementById('more-view').classList.remove('view-hidden'); }
         function handleASCIIUpload(e) {
             const file = e.target.files[0];
             if (!file) return;
@@ -975,26 +981,18 @@
         function toggleAnimationSetting() { userSettings.float = !userSettings.float; document.getElementById('float-toggle').classList.toggle('toggle-active', userSettings.float); applyTheme(); localStorage.setItem('j_settings', JSON.stringify(userSettings)); }
         function applyTheme() { document.documentElement.style.setProperty('--accent-primary', userSettings.primary); document.documentElement.style.setProperty('--accent-secondary', userSettings.secondary); document.body.classList.toggle('anim-disabled', !userSettings.float); }
         function resetSettings() { userSettings = { primary: "#00f2ff", secondary: "#bc13fe", float: true }; document.getElementById('theme-primary').value = userSettings.primary; document.getElementById('theme-secondary').value = userSettings.secondary; document.getElementById('float-toggle').classList.toggle('toggle-active', userSettings.float); applyTheme(); localStorage.setItem('j_settings', JSON.stringify(userSettings)); }
-        function generatePassword() {
-            const level = document.getElementById('pass-level').value;
-            let charset = "abcdefghijklmnopqrstuvwxyzABCDEFGHIJKLMNOPQRSTUVWXYZ";
-            let length = 12;
-            if (level === "weak") { length = 8; charset = "abcdefghijklmnopqrstuvwxyz"; }
-            else if (level === "medium") { charset += "0123456789"; }
-            else if (level === "strong") { length = 16; charset += "0123456789!@#$%^&*()_+~`|}{[]:;?><,./-="; }
-            let retVal = "";
-            for (let i = 0; i < length; ++i) { retVal += charset.charAt(Math.floor(Math.random() * charset.length)); }
-            document.getElementById('pass-output').innerText = retVal;
+        
+        function runCipherAction(action) {
+            const input = document.getElementById('cipher-input').value;
+            const output = document.getElementById('cipher-output');
+            try {
+                if (action === 'b64-enc') output.value = btoa(input);
+                else if (action === 'b64-dec') output.value = atob(input);
+                else if (action === 'hex-enc') output.value = Array.from(input).map(c => c.charCodeAt(0).toString(16).padStart(2, '0')).join(' ');
+                else if (action === 'hex-dec') output.value = input.split(' ').map(h => String.fromCharCode(parseInt(h, 16))).join('');
+            } catch (e) { output.value = "ERROR: INVALID INPUT STREAM"; }
         }
-        function runEncryption() {
-            const input = document.getElementById('enc-input').value;
-            const output = input.toUpperCase().split('').map(char => {
-                const code = char.charCodeAt(0);
-                if (code >= 65 && code <= 90) { return code - 64; }
-                return char;
-            }).join(' ');
-            document.getElementById('enc-output').value = output;
-        }
+
         function openCredits() { document.getElementById('main-view').classList.add('view-hidden'); document.getElementById('credits-view').classList.remove('view-hidden'); }
         function closeCredits() { document.getElementById('credits-view').classList.add('view-hidden'); document.getElementById('main-view').classList.remove('view-hidden'); }
         function showGameMenu() { stopGame(); document.getElementById('game-menu').classList.remove('hidden'); document.getElementById('game-settings-view').classList.add('hidden'); document.getElementById('game-play-area').classList.add('hidden'); document.getElementById('game-exit-btn').classList.remove('hidden'); document.getElementById('game-over-overlay').style.display = 'none'; }
@@ -1066,8 +1064,6 @@
         function exportSystemData() { saveNote(true); const data = { j_notes: notePages, j_settings: userSettings, currentLang: currentLang, timestamp: new Date().toISOString(), version: "1.5.0-BACKUP" }; const blob = new Blob([JSON.stringify(data, null, 4)], { type: 'application/json' }); const url = URL.createObjectURL(blob); const a = document.createElement('a'); a.href = url; a.download = `JaysTools_Backup_${new Date().toLocaleDateString().replace(/\//g, '-')}.json`; document.body.appendChild(a); a.click(); document.body.removeChild(a); URL.revokeObjectURL(url); document.getElementById('archive-status').innerText = "SUCCESS: REDUNDANCY FILE GENERATED."; }
         function importSystemData(event) { const file = event.target.files[0]; if (!file) return; const reader = new FileReader(); reader.onload = (e) => { try { const data = JSON.parse(e.target.result); if (data.j_notes && Array.isArray(data.j_notes)) { notePages = data.j_notes; localStorage.setItem('j_notes', JSON.stringify(notePages)); if (data.j_settings) { userSettings = data.j_settings; applyTheme(); } if (data.currentLang) changeLang(data.currentLang); activeIdx = 0; loadNote(activeIdx); document.getElementById('archive-status').innerText = "SUCCESS: SYSTEM RE-POPULATED."; } else { throw new Error("Invalid format"); } } catch (err) { document.getElementById('archive-status').innerText = "FAILURE: CORRUPT DATA STREAM."; } }; reader.readAsText(file); }
         document.getElementById('drive-url').addEventListener('input', e => { if(e.target.value.toLowerCase().includes('your mom')) document.body.classList.add('mom-mode'); else document.body.classList.remove('mom-mode'); });
-        applyTheme();
-        loadNote(activeIdx);
     </script>
 </body>
 </html>
